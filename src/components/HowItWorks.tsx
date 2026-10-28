@@ -19,8 +19,11 @@ export function HowItWorks() {
         </div>
       </div>
 
-      <div className="lg:border-l lg:border-brand">
-        <div data-reveal="up" className="px-5 pt-10 pb-6 lg:px-[30px] lg:pt-[30px] lg:pb-10">
+      <div>
+        <div
+          data-reveal="up"
+          className="px-5 pt-10 pb-6 lg:px-[30px] lg:pt-[30px] lg:pb-10 lg:rule-l lg:[--rule-y1:10px]"
+        >
           <h2 className="text-h2 lg:text-h2-lg">How it works in 5 simple steps</h2>
           <p className="mt-6 max-w-[430px] text-body lg:mt-8">
             Skip the waiting room. Get affordable dermatologist-led care from the comfort of your
@@ -34,7 +37,9 @@ export function HowItWorks() {
               key={step.title}
               data-reveal="up"
               style={revealDelay(i * 90)}
-              className="grid grid-cols-[44px_1fr] gap-x-5 border-t border-brand px-5 pt-5 pb-6 lg:grid-cols-[110px_1fr] lg:pl-[28px] lg:pr-[30px]"
+              className={`rule-t grid grid-cols-[44px_1fr] gap-x-5 px-5 pt-5 pb-6 lg:grid-cols-[110px_1fr] lg:pl-[28px] lg:pr-[30px] lg:rule-l lg:[--rule-x0:10px] lg:[--rule-y0:10px] ${
+                i < steps.length - 1 ? "lg:[--rule-y1:10px]" : ""
+              }`}
             >
               <span aria-hidden className="text-[32px] leading-none font-light lg:text-[44px]">
                 {i + 1}.

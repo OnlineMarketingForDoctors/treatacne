@@ -37,6 +37,70 @@ html {
 }
 
 /*
+ * Grid lines with optional gaps at junctions (the designs break lines ~10px either side
+ * of where they meet). Inset with --rule-x0/--rule-x1 (horizontal: start/end) and
+ * --rule-y0/--rule-y1 (vertical: start/end). Colour via --rule-color.
+ * rule-t / rule-b share ::before and rule-l / rule-r share ::after, so an element can
+ * have one horizontal and one vertical line.
+ */
+@utility rule-t {
+  position: relative;
+  &::before {
+    content: "";
+    position: absolute;
+    z-index: 1;
+    pointer-events: none;
+    top: 0;
+    left: var(--rule-x0, 0px);
+    right: var(--rule-x1, 0px);
+    height: 1px;
+    background: var(--rule-color, var(--color-brand));
+  }
+}
+@utility rule-b {
+  position: relative;
+  &::before {
+    content: "";
+    position: absolute;
+    z-index: 1;
+    pointer-events: none;
+    bottom: 0;
+    left: var(--rule-x0, 0px);
+    right: var(--rule-x1, 0px);
+    height: 1px;
+    background: var(--rule-color, var(--color-brand));
+  }
+}
+@utility rule-l {
+  position: relative;
+  &::after {
+    content: "";
+    position: absolute;
+    z-index: 1;
+    pointer-events: none;
+    left: 0;
+    top: var(--rule-y0, 0px);
+    bottom: var(--rule-y1, 0px);
+    width: 1px;
+    background: var(--rule-color, var(--color-brand));
+  }
+}
+@utility rule-r {
+  position: relative;
+  &::after {
+    content: "";
+    position: absolute;
+    z-index: 1;
+    pointer-events: none;
+    right: 0;
+    top: var(--rule-y0, 0px);
+    bottom: var(--rule-y1, 0px);
+    width: 1px;
+    background: var(--rule-color, var(--color-brand));
+  }
+}
+
+/*
  * Scroll reveal animations (see components/ScrollReveal.tsx).
  * data-reveal="up" | "left" | "zoom" | "group"
  * "group" stays visible itself and animates its `.reveal-rise` children; use it when the

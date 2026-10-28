@@ -26,21 +26,21 @@ export function Hero() {
       </div>
 
       <div className="grid grid-rows-[auto_auto_auto] bg-brand text-white lg:order-1 lg:grid-cols-[66.3%_1fr] lg:grid-rows-[1fr_203px_86px]">
-        <h1 className="px-5 py-10 text-h1 lg:border-r lg:border-white lg:px-[30px] lg:pt-[50px] lg:text-h1-lg">
+        <h1 className="px-5 py-10 text-h1 lg:rule-r lg:[--rule-color:white] lg:[--rule-y1:10px] lg:px-[30px] lg:pt-[50px] lg:text-h1-lg">
           <span data-reveal="up" className="block">
             Your own personalised acne treatment plan in 24 hours or less.
           </span>
         </h1>
         <div aria-hidden className="hidden lg:block" />
 
-        <ul className="space-y-[9px] border-t border-white px-5 py-9 text-small lg:col-start-1 lg:space-y-[11px] lg:border-r lg:px-[30px] lg:py-7 lg:text-body">
+        <ul className="rule-t space-y-[9px] px-5 py-9 text-small [--rule-color:white] lg:col-start-1 lg:space-y-[11px] lg:rule-r lg:[--rule-x1:10px] lg:[--rule-y0:10px] lg:px-[30px] lg:py-7 lg:text-body">
           {points.map((point, i) => (
             <li key={point} data-reveal="left" style={revealDelay(300 + i * 80)}>
               + {point}
             </li>
           ))}
         </ul>
-        <div aria-hidden className="hidden border-t border-white lg:block" />
+        <div aria-hidden className="hidden lg:block lg:rule-t lg:[--rule-color:white] lg:[--rule-x0:10px]" />
 
         <BoxLink href="/get-started" tone="responsive" className="lg:col-start-1 lg:h-full">
           Get Started Today →
