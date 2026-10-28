@@ -1,26 +1,44 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/*
+ * Brand tokens taken from the Figma exports (Components/Typography.png and page designs).
+ * Typeface in the designs is Neue Haas Unica W1G (a licensed Monotype font). Until the
+ * licensed webfont files are added, Inter is used as the fallback.
+ */
+@theme {
+  --color-brand: #e54a08;
+  --color-brand-soft: #ed6f37;
+  --color-brand-muted: #f6b493;
+  --color-cream: #f7f8f3;
+
+  --font-sans: "Neue Haas Unica W1G", var(--font-inter), "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+  /* Type scale: size / line-height from the typography sheet */
+  --text-h1: 2.5rem;
+  --text-h1--line-height: 1.1;
+  --text-h1-lg: 3.375rem;
+  --text-h1-lg--line-height: 1.1;
+  --text-h2: 1.875rem;
+  --text-h2--line-height: 1.1;
+  --text-h2-lg: 2.25rem;
+  --text-h2-lg--line-height: 1.1;
+  --text-big: 1.375rem;
+  --text-big--line-height: 1.2;
+  --text-body: 1rem;
+  --text-body--line-height: 1.2;
+  --text-small: 0.875rem;
+  --text-small--line-height: 1.2;
+  --text-note: 0.75rem;
+  --text-note--line-height: 1.2;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: #ffffff;
+  color: var(--color-brand);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
 }
