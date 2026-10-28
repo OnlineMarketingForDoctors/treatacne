@@ -2,8 +2,7 @@
 
 /*
  * Brand tokens taken from the Figma exports (Components/Typography.png and page designs).
- * Typeface in the designs is Neue Haas Unica W1G (a licensed Monotype font). Until the
- * licensed webfont files are added, Inter is used as the fallback.
+ * Typeface: Neue Haas Unica W1G (licensed Monotype font), loaded in app/layout.tsx.
  */
 @theme {
   --color-brand: #e54a08;
@@ -11,7 +10,7 @@
   --color-brand-muted: #f6b493;
   --color-cream: #f7f8f3;
 
-  --font-sans: "Neue Haas Unica W1G", var(--font-inter), "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-sans: var(--font-unica), "Helvetica Neue", Helvetica, Arial, sans-serif;
 
   /* Type scale: size / line-height from the typography sheet */
   --text-h1: 2.5rem;

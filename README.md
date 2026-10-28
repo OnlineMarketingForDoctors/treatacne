@@ -16,8 +16,8 @@ Open http://localhost:3000.
 
 ## Placeholders to replace
 
-- **Font:** designs use Neue Haas Unica W1G (licensed, Monotype). Inter is used until the
-  webfont files are supplied; add them with `@font-face` in `src/app/globals.css`.
+- **Font:** Neue Haas Unica W1G Regular is installed (`src/fonts`). Bold is still missing, so
+  bold text is synthesised by the browser. Add the Bold file in `src/app/layout.tsx`.
 - **Photos:** `public/images/*` were cropped from the Figma JPG exports. Swap in the original
   high-resolution photos when available.
 - **FAQ answers** and **social links:** in `src/lib/site.ts`, need client approval.
