@@ -8,6 +8,7 @@ import { BackToTop } from "@/components/BackToTop";
 import { CartProvider } from "@/components/cart/CartProvider";
 import { CartDrawer } from "@/components/cart/CartDrawer";
 import { revealBootScript } from "@/lib/reveal";
+import { SHOP_ENABLED } from "@/lib/site";
 
 // Neue Haas Unica W1G (Monotype). Only Regular is installed so far; bold text is
 // synthesised by the browser until NeueHaasUnicaW1G-Bold is added here.
@@ -18,12 +19,13 @@ const unica = localFont({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://treatacne.com.au"),
   title: {
     default: "Treat:Acne | Dermatologist-led online acne treatment",
     template: "%s | Treat:Acne",
   },
   description:
-    "Your own personalised acne treatment plan in 24 hours or less. Dermatologist-led telehealth care, anywhere in Australia.",
+    "Dermatologist-led online acne care anywhere in Australia. Your first 30-minute consultation is free with our trained acne nurses. GP consultations $99.",
 };
 
 export default function RootLayout({
@@ -44,7 +46,7 @@ export default function RootLayout({
           <main>{children}</main>
           <Footer />
           <BackToTop />
-          <CartDrawer />
+          {SHOP_ENABLED && <CartDrawer />}
         </CartProvider>
       </body>
     </html>

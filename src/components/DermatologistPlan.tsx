@@ -28,23 +28,22 @@ export function DermatologistPlan() {
       <div className="relative flex flex-col text-white lg:absolute lg:inset-y-0 lg:right-0 lg:w-[34.8%]">
         <div className="rule-b min-h-[275px] px-5 pt-[45px] pb-8 lg:min-h-0 lg:flex-1 lg:rule-l lg:[--rule-x0:10px] lg:[--rule-y1:10px] lg:px-[30px] lg:pt-[30px] lg:pb-8">
           <h2 data-reveal="up" className="text-h2 lg:text-h2-lg">
-            Get a personalised acne treatment plan guided
-            <br className="hidden lg:inline" /> by a dermatologist
+            A personalised plan,
+            <br className="hidden lg:inline" /> guided by a dermatologist
           </h2>
         </div>
         <div className="space-y-3 px-5 pt-[55px] pb-[50px] text-small lg:px-[30px] lg:py-8 lg:text-body lg:rule-l lg:[--rule-y0:10px]">
           <p data-reveal="up">
-            No more guesswork, no more wasted products. At TreatAcne, we connect you with qualified
-            dermatology professionals who design customised treatment plans based on your skin,
-            symptoms, and goals.
+            No more guesswork, no more wasted products. Our team designs a treatment plan around
+            your skin, symptoms and goals — whether you&apos;re dealing with hormonal breakouts,
+            persistent blackheads, painful cysts or post-acne marks.
           </p>
           <p data-reveal="up" style={revealDelay(100)}>
-            Whether you&apos;re dealing with hormonal breakouts, persistent blackheads, painful
-            cysts, or post-acne marks, our team will build a plan that&apos;s right for you—combining
-            prescription treatments, science-backed skincare, and expert support.
+            Your plan can combine medical treatment where appropriate, science-backed skincare and
+            ongoing support.
           </p>
           <p data-reveal="up" style={revealDelay(200)} className="lg:font-bold">
-            No subscriptions. No upsells.
+            No subscriptions. No lock-in.
             <br />
             Just expert care when you need it.
           </p>

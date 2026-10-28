@@ -1,8 +1,8 @@
 import Image from "next/image";
 import { steps } from "@/lib/site";
-import { revealDelay } from "@/lib/reveal";
+import { NumberedList } from "@/components/NumberedList";
 
-export function HowItWorks({ className = "" }: { className?: string }) {
+export function HowItWorks({ className = "", note }: { className?: string; note?: string }) {
   return (
     <section id="how-it-works" className={`grid border-b border-brand lg:grid-cols-2 ${className}`}>
       <div className="flex items-center justify-center px-5 pt-5 pb-5 max-lg:order-2 lg:p-[30px]">
@@ -31,26 +31,12 @@ export function HowItWorks({ className = "" }: { className?: string }) {
           </p>
         </div>
 
-        <ol>
-          {steps.map((step, i) => (
-            <li
-              key={step.title}
-              data-reveal="up"
-              style={revealDelay(i * 90)}
-              className={`rule-t grid grid-cols-[44px_1fr] gap-x-5 px-5 pt-5 pb-6 lg:grid-cols-[110px_1fr] lg:pl-[28px] lg:pr-[30px] lg:rule-l lg:[--rule-x0:10px] lg:[--rule-y0:10px] ${
-                i < steps.length - 1 ? "lg:[--rule-y1:10px]" : ""
-              }`}
-            >
-              <span aria-hidden className="text-[32px] leading-none font-light lg:text-[44px]">
-                {i + 1}.
-              </span>
-              <div>
-                <h3 className="text-body font-bold">{step.title}</h3>
-                <p className="mt-3 max-w-[460px] text-body">{step.body}</p>
-              </div>
-            </li>
-          ))}
-        </ol>
+        <NumberedList items={steps} lastGap={Boolean(note)} />
+        {note && (
+          <p className="rule-t px-5 py-6 text-small italic lg:rule-l lg:px-[30px] lg:py-8 lg:text-body lg:[--rule-x0:10px] lg:[--rule-y0:10px]">
+            {note}
+          </p>
+        )}
       </div>
     </section>
   );

@@ -9,19 +9,17 @@ export function ShopTeaser() {
           data-reveal="up"
           className="px-5 pt-8 pb-6 text-h2 lg:flex-1 lg:rule-r lg:[--rule-y1:10px] lg:px-[30px] lg:pt-[30px] lg:text-h2-lg"
         >
-          Shop our dermatologist-developed skincare
+          Dermatologist-developed skincare
         </h2>
         <p className="rule-t px-5 py-7 text-small max-lg:order-2 lg:rule-r lg:[--rule-x1:10px] lg:[--rule-y0:10px] lg:px-[30px] lg:py-8 lg:text-body">
-          Explore our curated range of science-backed cleansers, moisturisers, serums, and
-          supplements—formulated by dermatologists to support clear, healthy skin at every stage of
-          your acne journey.
+          Coming soon. Join the waitlist and we&apos;ll let you know as soon as it&apos;s available.
         </p>
         <BoxLink
-          href="/shop"
+          href="/shop#waitlist"
           tone="responsive"
           className="border-t border-brand max-lg:order-3 lg:rule-r"
         >
-          Shop Now →
+          Join the waitlist →
         </BoxLink>
         <div className="px-5 pb-5 max-lg:order-1 lg:hidden">
           <ShopImage />

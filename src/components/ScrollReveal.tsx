@@ -20,7 +20,8 @@ export function ScrollReveal() {
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
-          if (entry.isIntersecting) {
+          // Also reveal anything that has already scrolled past the top of the screen
+          if (entry.isIntersecting || entry.boundingClientRect.bottom < 0) {
             entry.target.classList.add("is-visible");
             observer.unobserve(entry.target);
           }
@@ -28,7 +29,12 @@ export function ScrollReveal() {
       },
       { rootMargin: "0px 0px -60px 0px", threshold: 0.1 },
     );
-    const observeAll = () => pending().forEach((el) => observer.observe(el));
+    const observeAll = () =>
+      pending().forEach((el) => {
+        // Already scrolled past (e.g. the visitor scrolled before this script ran): show it
+        if (el.getBoundingClientRect().bottom < 0) el.classList.add("is-visible");
+        else observer.observe(el);
+      });
     observeAll();
 
     const mutations = new MutationObserver(observeAll);

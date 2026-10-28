@@ -9,17 +9,17 @@ export function Convenience() {
           <h2 className="text-h2 lg:text-h2-lg">
             Designed for
             <br />
-            Convenience -
+            convenience —
             <br />
-            Anywhere in Australia
+            anywhere in Australia
           </h2>
           <div>
             <p className="max-w-[380px] text-small lg:text-body">
-              Treat:Acne was created with busy lives and remote locations in mind. Our fully
-              virtual model means you can access expert acne care from anywhere in Australia—no
-              clinic visits, no referrals, no waiting rooms. From online bookings and telehealth
-              consultations to having your treatments delivered to your door, we make it easy to
-              get the care you need, wherever you are.
+              Treat:Acne was created with busy lives and remote locations in mind. Our fully online
+              model means you can get expert acne care from anywhere in Australia: no clinic visits,
+              no referral needed, no waiting rooms. Your nurse calls you, your doctor sees you by
+              secure video, and your treatment can be posted to your door or collected from your
+              local pharmacy.
             </p>
             <PillLink href="/how-it-works" tone="light" className="mt-6 w-full lg:mt-9 lg:w-auto">
               Learn More →

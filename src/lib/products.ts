@@ -19,10 +19,9 @@ export const categories: Category[] = [
   { slug: "cleansers", name: "Cleansers" },
   { slug: "moisturisers", name: "Moisturisers" },
   { slug: "serums", name: "Serums" },
-  { slug: "supplements", name: "Supplements" },
 ];
 
-const [cleansers, moisturisers, serums, supplements] = categories;
+const [cleansers, moisturisers, serums] = categories;
 
 const placeholderPhoto = "/images/product-cleanser-cream.jpg";
 const placeholderDescription = [
@@ -50,8 +49,6 @@ export const products: Product[] = [
   placeholder("light-moisturiser", "Light Moisturiser", moisturisers),
   placeholder("clarifying-serum", "Clarifying Serum", serums),
   placeholder("hydrating-serum", "Hydrating Serum", serums),
-  placeholder("skin-support-capsules", "Skin Support Capsules", supplements),
-  placeholder("daily-skin-powder", "Daily Skin Powder", supplements),
 ];
 
 export function getProduct(slug: string) {

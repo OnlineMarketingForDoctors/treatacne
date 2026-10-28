@@ -6,11 +6,16 @@ import { FinalCta } from "@/components/FinalCta";
 import { AddToCartButton } from "@/components/shop/AddToCartButton";
 import { ProductGallery } from "@/components/shop/ProductGallery";
 import { formatPrice, getProduct, products } from "@/lib/products";
+import { SHOP_ENABLED } from "@/lib/site";
 
 type Params = Promise<{ slug: string }>;
 
+// Product pages are switched off until the shop launches (SHOP_ENABLED in lib/site.ts).
+// Only pre-built slugs are served; with the shop on, every product is pre-built.
+export const dynamicParams = false;
+
 export function generateStaticParams() {
-  return products.map((p) => ({ slug: p.slug }));
+  return SHOP_ENABLED ? products.map((p) => ({ slug: p.slug })) : [];
 }
 
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
@@ -20,7 +25,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
 
 export default async function ProductPage({ params }: { params: Params }) {
   const product = getProduct((await params).slug);
-  if (!product) notFound();
+  if (!SHOP_ENABLED || !product) notFound();
 
   return (
     <>
