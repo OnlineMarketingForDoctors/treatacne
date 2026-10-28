@@ -2,9 +2,9 @@ import Image from "next/image";
 import { steps } from "@/lib/site";
 import { revealDelay } from "@/lib/reveal";
 
-export function HowItWorks() {
+export function HowItWorks({ className = "" }: { className?: string }) {
   return (
-    <section id="how-it-works" className="grid border-b border-brand lg:grid-cols-2">
+    <section id="how-it-works" className={`grid border-b border-brand lg:grid-cols-2 ${className}`}>
       <div className="flex items-center justify-center px-5 pt-5 pb-5 max-lg:order-2 lg:p-[30px]">
         <div className="w-full overflow-hidden rounded-lg lg:max-w-[503px]">
           <Image

@@ -16,7 +16,10 @@ const unica = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Treat:Acne | Dermatologist-led online acne treatment",
+  title: {
+    default: "Treat:Acne | Dermatologist-led online acne treatment",
+    template: "%s | Treat:Acne",
+  },
   description:
     "Your own personalised acne treatment plan in 24 hours or less. Dermatologist-led telehealth care, anywhere in Australia.",
 };
