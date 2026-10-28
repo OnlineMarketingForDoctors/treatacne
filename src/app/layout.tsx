@@ -5,6 +5,8 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { ScrollReveal } from "@/components/ScrollReveal";
 import { BackToTop } from "@/components/BackToTop";
+import { CartProvider } from "@/components/cart/CartProvider";
+import { CartDrawer } from "@/components/cart/CartDrawer";
 import { revealBootScript } from "@/lib/reveal";
 
 // Neue Haas Unica W1G (Monotype). Only Regular is installed so far; bold text is
@@ -36,11 +38,14 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: revealBootScript }} />
       </head>
       <body className="antialiased">
-        <ScrollReveal />
-        <Header />
-        <main>{children}</main>
-        <Footer />
-        <BackToTop />
+        <CartProvider>
+          <ScrollReveal />
+          <Header />
+          <main>{children}</main>
+          <Footer />
+          <BackToTop />
+          <CartDrawer />
+        </CartProvider>
       </body>
     </html>
   );

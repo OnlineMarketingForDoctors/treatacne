@@ -4,9 +4,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { navLinks } from "@/lib/site";
+import { useCart } from "@/components/cart/CartProvider";
 
 export function Header() {
   const [open, setOpen] = useState(false);
+  const cart = useCart();
+  const cartLabel = cart.count > 0 ? `Cart (${cart.count})` : "Cart";
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
@@ -40,6 +43,9 @@ export function Header() {
               {link.label}
             </Link>
           ))}
+          <button type="button" onClick={cart.open} className="text-body hover:underline">
+            {cartLabel}
+          </button>
         </nav>
         <Link
           href="/get-started"
@@ -48,6 +54,13 @@ export function Header() {
           Get Started
         </Link>
 
+        <button
+          type="button"
+          onClick={cart.open}
+          className="min-w-[83px] border-l border-brand px-3 text-body lg:hidden"
+        >
+          {cartLabel}
+        </button>
         <button
           type="button"
           onClick={() => setOpen(true)}

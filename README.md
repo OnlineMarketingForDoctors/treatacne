@@ -13,7 +13,8 @@ Open http://localhost:3000.
 
 - [x] Home page (desktop + mobile, mobile menu drawer, FAQ accordion)
 - [x] About, How it works
-- [ ] Pricing, Shop, Product, Contact, Quiz, Get Started form
+- [x] Shop, Product pages and cart drawer (cart saved in the browser; checkout not connected yet)
+- [ ] Pricing, Contact, Quiz, Get Started form, Stripe checkout
 
 ## Placeholders to replace
 
@@ -24,4 +25,5 @@ Open http://localhost:3000.
   baked-in text using Nano Banana Pro. Swap in the original
   high-resolution photos when available.
 - **FAQ answers** and **social links:** in `src/lib/site.ts`, need client approval.
+- **Products:** `src/lib/products.ts` is a placeholder catalogue (names, prices, descriptions, photos).
 - **Newsletter form:** shows a confirmation only; not yet connected to an email platform.
