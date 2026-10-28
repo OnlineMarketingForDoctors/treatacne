@@ -54,7 +54,14 @@ export function Footer() {
         {/* Credits */}
         <div className="flex items-end justify-between pt-2 text-note text-brand-muted max-lg:order-4 lg:mt-2.5 lg:border-l lg:border-white lg:pt-0 lg:pl-4 lg:pr-[130px]">
           <span>©{new Date().getFullYear()}</span>
-          <span>Designed by Pull &amp; Press</span>
+          <a
+            href="https://onlinemarketingfordoctors.com/"
+            target="_blank"
+            rel="noopener"
+            className="hover:text-white hover:underline"
+          >
+            Powered by Online Marketing For Doctors
+          </a>
         </div>
       </div>
     </footer>
