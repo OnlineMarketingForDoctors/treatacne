@@ -6,7 +6,7 @@ import { FinalCta } from "@/components/FinalCta";
 import { keyMessage } from "@/lib/site";
 
 const stepsNote =
-  "Your acne nurse will call you by phone. GP and dermatologist consultations are by secure video: we'll send you a private link when your appointment is booked — just click to join, no app needed. Prefer to see a dermatologist? Just tell our nurse and they'll book you in. Some acne treatments can only be prescribed by a dermatologist, so if you have moderate to severe acne you'll need to see our dermatologist. Our nurse will guide you.";
+  "Your acne nurse will call you by phone. GP and dermatologist consultations are by secure video: we'll send you a private link when your appointment is booked - just click to join, no app needed. Prefer to see a dermatologist? Just tell our nurse and they'll book you in. Some acne treatments can only be prescribed by a dermatologist, so if you have moderate to severe acne you'll need to see our dermatologist. Our nurse will guide you.";
 
 export const metadata: Metadata = {
   title: "How it works",

@@ -9,7 +9,7 @@ export function Convenience() {
           <h2 className="text-h2 lg:text-h2-lg">
             Designed for
             <br />
-            convenience —
+            convenience -
             <br />
             anywhere in Australia
           </h2>

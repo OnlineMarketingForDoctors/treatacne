@@ -45,7 +45,7 @@ const questions: Question[] = [
   {
     id: "preference",
     label: "Who would you prefer to see?",
-    options: ["Our GP trained in acne — lower cost", "Dermatologist", "No preference"],
+    options: ["Our GP trained in acne - lower cost", "Dermatologist", "No preference"],
   },
 ];
 

@@ -61,8 +61,8 @@ export const crisisLines = [
 export const prices = [
   { service: "Acne nurse consultation (30 minutes, phone)", fee: "Free" },
   { service: "GP trained in acne (20 minutes, video, mild acne)", fee: "$99" },
-  { service: "Dermatologist — first consultation (20 minutes, video)", fee: "$365" },
-  { service: "Dermatologist — review (10 minutes, video)", fee: "$280" },
+  { service: "Dermatologist - first consultation (20 minutes, video)", fee: "$365" },
+  { service: "Dermatologist - review (10 minutes, video)", fee: "$280" },
   { service: "Nurse support between appointments", fee: "Free" },
   { service: "Blood tests", fee: "Bulk-billed (free)" },
 ];
@@ -73,7 +73,7 @@ export const steps = [
     body: "It takes about 4 minutes to fill out our online form and attach your photos.",
   },
   {
-    title: "Talk to our acne nurse — within 2 business days.",
+    title: "Talk to our acne nurse - within 2 business days.",
     body: "Our nurse calls you by phone for a free 30-minute consultation, reviews your history and photos, and guides you to the right doctor.",
   },
   {
@@ -86,7 +86,7 @@ export const steps = [
   },
   {
     title: "Get your treatment, your way.",
-    body: "We can send your script to you for any pharmacy, or post your treatment directly to you — whichever is easier, wherever you live in Australia.",
+    body: "We can send your script to you for any pharmacy, or post your treatment directly to you - whichever is easier, wherever you live in Australia.",
   },
 ];
 

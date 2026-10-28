@@ -18,7 +18,7 @@ const coursePrices = [
 export default function LearnPage() {
   return (
     <PageLayout
-      title="Mastering Acne — our online acne course."
+      title="Mastering Acne - our online acne course."
       intro={
         <p>
           Understand your skin, build a routine that works, and get the most from your treatment.

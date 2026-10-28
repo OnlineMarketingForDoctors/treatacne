@@ -34,12 +34,12 @@ export default function AboutPage() {
               frustration seeing patients struggle with ineffective treatments and delayed access to
               proper care. As a Fellow of the Australasian College of Dermatologists, Dr. Sharma
               understood that effective acne treatment requires both medical expertise and genuine
-              empathy—having experienced the emotional impact of acne herself, including scarring.
+              empathy - having experienced the emotional impact of acne herself, including scarring.
             </p>
             <p>
               This insight led her to create Treat:Acne: a dermatologist-founded platform that
               eliminates the guesswork and provides expert-led, personalised acne care across
-              Australia. Her mission is simple—to provide the clear, evidence-based treatment pathway
+              Australia. Her mission is simple - to provide the clear, evidence-based treatment pathway
               she wished existed during her own skin journey.
             </p>
           </div>
@@ -49,7 +49,7 @@ export default function AboutPage() {
               At Treat:Acne, our mission is to eliminate the confusion, frustration, and wasted time
               that comes with managing acne. We provide expert-led, personalised acne treatment
               through accessible telehealth consultations, bringing dermatologist-quality care
-              directly to patients across Australia—especially those in regional and remote areas
+              directly to patients across Australia - especially those in regional and remote areas
               who have limited access to specialist care.
             </p>
             <p>
@@ -66,7 +66,7 @@ export default function AboutPage() {
               to expert dermatological care, regardless of their location or circumstances. By
               combining cutting-edge telehealth technology with compassionate, personalised
               treatment, we aim to become the leading platform for acne care in
-              Australia—transforming not just skin health, but the confidence and wellbeing of every
+              Australia - transforming not just skin health, but the confidence and wellbeing of every
               patient we serve.
             </p>
             <p>

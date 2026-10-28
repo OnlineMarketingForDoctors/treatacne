@@ -35,7 +35,7 @@ export function DermatologistPlan() {
         <div className="space-y-3 px-5 pt-[55px] pb-[50px] text-small lg:px-[30px] lg:py-8 lg:text-body lg:rule-l lg:[--rule-y0:10px]">
           <p data-reveal="up">
             No more guesswork, no more wasted products. Our team designs a treatment plan around
-            your skin, symptoms and goals — whether you&apos;re dealing with hormonal breakouts,
+            your skin, symptoms and goals - whether you&apos;re dealing with hormonal breakouts,
             persistent blackheads, painful cysts or post-acne marks.
           </p>
           <p data-reveal="up" style={revealDelay(100)}>
