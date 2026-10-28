@@ -41,13 +41,16 @@ export function Footer() {
         </div>
 
         {/* Wordmark */}
-        <div className="flex items-end pt-8 max-lg:order-3 lg:pt-10 lg:pr-5">
+        <div
+          data-reveal="group"
+          className="flex items-end overflow-hidden pt-8 max-lg:order-3 lg:pt-10 lg:pr-5"
+        >
           <Image
             src="/images/logo-light.png"
             alt="Treat:Acne"
             width={364}
             height={54}
-            className="h-auto w-full max-w-[650px]"
+            className="reveal-rise h-auto w-full max-w-[650px]"
           />
         </div>
 

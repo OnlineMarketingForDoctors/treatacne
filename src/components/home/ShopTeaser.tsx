@@ -5,7 +5,7 @@ export function ShopTeaser() {
   return (
     <section className="grid border-t border-brand lg:min-h-[693px] lg:grid-cols-[34.7%_1fr]">
       <div className="flex flex-col lg:border-r lg:border-brand">
-        <h2 className="px-5 pt-8 pb-6 text-h2 lg:flex-1 lg:px-[30px] lg:pt-[30px] lg:text-h2-lg">
+        <h2 data-reveal="up" className="px-5 pt-8 pb-6 text-h2 lg:flex-1 lg:px-[30px] lg:pt-[30px] lg:text-h2-lg">
           Shop our dermatologist-developed skincare
         </h2>
         <p className="border-t border-brand px-5 py-7 text-small max-lg:order-2 lg:px-[30px] lg:py-8 lg:text-body">
@@ -39,6 +39,7 @@ function ShopImage() {
         alt="Treat:Acne cleanser packaging"
         fill
         sizes="(min-width: 1024px) 60vw, 100vw"
+        data-reveal="zoom"
         className="object-cover"
       />
     </div>

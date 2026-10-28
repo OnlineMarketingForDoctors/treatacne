@@ -3,6 +3,8 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { ScrollReveal } from "@/components/ScrollReveal";
+import { revealBootScript } from "@/lib/reveal";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -21,8 +23,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en-AU">
+    // suppressHydrationWarning: the reveal boot script adds a class to <html> before hydration
+    <html lang="en-AU" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: revealBootScript }} />
+      </head>
       <body className={`${inter.variable} antialiased`}>
+        <ScrollReveal />
         <Header />
         <main>{children}</main>
         <Footer />

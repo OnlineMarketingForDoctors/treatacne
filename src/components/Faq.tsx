@@ -1,11 +1,12 @@
 import Link from "next/link";
 import { faqs } from "@/lib/site";
+import { revealDelay } from "@/lib/reveal";
 
 export function Faq() {
   return (
     <section className="grid border-t border-brand lg:grid-cols-2">
       <div className="flex flex-col justify-between gap-10 bg-brand px-[30px] py-8 text-white lg:py-[30px]">
-        <div>
+        <div data-reveal="up">
           <h2 className="text-h2 lg:text-h2-lg">
             Frequently Asked
             <br />
@@ -24,8 +25,13 @@ export function Faq() {
       </div>
 
       <div>
-        {faqs.map((faq) => (
-          <details key={faq.question} className="group border-b border-brand">
+        {faqs.map((faq, i) => (
+          <details
+            key={faq.question}
+            data-reveal="up"
+            style={revealDelay(i * 90)}
+            className="group border-b border-brand"
+          >
             <summary className="flex min-h-[72px] cursor-pointer list-none items-center justify-between gap-6 px-5 py-4 text-small lg:px-[28px] lg:text-body [&::-webkit-details-marker]:hidden">
               {faq.question}
               <span

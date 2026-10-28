@@ -4,7 +4,7 @@ import { PillLink } from "@/components/Button";
 export function Convenience() {
   return (
     <section className="p-5 lg:p-[30px]">
-      <div className="grid overflow-hidden rounded-2xl lg:min-h-[633px] lg:grid-cols-2">
+      <div data-reveal="up" className="grid overflow-hidden rounded-2xl lg:min-h-[633px] lg:grid-cols-2">
         <div className="flex flex-col justify-between gap-12 bg-brand p-5 pb-6 text-white lg:p-[36px]">
           <h2 className="text-h2 lg:text-h2-lg">
             Designed for
@@ -26,12 +26,13 @@ export function Convenience() {
             </PillLink>
           </div>
         </div>
-        <div className="relative h-[260px] lg:h-auto">
+        <div className="relative h-[260px] overflow-hidden lg:h-auto">
           <Image
             src="/images/phone.jpg"
             alt="Person holding a phone showing the Treat:Acne app"
             fill
             sizes="(min-width: 1024px) 50vw, 100vw"
+            data-reveal="zoom"
             className="object-cover"
           />
         </div>
