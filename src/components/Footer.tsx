@@ -58,9 +58,11 @@ export function Footer() {
             href="https://onlinemarketingfordoctors.com/"
             target="_blank"
             rel="noopener"
-            className="hover:text-white hover:underline"
+            className="inline-flex items-center gap-1.5 hover:text-white hover:underline"
           >
-            Powered by Online Marketing For Doctors
+            Powered by
+            <Image src="/images/omfd-symbol.png" alt="" width={14} height={14} />
+            Online Marketing For Doctors
           </a>
         </div>
       </div>
