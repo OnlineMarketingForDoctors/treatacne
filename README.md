@@ -18,8 +18,9 @@ placeholder copy. Shared copy, prices, FAQ and links live in `src/lib/site.ts`.
 - [x] Pricing, Severe & persistent acne, FAQ, Learn, Photo guide, Quiz, Contact
 - [x] Shop "coming soon" + waitlist. Product pages and cart are built but switched off
       (`SHOP_ENABLED` in `src/lib/site.ts`)
-- [ ] Get Started 3-step form (needs secure Australian storage). `/get-started` is a temporary
-      page with the booking button
+- [x] Get Started 3-step form (`/get-started`) with secure storage, photo uploads and a
+      thank-you screen linking to Healthengine
+- [x] Staff area (`/staff`) with login + two-factor to review submissions
 - [ ] CMS so Niyati can edit prices, FAQ and team; GA4 + cookie notice; Learn articles
 
 ## Placeholders to replace
@@ -37,3 +38,48 @@ placeholder copy. Shared copy, prices, FAQ and links live in `src/lib/site.ts`.
   baked-in text using Nano Banana Pro. `photo-guide-example.jpg` is low resolution. Swap in the
   original photos when available.
 - **Products** (when the shop launches): `src/lib/products.ts` is a placeholder catalogue.
+
+## Get Started form and staff area
+
+**How it works**
+
+1. The patient fills in the 3-step form. Only first name, last name, date of birth and mobile are
+   required (plus guardian consent for under-18s and the step 3 consents).
+2. On submit, the server (`src/app/(site)/get-started/actions.ts`) saves the answers to Supabase
+   using the secret key and issues one-time upload links. Photos go straight from the browser into
+   the private `submissions` bucket.
+3. A notification email with **only a secure link** goes to info@treatacne.com.au (no names,
+   health details or photos).
+4. Staff open the link, sign in at `/staff` with password + two-factor, review the answers and
+   photos, and set the status (New, Reviewed, Added to Xestro). Every view and status change is
+   logged.
+
+**Security:** data is stored in Supabase's Sydney region and encrypted at rest. Row-level
+security means the public key can't read or write anything; staff can read only after
+two-factor sign-in and only if listed in `staff_members`. Database changes are recorded in
+`supabase/migrations`.
+
+**Environment variables** (Vercel > Project > Settings > Environment Variables): see
+`.env.example`.
+
+**Adding a staff member**
+
+1. Supabase dashboard > Authentication > Users > **Add user** > Create new user. Enter their
+   email and a strong temporary password, and tick **Auto Confirm User**.
+2. In the SQL editor, run (with their email and name):
+   ```sql
+   insert into public.staff_members (user_id, name)
+   select id, 'Marnie Pitts' from auth.users where email = 'marnie@example.com';
+   ```
+3. Give them the temporary password securely. On first sign-in at `/staff` they set up an
+   authenticator app, and they can change their password under "Change password".
+
+To remove access, delete the user in Authentication > Users (this also removes them from
+`staff_members`).
+
+**Testing locally in a proxied environment:** start the server with
+`NODE_USE_ENV_PROXY=1` so server-side calls to Supabase go through the proxy.
+
+**Still to do:** DLQI questionnaire (needs the Cardiff University licence; placeholder in
+`src/lib/intake.ts`), password-reset emails, and cleaning up incomplete submissions.
+

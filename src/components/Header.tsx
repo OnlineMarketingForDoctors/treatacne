@@ -36,15 +36,15 @@ export function Header() {
 
         <nav
           aria-label="Main"
-          className="hidden flex-1 items-center justify-end gap-8 border-l border-brand pr-[70px] lg:flex"
+          className="hidden flex-1 items-center justify-end gap-5 border-l border-brand pr-6 pl-6 whitespace-nowrap lg:flex xl:gap-8 xl:pr-[70px]"
         >
           {navLinks.map((link) => (
-            <Link key={link.href} href={link.href} className="text-body hover:underline">
+            <Link key={link.href} href={link.href} className="text-small hover:underline xl:text-body">
               {link.label}
             </Link>
           ))}
           {SHOP_ENABLED && (
-            <button type="button" onClick={cart.open} className="text-body hover:underline">
+            <button type="button" onClick={cart.open} className="text-small hover:underline xl:text-body">
               {cartLabel}
             </button>
           )}

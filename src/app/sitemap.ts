@@ -12,7 +12,6 @@ const paths = [
   "/learn",
   "/photo-guide",
   "/quiz",
-  "/get-started",
   "/shop",
   "/contact",
   "/privacy-policy",

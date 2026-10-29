@@ -1,14 +1,8 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
 import { ScrollReveal } from "@/components/ScrollReveal";
-import { BackToTop } from "@/components/BackToTop";
-import { CartProvider } from "@/components/cart/CartProvider";
-import { CartDrawer } from "@/components/cart/CartDrawer";
 import { revealBootScript } from "@/lib/reveal";
-import { SHOP_ENABLED } from "@/lib/site";
 
 // Neue Haas Unica W1G (Monotype). Only Regular is installed so far; bold text is
 // synthesised by the browser until NeueHaasUnicaW1G-Bold is added here.
@@ -40,14 +34,8 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: revealBootScript }} />
       </head>
       <body className="antialiased">
-        <CartProvider>
-          <ScrollReveal />
-          <Header />
-          <main>{children}</main>
-          <Footer />
-          <BackToTop />
-          {SHOP_ENABLED && <CartDrawer />}
-        </CartProvider>
+        <ScrollReveal />
+        {children}
       </body>
     </html>
   );
