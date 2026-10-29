@@ -2,6 +2,8 @@
 // Shared by the form, the server-side validation and the staff review pages.
 // Clinical intake may name medicines (guide section 5): it isn't advertising.
 
+import { DLQI_COPYRIGHT, DLQI_ENABLED, DLQI_INSTRUCTIONS, DLQI_MIN_AGE, dlqiQuestions } from "@/lib/dlqi";
+
 export type Answers = Record<string, string | string[] | boolean | undefined>;
 
 type Width = "full" | "half" | "third" | "quarter";
@@ -154,7 +156,25 @@ export const steps: Step[] = [
           { id: "acneAgeStarted", type: "text", label: "Age when acne started", placeholder: "Age when acne started? e.g. 15", width: "half", inputMode: "numeric" },
           { id: "acneLocations", type: "choice", label: "Where is your acne mainly located?", options: ["Forehead", "Cheeks", "Nose", "Chin/Jawline", "Chest", "Back", "Neck/Shoulders"], multiple: true, columns: 4 },
           { id: "acneTypes", type: "choice", label: "What type of acne do you mainly have?", options: ["Blackheads/Whiteheads", "Red bumps", "Pus-filled spots", "Deep painful cysts", "Not sure"], multiple: true, columns: 3 },
-          // TODO: DLQI questionnaire (10 questions) goes here once the Cardiff University licence is in place.
+        ],
+      },
+      {
+        title: "How your skin affects your life (DLQI)",
+        // Licensed questionnaire, ages 16+ only (see lib/dlqi.ts)
+        showIf: (a) => DLQI_ENABLED && (ageFrom(str(a, "dob")) ?? 0) >= DLQI_MIN_AGE,
+        fields: [
+          { id: "dlqiInstructions", type: "note", text: DLQI_INSTRUCTIONS },
+          ...dlqiQuestions.map(
+            (q): Field => ({
+              id: q.id,
+              type: "choice",
+              label: q.label,
+              options: q.options,
+              columns: q.options.length === 4 ? 4 : 3,
+              showIf: q.id === "dlqi7b" ? (a) => str(a, "dlqi7") === "No" : undefined,
+            }),
+          ),
+          { id: "dlqiCopyright", type: "note", text: DLQI_COPYRIGHT },
         ],
       },
       {

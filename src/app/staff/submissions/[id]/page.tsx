@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ageFrom, allFileSlots, steps, visibleFields, type Answers } from "@/lib/intake";
 import { formatDateTime, requireStaff, statusLabels } from "@/lib/staff";
+import { dlqiBand, dlqiScore } from "@/lib/dlqi";
 import { SUBMISSIONS_BUCKET } from "@/lib/supabase/env";
 import { updateStatus } from "../../actions";
 import { StaffNav } from "../../StaffNav";
@@ -51,6 +52,8 @@ export default async function SubmissionPage({ params }: { params: Promise<{ id:
 
   const answers = row.data as Answers;
   const age = ageFrom(row.date_of_birth);
+  const dlqiAnswered = Object.keys(answers).some((k) => k.startsWith("dlqi"));
+  const dlqi = dlqiScore(answers);
 
   return (
     <>
@@ -72,6 +75,14 @@ export default async function SubmissionPage({ params }: { params: Promise<{ id:
           <p className="mt-2 text-small text-black/70">
             Age {age ?? "-"} · Mobile {row.mobile} · Received {formatDateTime(row.created_at)}
           </p>
+          {dlqiAnswered && (
+            <p className="mt-2 text-small">
+              DLQI score:{" "}
+              <strong className="font-bold">
+                {dlqi === null ? "not scored (2 or more questions unanswered)" : `${dlqi}/30 - ${dlqiBand(dlqi)}`}
+              </strong>
+            </p>
+          )}
         </div>
         <form action={updateStatus} className="flex items-center gap-3">
           <input type="hidden" name="id" value={row.id} />

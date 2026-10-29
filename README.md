@@ -80,6 +80,10 @@ To remove access, delete the user in Authentication > Users (this also removes t
 **Testing locally in a proxied environment:** start the server with
 `NODE_USE_ENV_PROXY=1` so server-side calls to Supabase go through the proxy.
 
-**Still to do:** DLQI questionnaire (needs the Cardiff University licence; placeholder in
-`src/lib/intake.ts`), password-reset emails, and cleaning up incomplete submissions.
+**DLQI:** the Dermatology Life Quality Index is built into step 2 of the form (ages 16+) and the
+staff page shows the score out of 30 with its band. It is switched off until the Cardiff University
+licence is confirmed: set `DLQI_ENABLED = true` in `src/lib/dlqi.ts`. Under-16s would need the
+separate Children's DLQI (CDLQI), which has its own licence.
+
+**Still to do:** password-reset emails and cleaning up incomplete submissions.
 
