@@ -9,6 +9,9 @@ export const COURSE_URL = "#";
 // Shop is a "coming soon" page for now. Set to true to bring back the product pages and cart.
 export const SHOP_ENABLED = false;
 
+// Search engines are told not to index the site until launch. Set to true to allow indexing.
+export const SITE_INDEXABLE = false;
+
 export const contact = {
   email: "info@treatacne.com.au",
   company: "Treat Skin Conditions Pty Ltd",

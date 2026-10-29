@@ -85,5 +85,10 @@ and the Children's DLQI for ages 4–15 (both licensed from Cardiff University).
 shows the score out of 30 with its band. Switches: `DLQI_ENABLED` and `CDLQI_ENABLED` in
 `src/lib/dlqi.ts`.
 
+**Before launch:**
+- Set `TEST_PREFILL = false` in `src/lib/testPrefill.ts` (it pre-fills the Get Started form with
+  dummy data and placeholder photos for testing).
+- Set `SITE_INDEXABLE = true` in `src/lib/site.ts` (until then every page sends `noindex`).
+
 **Still to do:** password-reset emails and cleaning up incomplete submissions.
 

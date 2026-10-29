@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { ScrollReveal } from "@/components/ScrollReveal";
 import { revealBootScript } from "@/lib/reveal";
+import { SITE_INDEXABLE } from "@/lib/site";
 
 // Neue Haas Unica W1G (Monotype). Only Regular is installed so far; bold text is
 // synthesised by the browser until NeueHaasUnicaW1G-Bold is added here.
@@ -20,6 +21,7 @@ export const metadata: Metadata = {
   },
   description:
     "Dermatologist-led online acne care anywhere in Australia. Your first 30-minute consultation is free with our trained acne nurses. GP consultations $99.",
+  ...(SITE_INDEXABLE ? {} : { robots: { index: false, follow: false } }),
 };
 
 export default function RootLayout({

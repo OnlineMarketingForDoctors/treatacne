@@ -18,6 +18,7 @@ import {
   type Answers,
 } from "@/lib/intake";
 import { BOOKING_URL, keyMessage } from "@/lib/site";
+import { TEST_PREFILL, testAnswers, testFiles } from "@/lib/testPrefill";
 import { completeSubmission, startSubmission } from "./actions";
 
 const typeFromName: Record<string, string> = {
@@ -43,9 +44,8 @@ type Status =
 
 export function GetStartedForm() {
   const [stepIndex, setStepIndex] = useState(0);
-  const [answers, setAnswers] = useState<Answers>(() => ({
-    signatureDate: new Date().toISOString().slice(0, 10),
-  }));
+  const emptyAnswers = (): Answers => ({ signatureDate: new Date().toISOString().slice(0, 10) });
+  const [answers, setAnswers] = useState<Answers>(() => (TEST_PREFILL ? testAnswers() : emptyAnswers()));
   const [files, setFiles] = useState<Record<string, File | undefined>>({});
   const [fileErrors, setFileErrors] = useState<Record<string, string>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -53,6 +53,18 @@ export function GetStartedForm() {
   const honeypot = useRef<HTMLInputElement>(null);
   const top = useRef<HTMLDivElement>(null);
   const dirty = useRef(false);
+
+  // Test mode: placeholder photos (made in the browser, so after the first render)
+  useEffect(() => {
+    if (TEST_PREFILL) void testFiles().then(setFiles);
+  }, []);
+
+  const clearTestData = () => {
+    setAnswers(emptyAnswers());
+    setFiles({});
+    setErrors({});
+    setFileErrors({});
+  };
 
   // Warn before leaving with unsent answers (nothing is saved in the browser)
   useEffect(() => {
@@ -179,6 +191,17 @@ export function GetStartedForm() {
 
   return (
     <div ref={top} className="mx-auto max-w-[705px] scroll-mt-[90px] px-5 pt-10 pb-16 lg:pt-[50px] lg:pb-[90px]">
+      {TEST_PREFILL && (
+        <div className="mb-8 flex flex-wrap items-center justify-between gap-3 rounded-[10px] border border-dashed border-brand bg-[#fcede6] px-4 py-3 text-small">
+          <span>
+            <strong className="font-bold">Test mode:</strong> this form is pre-filled with dummy data and
+            placeholder photos.
+          </span>
+          <button type="button" onClick={clearTestData} className="text-brand underline underline-offset-2">
+            Clear test data
+          </button>
+        </div>
+      )}
       <h1 className="text-center text-h2 lg:text-h2-lg">{step.heading}</h1>
       {step.intro && (
         <p className="mx-auto mt-8 max-w-[560px] text-center text-[18px] leading-[1.2] text-black lg:mt-[55px] lg:text-big">
