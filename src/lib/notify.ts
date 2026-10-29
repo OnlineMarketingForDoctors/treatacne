@@ -23,7 +23,8 @@ export async function notifyNewSubmission(submissionId: string) {
   const resend = new Resend(apiKey);
   const { error } = await resend.emails.send({
     from: process.env.RESEND_FROM ?? "Treat:Acne <notifications@treatacne.com.au>",
-    to: process.env.NOTIFY_EMAIL ?? contact.email,
+    // NOTIFY_EMAIL can list several addresses, separated by commas
+    to: (process.env.NOTIFY_EMAIL ?? contact.email).split(",").map((e) => e.trim()).filter(Boolean),
     subject: "New Get Started form submission",
     text: `A new Get Started form has been submitted.\n\nReview it securely (staff login required):\n${link}\n`,
     html: `<p>A new Get Started form has been submitted.</p><p><a href="${link}">Review it securely</a> (staff login required).</p>`,
