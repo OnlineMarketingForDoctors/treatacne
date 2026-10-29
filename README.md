@@ -81,8 +81,8 @@ To remove access, delete the user in Authentication > Users (this also removes t
 `NODE_USE_ENV_PROXY=1` so server-side calls to Supabase go through the proxy.
 
 **DLQI:** the Dermatology Life Quality Index is built into step 2 of the form (ages 16+) and the
-staff page shows the score out of 30 with its band. It is switched off until the Cardiff University
-licence is confirmed: set `DLQI_ENABLED = true` in `src/lib/dlqi.ts`. Under-16s would need the
+staff page shows the score out of 30 with its band. It is switched on (Cardiff University licence confirmed); the switch is
+`DLQI_ENABLED` in `src/lib/dlqi.ts`. Under-16s would need the
 separate Children's DLQI (CDLQI), which has its own licence.
 
 **Still to do:** password-reset emails and cleaning up incomplete submissions.

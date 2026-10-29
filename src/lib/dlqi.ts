@@ -3,8 +3,8 @@
 // (build guide section 5). Keep the wording and scoring exactly as published.
 // The DLQI is for ages 16+; children (4–16) use the separate CDLQI.
 
-/** Switch on once the Cardiff University licence is confirmed. */
-export const DLQI_ENABLED = false;
+/** Cardiff University licence confirmed. */
+export const DLQI_ENABLED = true;
 
 export const DLQI_MIN_AGE = 16;
 
