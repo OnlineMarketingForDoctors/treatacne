@@ -2,7 +2,19 @@
 // Shared by the form, the server-side validation and the staff review pages.
 // Clinical intake may name medicines (guide section 5): it isn't advertising.
 
-import { DLQI_COPYRIGHT, DLQI_ENABLED, DLQI_INSTRUCTIONS, DLQI_MIN_AGE, dlqiQuestions } from "@/lib/dlqi";
+import {
+  CDLQI_COPYRIGHT,
+  CDLQI_ENABLED,
+  CDLQI_INSTRUCTIONS,
+  CDLQI_MIN_AGE,
+  CDLQI_PARENT_NOTE,
+  cdlqiQuestions,
+  DLQI_COPYRIGHT,
+  DLQI_ENABLED,
+  DLQI_INSTRUCTIONS,
+  DLQI_MIN_AGE,
+  dlqiQuestions,
+} from "@/lib/dlqi";
 
 export type Answers = Record<string, string | string[] | boolean | undefined>;
 
@@ -175,6 +187,34 @@ export const steps: Step[] = [
             }),
           ),
           { id: "dlqiCopyright", type: "note", text: DLQI_COPYRIGHT },
+        ],
+      },
+      {
+        title: "How your skin affects you (CDLQI)",
+        // Licensed children's questionnaire, ages 4–15 (see lib/dlqi.ts)
+        showIf: (a) => {
+          const age = ageFrom(str(a, "dob"));
+          return CDLQI_ENABLED && age !== null && age >= CDLQI_MIN_AGE && age < DLQI_MIN_AGE;
+        },
+        fields: [
+          { id: "cdlqiParentNote", type: "note", text: CDLQI_PARENT_NOTE },
+          { id: "cdlqiInstructions", type: "note", text: CDLQI_INSTRUCTIONS },
+          ...cdlqiQuestions.map(
+            (q): Field => ({
+              id: q.id,
+              type: "choice",
+              label: q.label,
+              options: q.options,
+              columns: q.options.length === 2 ? 2 : q.options.length === 4 ? 4 : 3,
+              showIf:
+                q.id === "cdlqi7a"
+                  ? (a) => str(a, "cdlqi7") === "School time"
+                  : q.id === "cdlqi7b"
+                    ? (a) => str(a, "cdlqi7") === "Holiday time"
+                    : undefined,
+            }),
+          ),
+          { id: "cdlqiCopyright", type: "note", text: CDLQI_COPYRIGHT },
         ],
       },
       {
