@@ -4,12 +4,30 @@ import { contact, crisisLines } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Contact",
-  description: "Contact Treat:Acne by email. Crisis support lines and emergency information.",
+  description: "Call, text or email Treat:Acne. Crisis support lines and emergency information.",
 };
 
 export default function ContactPage() {
   return (
     <PageLayout title="Contact us">
+      <Block heading="Phone">
+        <p>
+          <a
+            href={`tel:${contact.phoneTel}`}
+            className="text-big text-brand underline underline-offset-2"
+          >
+            {contact.phone}
+          </a>
+        </p>
+        <p>
+          You can call or{" "}
+          <a href={`sms:${contact.phoneTel}`} className="text-brand underline underline-offset-2">
+            text us
+          </a>{" "}
+          on this number.
+        </p>
+      </Block>
+
       <Block heading="Email">
         <p>
           <a

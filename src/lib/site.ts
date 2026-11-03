@@ -14,6 +14,8 @@ export const SITE_INDEXABLE = false;
 
 export const contact = {
   email: "info@treatacne.com.au",
+  phone: "0485 816 400",
+  phoneTel: "+61485816400",
   company: "Treat Skin Conditions Pty Ltd",
   abn: "70 685 569 608",
   address: "186 Gilbert Road, Preston VIC 3072",

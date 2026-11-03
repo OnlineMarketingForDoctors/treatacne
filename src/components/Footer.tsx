@@ -64,6 +64,16 @@ export function Footer() {
         {/* Acknowledgement, support lines and credits */}
         <div className="flex flex-col justify-between gap-8 pt-8 max-lg:order-4 lg:rule-l lg:pt-10 lg:pl-8 lg:[--rule-color:white] lg:[--rule-y0:10px]">
           <div className="max-w-[560px] space-y-3 text-small">
+            <p className="text-body">
+              Call or text{" "}
+              <a href={`tel:${contact.phoneTel}`} className="underline underline-offset-2">
+                {contact.phone}
+              </a>
+              {" · "}
+              <a href={`mailto:${contact.email}`} className="underline underline-offset-2">
+                {contact.email}
+              </a>
+            </p>
             <p>
               Treat:Acne acknowledges the Traditional Custodians of the lands on which we work and
               pay our respects to Elders past and present.
