@@ -2,12 +2,13 @@ import Image from "next/image";
 import { NumberedList } from "@/components/NumberedList";
 import { whyChoose } from "@/lib/site";
 
-// Same layout as the Home "How it works" section: photo on the left, heading and list on the right.
+// Same layout as the Home "How it works" section, mirrored: photo on the left, heading and list on the right.
 export function WhyChoose() {
   return (
     <section className="grid border-t border-brand lg:grid-cols-2">
-      <div className="flex items-center justify-center px-5 pt-5 pb-5 max-lg:order-2 lg:p-[30px]">
-        <div className="w-full overflow-hidden rounded-lg lg:max-w-[503px]">
+      {/* Photo 30px from the top of the section, sticky like the How it works photo */}
+      <div className="px-5 pt-5 pb-5 max-lg:order-2 lg:p-[30px]">
+        <div className="mx-auto w-full overflow-hidden rounded-lg lg:sticky lg:top-[92px] lg:max-w-[503px]">
           <Image
             data-reveal="zoom"
             src="/images/hands.jpg"
