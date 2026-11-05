@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import { Block, PageLayout } from "@/components/PageLayout";
 import { contact, crisisLines } from "@/lib/site";
+import { ContactForm } from "./ContactForm";
 
 export const metadata: Metadata = {
   title: "Contact",
-  description: "Call, text or email Treat:Acne. Crisis support lines and emergency information.",
+  description: "Call, text, email or message Treat:Acne. Crisis support lines and emergency information.",
 };
 
 export default function ContactPage() {
@@ -37,6 +38,10 @@ export default function ContactPage() {
             {contact.email}
           </a>
         </p>
+      </Block>
+
+      <Block heading="Send us a message">
+        <ContactForm />
       </Block>
 
       <Block heading="Address">

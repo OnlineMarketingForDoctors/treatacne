@@ -35,3 +35,43 @@ export async function notifyNewSubmission(submissionId: string) {
   }
   return { sent: true };
 }
+
+const escapeHtml = (s: string) =>
+  s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+
+export type ContactMessage = { name: string; email: string; phone?: string; message: string };
+
+/** Sends a Contact page message, with all its details, to the clinic inbox. */
+export async function notifyContactMessage(msg: ContactMessage) {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) {
+    console.warn("RESEND_API_KEY not set: skipping contact form email");
+    return { sent: false };
+  }
+  const rows: [string, string][] = [
+    ["Name", msg.name],
+    ["Email", msg.email],
+    ["Phone", msg.phone || "-"],
+    ["Message", msg.message],
+  ];
+  const resend = new Resend(apiKey);
+  const { error } = await resend.emails.send({
+    from: process.env.RESEND_FROM ?? "Treat:Acne <notifications@treatacne.com.au>",
+    to: (process.env.CONTACT_EMAIL ?? contact.email).split(",").map((e) => e.trim()).filter(Boolean),
+    replyTo: msg.email,
+    // No line breaks in the subject (header injection)
+    subject: `Website enquiry from ${msg.name.replace(/[\r\n]+/g, " ").slice(0, 80)}`,
+    text: `New message from the Treat:Acne Contact page.\n\n${rows.map(([k, v]) => `${k}: ${v}`).join("\n\n")}\n\nReply to this email to answer ${msg.name}.\n`,
+    html: `<p>New message from the Treat:Acne Contact page.</p><table cellpadding="6" style="border-collapse:collapse">${rows
+      .map(
+        ([k, v]) =>
+          `<tr><th align="left" valign="top" style="padding-right:16px">${k}</th><td style="white-space:pre-wrap">${escapeHtml(v)}</td></tr>`,
+      )
+      .join("")}</table><p>Reply to this email to answer ${escapeHtml(msg.name)}.</p>`,
+  });
+  if (error) {
+    console.error("Failed to send contact form email", error);
+    return { sent: false };
+  }
+  return { sent: true };
+}
