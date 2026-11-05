@@ -4,17 +4,21 @@ import { revealDelay } from "@/lib/reveal";
  * Numbered list from the "How it works" design. Sits in a column whose left edge is a
  * vertical line; lines break ~10px around each divider. `lastGap` keeps a gap below the
  * last item when another divider follows it. `firstDivider={false}` drops the line above the
- * first item on desktop (where the section border already sits there).
+ * first item on desktop (where the section border already sits there). `lineSide="right"`
+ * puts the vertical line on the right, for a list in the left half of a section.
  */
 export function NumberedList({
   items,
   lastGap = false,
   firstDivider = true,
+  lineSide = "left",
 }: {
   items: { title: string; body: string; extra?: React.ReactNode }[];
   lastGap?: boolean;
   firstDivider?: boolean;
+  lineSide?: "left" | "right";
 }) {
+  const right = lineSide === "right";
   return (
     <ol>
       {items.map((item, i) => {
@@ -25,8 +29,12 @@ export function NumberedList({
             key={item.title}
             data-reveal="up"
             style={revealDelay(i * 90)}
-            className={`grid grid-cols-[44px_1fr] gap-x-5 px-5 pt-5 pb-6 lg:grid-cols-[110px_1fr] lg:pl-[28px] lg:pr-[30px] lg:rule-l ${
-              divider ? "rule-t lg:[--rule-x0:10px] lg:[--rule-y0:10px]" : "rule-t lg:before:hidden"
+            className={`grid grid-cols-[44px_1fr] gap-x-5 px-5 pt-5 pb-6 lg:grid-cols-[110px_1fr] ${
+              right ? "lg:rule-r lg:pr-[28px] lg:pl-[30px]" : "lg:rule-l lg:pl-[28px] lg:pr-[30px]"
+            } ${
+              divider
+                ? `rule-t lg:[--rule-y0:10px] ${right ? "lg:[--rule-x1:10px]" : "lg:[--rule-x0:10px]"}`
+                : "rule-t lg:before:hidden"
             } ${gapBelow ? "lg:[--rule-y1:10px]" : ""}`}
           >
             <span aria-hidden className="text-[32px] leading-none font-light lg:text-[44px]">
