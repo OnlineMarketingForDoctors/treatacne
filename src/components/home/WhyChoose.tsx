@@ -8,11 +8,10 @@ export function WhyChoose() {
     <section className="grid border-t border-brand lg:grid-cols-2">
       <div className="flex items-center justify-center px-5 pt-5 pb-5 max-lg:order-2 lg:p-[30px]">
         <div className="w-full overflow-hidden rounded-lg lg:max-w-[503px]">
-          {/* Generated with Nano Banana Pro from the "How it works" photo (same model) */}
           <Image
             data-reveal="zoom"
-            src="/images/why-choose-laughing.jpg"
-            alt="Laughing woman touching her cheek"
+            src="/images/hands.jpg"
+            alt="Laughing woman covering her face with her hands"
             width={962}
             height={983}
             sizes="(min-width: 1024px) 34vw, 100vw"

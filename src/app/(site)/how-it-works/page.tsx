@@ -72,7 +72,7 @@ export default function HowItWorksPage() {
                 <p className={`mt-3 text-body ${highlight ? "" : "text-black"}`}>{step.body}</p>
                 {extras[i] && (
                   <div
-                    className={`mt-3 text-body ${highlight ? "[&_a]:!text-white" : "text-black"}`}
+                    className={`mt-3 text-body ${highlight ? "" : "text-black [&_a]:text-brand"}`}
                   >
                     {extras[i]}
                   </div>

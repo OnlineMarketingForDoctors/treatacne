@@ -3,7 +3,7 @@ import Link from "next/link";
 import { budgetCallout, steps } from "@/lib/site";
 import { NumberedList } from "@/components/NumberedList";
 
-const linkClass = "text-brand underline underline-offset-2";
+const linkClass = "underline underline-offset-2";
 
 /** Step links shared by Home and How it works (Home links to its own quiz section) */
 export const stepExtras = (quizHref: string): Record<number, React.ReactNode> => ({
@@ -30,22 +30,27 @@ export const stepExtras = (quizHref: string): Record<number, React.ReactNode> =>
 export function BudgetCallout({ className = "" }: { className?: string }) {
   return (
     <div className={`rounded-2xl bg-cream p-5 lg:p-7 ${className}`}>
-      <h3 className="text-body font-bold">{budgetCallout.title}</h3>
+      <h3 className="text-body font-bold text-brand">{budgetCallout.title}</h3>
       <p className="mt-2 text-body text-black">{budgetCallout.body}</p>
     </div>
   );
 }
 
-// Home page version: the 5 steps as a list with the callout underneath, photo on the right.
+// Home page version: orange, the 5 steps on the left with the callout underneath, and the photo
+// on the right, sticky while the steps scroll past (same 30px spacing as the section above).
 export function HowItWorks({ className = "" }: { className?: string }) {
   return (
-    <section id="how-it-works" className={`grid border-b border-brand lg:grid-cols-2 ${className}`}>
-      <div className="flex items-center justify-center px-5 pt-5 pb-5 max-lg:order-2 lg:order-2 lg:p-[30px]">
-        <div className="w-full overflow-hidden rounded-lg lg:max-w-[503px]">
+    <section
+      id="how-it-works"
+      className={`grid border-b border-brand bg-brand text-white [--rule-color:white] lg:grid-cols-2 ${className}`}
+    >
+      <div className="px-5 pt-5 pb-5 max-lg:order-2 lg:order-2 lg:p-[30px]">
+        <div className="mx-auto w-full overflow-hidden rounded-lg lg:sticky lg:top-[92px] lg:max-w-[503px]">
+          {/* Generated with Nano Banana Pro from hands.jpg (same model) */}
           <Image
             data-reveal="zoom"
-            src="/images/hands.jpg"
-            alt="Laughing woman covering her face with her hands"
+            src="/images/why-choose-laughing.jpg"
+            alt="Laughing woman touching her cheek"
             width={962}
             height={983}
             sizes="(min-width: 1024px) 34vw, 100vw"
