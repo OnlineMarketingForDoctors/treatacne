@@ -1,5 +1,4 @@
 import { FinalCta } from "@/components/FinalCta";
-import { OfferTermsText } from "@/components/OfferTermsText";
 import { revealDelay } from "@/lib/reveal";
 
 /**
@@ -10,15 +9,18 @@ import { revealDelay } from "@/lib/reveal";
 export function PageLayout({
   title,
   intro,
+  pricingLink = true,
   children,
 }: {
   title: React.ReactNode;
   intro?: React.ReactNode;
+  /** false on /pricing, so the band doesn't link to the page it's on */
+  pricingLink?: boolean;
   children: React.ReactNode;
 }) {
   return (
     <>
-      <section className="grid border-b border-brand px-5 pb-10 lg:grid-cols-[34.7%_1fr] lg:px-[30px] lg:pb-[30px]">
+      <section className="grid grid-cols-1 border-b border-brand px-5 pb-10 lg:grid-cols-[34.7%_1fr] lg:px-[30px] lg:pb-[30px]">
         <div className="pt-8 pb-6 lg:pt-[28px] lg:pr-10 lg:pb-0">
           <h1
             data-reveal="up"
@@ -40,7 +42,7 @@ export function PageLayout({
           {children}
         </div>
       </section>
-      <FinalCta tone="white" />
+      <FinalCta pricingLink={pricingLink} />
     </>
   );
 }
@@ -60,14 +62,5 @@ export function Block({
       {heading && <h2 className="mb-4 text-[22px] leading-[1.2] lg:text-[26px]">{heading}</h2>}
       <div className="max-w-[680px] space-y-3 text-body text-black">{children}</div>
     </div>
-  );
-}
-
-/** Terms that must sit alongside the free-consultation offer. */
-export function OfferTerms({ className = "" }: { className?: string }) {
-  return (
-    <p className={`text-note text-black/70 ${className}`}>
-      <OfferTermsText />
-    </p>
   );
 }

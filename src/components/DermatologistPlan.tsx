@@ -28,14 +28,13 @@ export function DermatologistPlan() {
       <div className="relative flex flex-col text-white lg:absolute lg:inset-y-0 lg:right-0 lg:w-[34.8%]">
         <div className="rule-b min-h-[275px] px-5 pt-[45px] pb-8 lg:min-h-0 lg:flex-1 lg:rule-l lg:[--rule-x0:10px] lg:[--rule-y1:10px] lg:px-[30px] lg:pt-[30px] lg:pb-8">
           <h2 data-reveal="up" className="text-h2 lg:text-h2-lg">
-            A personalised plan,
-            <br className="hidden lg:inline" /> guided by a dermatologist
+            Your personalised acne treatment plan starts here
           </h2>
         </div>
         <div className="space-y-3 px-5 pt-[55px] pb-[50px] text-small lg:px-[30px] lg:py-8 lg:text-body lg:rule-l lg:[--rule-y0:10px]">
           <p data-reveal="up">
-            No more guesswork, no more wasted products. Our team designs a treatment plan around
-            your skin, symptoms and goals - whether you&apos;re dealing with hormonal breakouts,
+            A plan based on your skin and what you&apos;ve already tried. Our team designs a
+            treatment plan around your skin, symptoms and goals - whether you&apos;re dealing with hormonal breakouts,
             persistent blackheads, painful cysts or post-acne marks.
           </p>
           <p data-reveal="up" style={revealDelay(100)}>

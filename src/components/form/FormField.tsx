@@ -90,6 +90,52 @@ export function FormField({
     );
   }
 
+  if (field.type === "matrix") {
+    const radio = (rowId: string, option: string) => {
+      const checked = answers[rowId] === option;
+      return (
+        <label
+          key={option}
+          className={`flex min-h-[34px] cursor-pointer items-center justify-center rounded-full border border-brand px-3 py-1 text-center text-small transition-colors has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-brand ${
+            checked ? "bg-brand text-white" : "text-brand hover:bg-brand/10"
+          }`}
+        >
+          <input
+            type="radio"
+            name={rowId}
+            value={option}
+            checked={checked}
+            // Clicking the chosen answer again clears it (the grid is optional)
+            onClick={() => checked && onChange(rowId, "")}
+            onChange={() => onChange(rowId, option)}
+            className="sr-only"
+          />
+          {option}
+        </label>
+      );
+    };
+    return (
+      <fieldset className="col-span-full">
+        <legend className="mb-3 text-small text-black">{field.label}</legend>
+        <div className="divide-y divide-brand/30 border-y border-brand/30">
+          {field.rows.map((row) => (
+            <div
+              key={row.id}
+              role="radiogroup"
+              aria-label={row.label}
+              className="grid gap-2 py-3 md:grid-cols-[1fr_auto] md:items-center md:gap-6"
+            >
+              <span className="text-small text-black">{row.label}</span>
+              <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 md:w-[440px]">
+                {field.options.map((o) => radio(row.id, o))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </fieldset>
+    );
+  }
+
   if (field.type === "choice") {
     const selected = Array.isArray(value) ? value : typeof value === "string" ? [value] : [];
     const toggle = (option: string) => {
@@ -135,6 +181,7 @@ export function FormField({
             );
           })}
         </div>
+        {field.help && <p className="mt-2 text-note text-black/60">{field.help}</p>}
         {errorText}
       </fieldset>
     );
@@ -153,6 +200,12 @@ export function FormField({
       {star}
     </label>
   );
+  const help =
+    "help" in field && field.help ? (
+      <p id={`${field.id}-help`} className="-mt-1 mb-2 text-note text-black/60">
+        {field.help}
+      </p>
+    ) : null;
   const width = `${"width" in field && field.width ? widthClass[field.width] : widthClass.full}${
     // Step 1 shows most labels for screen readers only; keep inputs in a row level
     compact ? " sm:self-end" : ""
@@ -169,7 +222,7 @@ export function FormField({
           onChange={(e) => onChange(field.id, e.target.value)}
           aria-invalid={Boolean(error)}
           aria-describedby={describedBy}
-          className={`${inputClass} ${border} appearance-none bg-[url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='14'%20height='9'%20fill='none'%3E%3Cpath%20d='m1%201%206%206%206-6'%20stroke='%23e54a08'%20stroke-width='1.6'/%3E%3C/svg%3E")] bg-[position:right_14px_center] bg-no-repeat pr-10 ${
+          className={`${inputClass} ${border} appearance-none bg-[url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='14'%20height='9'%20fill='none'%3E%3Cpath%20d='m1%201%206%206%206-6'%20stroke='%23e64a09'%20stroke-width='1.6'/%3E%3C/svg%3E")] bg-[position:right_14px_center] bg-no-repeat pr-10 ${
             value ? "" : "text-black/35"
           }`}
         >
@@ -189,6 +242,7 @@ export function FormField({
     return (
       <div className="col-span-full">
         {label}
+        {help}
         <textarea
           id={field.id}
           rows={3}

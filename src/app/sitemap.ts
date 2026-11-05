@@ -14,6 +14,8 @@ const paths = [
   "/quiz",
   "/shop",
   "/contact",
+  "/feedback-and-complaints",
+  "/accessibility",
   "/privacy-policy",
   "/terms-of-use",
 ];

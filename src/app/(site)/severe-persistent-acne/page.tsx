@@ -1,12 +1,15 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { PillLink } from "@/components/Button";
+import { CourseLine } from "@/components/CourseLine";
 import { Block, PageLayout } from "@/components/PageLayout";
 import { BOOKING_URL } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Severe & persistent acne",
   description:
-    "Our dermatologist specialises in treating severe, scarring and persistent acne, wherever you live in Australia.",
+    "Our dermatologist has a particular interest in severe, scarring and persistent acne, and sees patients by secure video wherever they live in Australia.",
+  alternates: { canonical: "/severe-persistent-acne" },
 };
 
 const includes = [
@@ -17,7 +20,7 @@ const includes = [
   { title: "Regular dermatologist reviews:", body: "to track progress and adjust your plan." },
   {
     title: "Nurse support between visits:",
-    body: "email us with any concerns, and our nurse will call you back.",
+    body: "text or email us with any concerns, and our nurse will get back to you.",
   },
   {
     title: "Monitoring when needed:",
@@ -35,8 +38,8 @@ export default function SevereAcnePage() {
       title="Severe or persistent acne? You don't have to keep guessing."
       intro={
         <p>
-          Some acne needs more than skincare. Our dermatologist specialises in treating severe,
-          scarring and persistent acne, wherever you live in Australia.
+          Some acne needs more than skincare. Our dermatologist has a particular interest in
+          severe, scarring and persistent acne, and sees patients wherever they live in Australia.
         </p>
       }
     >
@@ -63,15 +66,27 @@ export default function SevereAcnePage() {
         <p className="text-small italic">
           Treatment is only prescribed when clinically appropriate, after a consultation. Some acne
           treatments can only be prescribed by a dermatologist, so if you have moderate to severe
-          acne you&apos;ll need to see our dermatologist. Our nurse will guide you.
+          acne we recommend our dermatologist. Our nurse will guide you.
+        </p>
+      </Block>
+
+      <Block heading="Fees">
+        <p>
+          Dermatologist consultations by secure video are $365 for the first consultation and $280
+          for reviews, with a Medicare rebate if you have a valid referral. Your first
+          consultation with our acne nurse is free.{" "}
+          <Link href="/pricing" className="text-brand underline underline-offset-2">
+            See Pricing
+          </Link>
         </p>
       </Block>
 
       <div data-reveal="up" className="border-t border-brand pt-[30px]">
         {/* Books the free nurse consultation; the nurse then books the dermatologist */}
         <PillLink href={BOOKING_URL} className="w-full sm:w-auto">
-          See a Dermatologist →
+          Book your free nurse consultation →
         </PillLink>
+        <CourseLine className="mt-4 text-black/70" />
       </div>
     </PageLayout>
   );

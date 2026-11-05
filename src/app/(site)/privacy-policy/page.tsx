@@ -1,7 +1,11 @@
 import type { Metadata } from "next";
 import { Block, PageLayout } from "@/components/PageLayout";
 
-export const metadata: Metadata = { title: "Privacy Policy" };
+export const metadata: Metadata = {
+  title: "Privacy Policy",
+  description: "How Treat:Acne collects, stores, uses and protects your personal and health information.",
+  alternates: { canonical: "/privacy-policy" },
+};
 
 // TODO: replace with the Privacy Policy after legal review (due from Niyati).
 export default function PrivacyPolicyPage() {

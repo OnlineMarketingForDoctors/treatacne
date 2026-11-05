@@ -16,11 +16,11 @@ const unica = localFont({
 export const metadata: Metadata = {
   metadataBase: new URL("https://treatacne.com.au"),
   title: {
-    default: "Treat:Acne | Dermatologist-led online acne treatment",
-    template: "%s | Treat:Acne",
+    default: "Treat:Acne – Dermatologist-led care",
+    template: "%s | Treat:Acne – Dermatologist-led care",
   },
   description:
-    "Dermatologist-led online acne care anywhere in Australia. Your first 30-minute consultation is free with our trained acne nurses. GP consultations $99.",
+    "Dermatologist-led online acne care anywhere in Australia. Your first consultation with our acne nurse is free. Nurse consultations don't include prescribing; doctor fees apply.",
   ...(SITE_INDEXABLE ? {} : { robots: { index: false, follow: false } }),
 };
 

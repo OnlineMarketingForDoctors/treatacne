@@ -12,7 +12,7 @@ import {
   isUnder18,
   steps,
   validateStep,
-  visibleFields,
+  visibleAnswerIds,
   type Answers,
 } from "@/lib/intake";
 
@@ -33,6 +33,13 @@ const startInput = z.object({
       }),
     )
     .max(allFileSlots.length),
+  /** Quiz answers saved in the browser, passed on to the nurse */
+  quiz: z
+    .object({
+      answers: z.record(z.string().max(40), z.array(z.string().max(120)).max(10)),
+      result: z.enum(["A", "B", "C", "D"]),
+    })
+    .optional(),
   /** Honeypot: hidden from people, filled in by bots */
   website: z.string().optional(),
 });
@@ -54,12 +61,12 @@ type StartResult =
 export async function startSubmission(input: unknown): Promise<StartResult> {
   const parsed = startInput.safeParse(input);
   if (!parsed.success) return { ok: false, error: "Some answers couldn't be read. Please check the form and try again." };
-  const { files, website } = parsed.data;
+  const { files, website, quiz } = parsed.data;
   if (website) return { ok: false, error: "Something went wrong. Please try again." };
 
   // Keep only known fields that are currently shown (drops answers hidden by later choices)
   const raw = parsed.data.answers as Answers;
-  const shown = new Set(steps.flatMap((s) => visibleFields(s, raw)).map((f) => f.id));
+  const shown = new Set(steps.flatMap((s) => visibleAnswerIds(s, raw)));
   const answers: Answers = {};
   for (const [key, value] of Object.entries(raw)) {
     if (fieldIds.has(key) && shown.has(key)) answers[key] = value;
@@ -97,7 +104,7 @@ export async function startSubmission(input: unknown): Promise<StartResult> {
     mobile: String(answers.mobile).trim(),
     email: typeof answers.email === "string" && answers.email.trim() ? answers.email.trim() : null,
     under_18: isUnder18(answers),
-    data: answers,
+    data: quiz ? { ...answers, quiz } : answers,
     files: fileRecords,
   });
   if (error) {

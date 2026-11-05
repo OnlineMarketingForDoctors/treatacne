@@ -1,86 +1,50 @@
 "use client";
 
+import Link from "next/link";
 import { useRef, useState } from "react";
+import { CourseLine } from "@/components/CourseLine";
 import { PillLink } from "@/components/Button";
-import { OfferTermsText } from "@/components/OfferTermsText";
-import { BOOKING_URL, keyMessage } from "@/lib/site";
+import { COURSE_PAGE, GET_STARTED_URL } from "@/lib/site";
+import { saveQuiz, type QuizAnswers, type QuizResult } from "@/lib/quizStore";
+import { GP_OPTION, NOT_READY, quizQuestions, type Question } from "@/lib/quiz";
 
-type Question = { id: string; label: string; options: string[]; multiple?: boolean };
-
-const questions: Question[] = [
-  {
-    id: "severity",
-    label: "How would you describe your acne?",
-    options: ["Mild", "Moderate", "Severe", "Not sure"],
-  },
-  {
-    id: "duration",
-    label: "How long have you had it?",
-    options: ["Less than 6 months", "6–12 months", "1+ years"],
-  },
-  { id: "location", label: "Where is it?", options: ["Face", "Back", "Chest"], multiple: true },
-  {
-    id: "tried",
-    label: "What have you tried?",
-    options: [
-      "Nothing",
-      "Skincare",
-      "Prescription creams",
-      "Prescription tablets",
-      "Treatment from my GP",
-    ],
-    multiple: true,
-  },
-  { id: "scarring", label: "Do you have scarring or dark marks?", options: ["Yes", "No", "Not sure"] },
-  {
-    id: "goal",
-    label: "What's your main goal?",
-    options: [
-      "Clear skin",
-      "Prevent scarring",
-      "Treat severe or persistent acne",
-      "Ongoing management",
-    ],
-  },
-  {
-    id: "preference",
-    label: "Who would you prefer to see?",
-    options: ["Our GP trained in acne - lower cost", "Dermatologist", "No preference"],
-  },
-];
-
-type Answers = Record<string, string[]>;
-
-/** Result logic from the build guide. Anything pointing to a dermatologist wins. */
-function recommend(a: Answers): "gp" | "dermatologist" {
+/**
+ * Result rules from Niyati's review, checked in order; the first match wins. Q2, Q3, Q5 and
+ * Q6 don't change the result (they go to the nurse with the form).
+ */
+function recommend(a: QuizAnswers): { result: QuizResult; reason?: string } {
   const has = (id: string, value: string) => a[id]?.includes(value) ?? false;
-  const dermatologist =
-    has("severity", "Moderate") ||
-    has("severity", "Severe") ||
-    has("scarring", "Yes") ||
-    has("tried", "Prescription tablets") ||
-    has("tried", "Treatment from my GP") ||
-    has("goal", "Treat severe or persistent acne") ||
-    has("preference", "Dermatologist");
-  return dermatologist ? "dermatologist" : "gp";
+  if (has("preference", NOT_READY)) return { result: "D" };
+  if (has("preference", "Dermatologist"))
+    return { result: "B", reason: "You told us you'd prefer a dermatologist." };
+  if (has("preference", GP_OPTION)) return { result: "A" };
+  if (has("severity", "Severe"))
+    return { result: "B", reason: "Severe acne is best managed by a dermatologist." };
+  if (["Treatment from my GP", "Prescription creams", "Prescription tablets"].some((o) => has("tried", o)))
+    return {
+      result: "B",
+      reason: "You've already tried treatment, so it's time for a specialist approach.",
+    };
+  if (has("severity", "Moderate"))
+    return { result: "B", reason: "For moderate acne, we recommend our dermatologist." };
+  if (has("severity", "Mild")) return { result: "A" };
+  return { result: "C" };
 }
 
 export function Quiz() {
-  const [answers, setAnswers] = useState<Answers>({});
-  const [result, setResult] = useState<"gp" | "dermatologist" | null>(null);
+  const [answers, setAnswers] = useState<QuizAnswers>({});
+  const [outcome, setOutcome] = useState<{ result: QuizResult; reason?: string } | null>(null);
   const resultRef = useRef<HTMLDivElement>(null);
 
   const toggle = (q: Question, option: string) => {
-    setResult(null);
+    setOutcome(null);
     setAnswers((prev) => {
       const current = prev[q.id] ?? [];
       if (!q.multiple) return { ...prev, [q.id]: [option] };
-      return {
-        ...prev,
-        [q.id]: current.includes(option)
-          ? current.filter((o) => o !== option)
-          : [...current, option],
-      };
+      if (current.includes(option)) return { ...prev, [q.id]: current.filter((o) => o !== option) };
+      // "Nothing" can't be ticked with anything else
+      if (option === "Nothing") return { ...prev, [q.id]: ["Nothing"] };
+      return { ...prev, [q.id]: [...current.filter((o) => o !== "Nothing"), option] };
     });
   };
 
@@ -88,14 +52,16 @@ export function Quiz() {
     <form
       onSubmit={(e) => {
         e.preventDefault();
-        setResult(recommend(answers));
+        const next = recommend(answers);
+        setOutcome(next);
+        saveQuiz(answers, next.result);
         requestAnimationFrame(() => {
           resultRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
           resultRef.current?.focus();
         });
       }}
     >
-      {questions.map((q, i) => (
+      {quizQuestions.map((q, i) => (
         <fieldset key={q.id} className="border-t border-brand py-[26px]">
           <legend className="float-left mb-4 w-full text-body text-black">
             <span className="text-brand">{i + 1}.</span> {q.label}
@@ -137,26 +103,96 @@ export function Quiz() {
       </div>
 
       <div ref={resultRef} tabIndex={-1} aria-live="polite" className="outline-none">
-        {result && (
-          <div className="mt-[30px] rounded-2xl bg-brand p-6 text-white lg:p-[33px]">
-            <h2 className="text-h2 lg:text-h2-lg">
-              {result === "gp"
-                ? "Start with our acne nurse and our GP trained in acne ($99)."
-                : "Start with our acne nurse and a dermatologist."}
-            </h2>
-            <p className="mt-6 text-body lg:text-big">{keyMessage}</p>
-            <p className="mt-3 text-note text-white/85">
-              <OfferTermsText />
-            </p>
-            <PillLink href={BOOKING_URL} tone="light" className="mt-8 w-full sm:w-auto">
-              Book your free nurse consultation →
-            </PillLink>
-          </div>
+        {outcome && <Result {...outcome} />}
+        {!outcome && (
+          <p className="mt-6 text-small text-black italic">
+            This quiz is a guide only and does not diagnose or prescribe.
+          </p>
         )}
-        <p className="mt-6 text-small text-black italic">
-          This quiz is a guide only and does not diagnose or prescribe.
-        </p>
       </div>
     </form>
+  );
+}
+
+const copy: Record<Exclude<QuizResult, "D">, { heading: string; body: string }> = {
+  A: {
+    heading: "Start with our acne nurse, then see our GP.",
+    body: "Based on your answers, our GP with a special interest in acne is a good place to start. Your first phone consultation with our acne nurse is free. She'll review your history and photos, then book you with our GP.",
+  },
+  B: {
+    heading: "Start with our acne nurse, then see our dermatologist.",
+    body: "Based on your answers, our dermatologist is the right place to start. Your first phone consultation with our acne nurse is free. She'll review your history and photos, then book you with our dermatologist by secure video.",
+  },
+  C: {
+    heading: "Start with our acne nurse.",
+    body: "Not sure how severe your acne is? That's fine. Your first phone consultation with our acne nurse is free. She'll review your photos and help you choose the right doctor.",
+  },
+};
+
+function Result({ result, reason }: { result: QuizResult; reason?: string }) {
+  if (result === "D") {
+    return (
+      <div className="mt-[30px] rounded-2xl bg-brand p-6 text-white lg:p-[33px]">
+        <h2 className="text-h2 lg:text-h2-lg">Start with our dermatologist&apos;s online course.</h2>
+        <p className="mt-6 text-body lg:text-big">
+          Not ready to see someone yet? That&apos;s okay. Mastering Acne, created by our
+          dermatologist Dr Niyati Sharma, explains how acne works, how to build a routine that suits
+          your skin, and how to get the most from treatment, at your own pace.
+        </p>
+        <p className="mt-4 text-body font-bold">Mastering Acne online course: $49</p>
+        <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-6">
+          <PillLink href={COURSE_PAGE} tone="light" className="w-full bg-white !text-brand hover:!bg-cream sm:w-auto">
+            See the course →
+          </PillLink>
+          <Link href={GET_STARTED_URL} className="text-body underline underline-offset-2">
+            Or book your free nurse consultation
+          </Link>
+        </div>
+        <p className="mt-6 text-note text-white/85">
+          If your acne is painful, leaving marks or scars, or not improving, we recommend booking a
+          consultation. The course is general education only and is not medical advice.
+        </p>
+      </div>
+    );
+  }
+
+  const { heading, body } = copy[result];
+  return (
+    <div className="mt-[30px] rounded-2xl bg-brand p-6 text-white lg:p-[33px]">
+      <h2 className="text-h2 lg:text-h2-lg">{heading}</h2>
+      <p className="mt-6 text-body lg:text-big">{body}</p>
+      {reason && <p className="mt-4 text-body">{reason}</p>}
+      {result === "A" && (
+        <>
+          <p className="mt-4 text-body font-bold">GP consultation by video: $99 (no Medicare rebate).</p>
+          <p className="mt-2 text-body">If you need a dermatologist later, our GP can refer you.</p>
+        </>
+      )}
+      {result === "B" && (
+        <p className="mt-4 text-body">
+          Have a GP referral? Upload it in the form to claim a Medicare rebate.
+        </p>
+      )}
+      {/* Form first: the answers are attached to the Get Started form, then the patient books */}
+      <PillLink href={GET_STARTED_URL} tone="light" className="mt-8 w-full bg-white !text-brand hover:!bg-cream sm:w-auto">
+        Book your free nurse consultation →
+      </PillLink>
+      <p className="mt-6 text-note text-white/85">
+        Nurse consultations don&apos;t include prescribing.{" "}
+        {result !== "A" && (
+          <>
+            Doctor fees apply.{" "}
+            <Link href="/pricing" className="underline underline-offset-2">
+              See Pricing
+            </Link>
+            .{" "}
+          </>
+        )}
+        The doctor you see will be confirmed based on your consultation with our acne nurse, who
+        may recommend a different pathway. This quiz is a guide only and does not diagnose or
+        prescribe.
+      </p>
+      <CourseLine className="mt-4 text-white/85" />
+    </div>
   );
 }

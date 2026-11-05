@@ -5,10 +5,10 @@
  * Typeface: Neue Haas Unica W1G (licensed Monotype font), loaded in app/layout.tsx.
  */
 @theme {
-  --color-brand: #e54a08;
+  --color-brand: #e64a09;
   --color-brand-soft: #ed6f37;
   --color-brand-muted: #f6b493;
-  --color-cream: #f7f8f3;
+  --color-cream: #f3f2ec;
 
   --font-sans: var(--font-unica), "Helvetica Neue", Helvetica, Arial, sans-serif;
 

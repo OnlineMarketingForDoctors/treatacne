@@ -1,7 +1,11 @@
 import type { Metadata } from "next";
 import { Block, PageLayout } from "@/components/PageLayout";
 
-export const metadata: Metadata = { title: "Terms of Use" };
+export const metadata: Metadata = {
+  title: "Terms of Use",
+  description: "The terms that apply when you use the Treat:Acne website and telehealth service.",
+  alternates: { canonical: "/terms-of-use" },
+};
 
 // TODO: replace with the Terms of Use after legal review (due from Niyati).
 export default function TermsOfUsePage() {

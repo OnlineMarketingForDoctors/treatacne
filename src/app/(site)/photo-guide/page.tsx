@@ -5,7 +5,9 @@ import { revealDelay } from "@/lib/reveal";
 
 export const metadata: Metadata = {
   title: "Photo guide",
-  description: "How to take clear skin photos for your Treat:Acne consultation.",
+  description:
+    "How to take clear photos of your skin for your Treat:Acne consultation and follow-up visits: lighting, angles and what to include.",
+  alternates: { canonical: "/photo-guide" },
 };
 
 const groups = [
@@ -94,7 +96,7 @@ export default function PhotoGuidePage() {
           </p>
         </div>
       </section>
-      <FinalCta tone="white" />
+      <FinalCta />
     </>
   );
 }

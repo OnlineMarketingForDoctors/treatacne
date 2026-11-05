@@ -11,6 +11,7 @@ import { WaitlistForm } from "@/components/WaitlistForm";
 export const metadata: Metadata = {
   title: "Shop",
   description: "Dermatologist-developed skincare is coming soon. Join the waitlist to be notified.",
+  alternates: { canonical: "/shop" },
 };
 
 export default async function ShopPage(props: { searchParams: Promise<{ category?: string }> }) {
@@ -20,7 +21,7 @@ export default async function ShopPage(props: { searchParams: Promise<{ category
 function ComingSoon() {
   return (
     <>
-      <section className="grid border-b border-brand lg:min-h-[600px] lg:grid-cols-[34.7%_1fr]">
+      <section className="grid grid-cols-1 border-b border-brand lg:min-h-[600px] lg:grid-cols-[34.7%_1fr]">
         <div className="flex flex-col justify-between gap-12 px-5 pt-8 pb-10 lg:px-[30px] lg:pt-[28px] lg:pb-[30px]">
           <h1 data-reveal="up" className="text-h2 lg:text-h2-lg">
             Dermatologist-developed skincare is coming soon.
@@ -33,6 +34,7 @@ function ComingSoon() {
           </div>
         </div>
         <div className="px-5 pb-5 lg:p-[28px]">
+          {/* TODO: swap in Chris's new placeholder image when it arrives (same slot) */}
           <div className="relative aspect-[352/318] h-full overflow-hidden rounded-2xl lg:aspect-auto">
             <Image
               src="/images/products.jpg"
@@ -46,7 +48,7 @@ function ComingSoon() {
           </div>
         </div>
       </section>
-      <FinalCta tone="white" />
+      <FinalCta />
     </>
   );
 }
@@ -83,7 +85,7 @@ async function ProductListing({
         </ul>
       </section>
 
-      <FinalCta tone="white" />
+      <FinalCta />
     </>
   );
 }

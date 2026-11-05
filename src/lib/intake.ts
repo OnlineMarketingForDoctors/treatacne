@@ -1,6 +1,6 @@
-// Get Started form definition (Chris's 3-step design + build guide section 5).
+// Get Started form definition: the shorter 5-step form from Niyati's review (Nov 2026).
 // Shared by the form, the server-side validation and the staff review pages.
-// Clinical intake may name medicines (guide section 5): it isn't advertising.
+// Generic medicine names only (TGA advertising rules apply to this public page too).
 
 import {
   CDLQI_COPYRIGHT,
@@ -26,6 +26,8 @@ export type Field =
       type: "text" | "email" | "tel" | "date" | "textarea";
       label: string;
       placeholder?: string;
+      /** Helper text under the label */
+      help?: string;
       required?: boolean;
       width?: Width;
       autoComplete?: string;
@@ -50,7 +52,17 @@ export type Field =
       multiple?: boolean;
       columns?: 2 | 3 | 4;
       required?: boolean;
+      /** Small print under the options */
       help?: string;
+      showIf?: (a: Answers) => boolean;
+    }
+  | {
+      id: string;
+      /** One row per item, same options on each row; each row is saved under its own id */
+      type: "matrix";
+      label: string;
+      rows: { id: string; label: string }[];
+      options: string[];
       showIf?: (a: Answers) => boolean;
     }
   | {
@@ -65,7 +77,13 @@ export type Field =
   | { id: string; type: "note"; text: string; showIf?: (a: Answers) => boolean };
 
 export type Section = { title: string; fields: Field[]; showIf?: (a: Answers) => boolean };
-export type Step = { heading: string; intro?: string; sections: Section[] };
+export type Step = {
+  /** Short name for the progress label ("Step 2 of 5: Your skin") */
+  name: string;
+  heading: string;
+  intro?: string;
+  sections: Section[];
+};
 
 const str = (a: Answers, id: string) => (typeof a[id] === "string" ? (a[id] as string) : "");
 
@@ -89,91 +107,131 @@ export const isUnder18 = (a: Answers) => {
 };
 
 const durations = ["Less than 6 months", "6–12 months", "1–2 years", "2–5 years", "More than 5 years"];
-const useDurations = ["Less than 1 month", "1–3 months", "3–6 months", "More than 6 months"];
-const effectiveness = ["Yes", "Partly", "No", "Not sure"];
 const yesNo = ["Yes", "No"];
 const states = ["ACT", "NSW", "NT", "QLD", "SA", "TAS", "VIC", "WA"];
+export const isFemale = (a: Answers) => str(a, "sex") === "Female";
+
+export const triedOptions = ["Helped", "Partly", "Didn't help", "Not tried"];
+export const triedRows = [
+  { id: "triedPharmacy", label: "Pharmacy washes or creams (e.g. benzoyl peroxide, salicylic acid)" },
+  { id: "triedPrescriptionTopical", label: "Prescription creams or gels (e.g. adapalene, tretinoin, clindamycin)" },
+  { id: "triedAntibiotics", label: "Antibiotic tablets (e.g. doxycycline, minocycline)" },
+  { id: "triedPill", label: "The contraceptive pill (taken for acne)" },
+  { id: "triedSpironolactone", label: "Spironolactone" },
+  { id: "triedIsotretinoin", label: "Isotretinoin" },
+];
+
+/** Which skin questionnaire applies at this age (step 4), if any */
+export function questionnaireFor(a: Answers): "dlqi" | "cdlqi" | null {
+  const age = ageFrom(str(a, "dob"));
+  if (age === null) return null;
+  if (DLQI_ENABLED && age >= DLQI_MIN_AGE) return "dlqi";
+  if (CDLQI_ENABLED && age >= CDLQI_MIN_AGE) return "cdlqi";
+  return null;
+}
+
+export const QUESTIONNAIRE_INTRO =
+  "Optional: how your skin affects your life. These 10 quick questions help us triage you even faster. No time? No problem: you can skip them and still submit.";
 
 export const steps: Step[] = [
   {
-    heading: "Let's start with some contact info.",
+    name: "A bit about you",
+    heading: "A bit about you",
     sections: [
       {
-        title: "Personal Details",
+        title: "Your details",
         fields: [
           { id: "firstName", type: "text", label: "First name", placeholder: "First name", required: true, width: "half", autoComplete: "given-name" },
           { id: "lastName", type: "text", label: "Last name", placeholder: "Last name", required: true, width: "half", autoComplete: "family-name" },
           { id: "dob", type: "date", label: "Date of birth", required: true, width: "half", autoComplete: "bday" },
-          { id: "sex", type: "select", label: "Sex assigned at birth", options: ["Female", "Male", "Intersex", "Prefer not to say"], width: "half" },
+          { id: "sex", type: "select", label: "Sex assigned at birth", options: ["Female", "Male", "Intersex", "Prefer not to say"], required: true, width: "half" },
+          { id: "mobile", type: "tel", label: "Mobile number", placeholder: "Mobile number", required: true, width: "half", autoComplete: "tel", inputMode: "tel" },
+          { id: "email", type: "email", label: "Email address", placeholder: "Email address", required: true, width: "half", autoComplete: "email", inputMode: "email" },
+          { id: "state", type: "select", label: "State", options: states, required: true, width: "half" },
+          { id: "interpreter", type: "choice", label: "Do you need an interpreter?", options: yesNo, required: true, columns: 2 },
+          { id: "interpreterLanguage", type: "text", label: "Which language?", placeholder: "Which language?", required: true, width: "half", showIf: (a) => str(a, "interpreter") === "Yes" },
         ],
       },
       {
         title: "Parent or guardian",
         showIf: isUnder18,
         fields: [
-          { id: "guardianNote", type: "note", text: "As the patient is under 18, a parent or guardian needs to complete this section. A parent or guardian must be present at every consultation." },
-          { id: "guardianName", type: "text", label: "Parent/guardian name", placeholder: "Parent/guardian name", width: "half" },
-          { id: "guardianRelationship", type: "text", label: "Relationship to patient", placeholder: "Relationship to patient", width: "half" },
-          { id: "guardianPhone", type: "tel", label: "Parent/guardian phone", placeholder: "Parent/guardian phone", width: "half", inputMode: "tel" },
-          { id: "guardianEmail", type: "email", label: "Parent/guardian email", placeholder: "Parent/guardian email", width: "half", inputMode: "email" },
-          { id: "guardianConsent", type: "checkbox", label: "I am the patient's parent or guardian, I consent to their care, and I will attend their consultations.", required: true },
-        ],
-      },
-      {
-        title: "Contact Details",
-        fields: [
-          { id: "mobile", type: "tel", label: "Mobile number", placeholder: "Mobile number", required: true, width: "half", autoComplete: "tel", inputMode: "tel" },
-          { id: "email", type: "email", label: "Email address", placeholder: "Email address", width: "half", autoComplete: "email", inputMode: "email" },
-          { id: "address1", type: "text", label: "Address line 1", placeholder: "Address line 1", width: "half", autoComplete: "address-line1" },
-          { id: "address2", type: "text", label: "Address line 2", placeholder: "Address line 2", width: "half", autoComplete: "address-line2" },
-          { id: "suburb", type: "text", label: "Suburb", placeholder: "Suburb", width: "half", autoComplete: "address-level2" },
-          { id: "postcode", type: "text", label: "Postcode", placeholder: "Postcode", width: "quarter", autoComplete: "postal-code", inputMode: "numeric" },
-          { id: "state", type: "select", label: "State", options: states, width: "quarter" },
-        ],
-      },
-      {
-        title: "Medicare & Health Card",
-        fields: [
-          { id: "medicareNumber", type: "text", label: "Medicare number", placeholder: "Medicare number", width: "half", inputMode: "numeric" },
-          { id: "medicareExpiry", type: "text", label: "Medicare expiry date", placeholder: "Medicare expiry (MM/YYYY)", width: "half" },
-          { id: "concessionCard", type: "text", label: "Healthcare / concession card", placeholder: "Healthcare / Concession Card (Optional)", width: "half" },
-          { id: "concessionExpiry", type: "text", label: "Concession card expiry", placeholder: "Expiry date (MM/YYYY)", width: "half" },
-        ],
-      },
-      {
-        title: "Your GP",
-        fields: [
-          { id: "gpName", type: "text", label: "GP name", placeholder: "GP name", width: "half" },
-          { id: "gpClinic", type: "text", label: "GP clinic / practice", placeholder: "GP Clinic / Practice", width: "half" },
-          { id: "gpAddress", type: "text", label: "GP street address", placeholder: "GP street address", width: "full" },
-        ],
-      },
-      {
-        title: "Emergency Contact",
-        fields: [
-          { id: "emergencyName", type: "text", label: "Emergency contact name", placeholder: "Name", width: "third" },
-          { id: "emergencyRelationship", type: "text", label: "Relationship", placeholder: "Relationship", width: "third" },
-          { id: "emergencyPhone", type: "tel", label: "Emergency contact phone", placeholder: "Phone", width: "third", inputMode: "tel" },
+          { id: "guardianNote", type: "note", text: "As the patient is under 18, a parent or guardian needs to give consent and join every consultation. They'll also sign at the last step." },
+          { id: "guardianName", type: "text", label: "Parent/guardian name", placeholder: "Parent/guardian name", required: true, width: "half" },
+          { id: "guardianRelationship", type: "text", label: "Relationship to patient", placeholder: "Relationship to patient", required: true, width: "half" },
+          { id: "guardianPhone", type: "tel", label: "Parent/guardian phone", placeholder: "Parent/guardian phone (optional)", width: "half", inputMode: "tel" },
+          { id: "guardianEmail", type: "email", label: "Parent/guardian email", placeholder: "Parent/guardian email (optional)", width: "half", inputMode: "email" },
         ],
       },
     ],
   },
   {
-    heading: "Tell us more about your skin",
+    name: "Your skin",
+    heading: "Your skin",
     sections: [
       {
-        title: "Acne History",
+        title: "Your skin",
         fields: [
-          { id: "acneDuration", type: "select", label: "How long have you had acne?", options: durations, width: "half" },
-          { id: "acneAgeStarted", type: "text", label: "Age when acne started", placeholder: "Age when acne started? e.g. 15", width: "half", inputMode: "numeric" },
-          { id: "acneLocations", type: "choice", label: "Where is your acne mainly located?", options: ["Forehead", "Cheeks", "Nose", "Chin/Jawline", "Chest", "Back", "Neck/Shoulders"], multiple: true, columns: 4 },
-          { id: "acneTypes", type: "choice", label: "What type of acne do you mainly have?", options: ["Blackheads/Whiteheads", "Red bumps", "Pus-filled spots", "Deep painful cysts", "Not sure"], multiple: true, columns: 3 },
+          { id: "acneDuration", type: "select", label: "How long have you had acne?", options: durations, required: true, width: "half" },
+          { id: "acneLocations", type: "choice", label: "Where is your acne?", options: ["Forehead", "Cheeks", "Nose", "Chin/Jawline", "Chest", "Back", "Neck/Shoulders"], multiple: true, required: true, columns: 4 },
+          { id: "acneTypes", type: "choice", label: "What type of acne do you mainly have?", options: ["Blackheads/Whiteheads", "Red bumps", "Pus-filled spots", "Deep painful cysts", "Not sure"], multiple: true, required: true, columns: 3 },
         ],
       },
       {
+        title: "What have you tried? (optional)",
+        fields: [
+          { id: "tried", type: "matrix", label: "What have you tried, and did it help?", rows: triedRows, options: triedOptions },
+          { id: "triedOther", type: "text", label: "Anything else you've tried? (optional)", placeholder: "Other treatments you've tried (optional)" },
+        ],
+      },
+      {
+        title: "Any medicines you take? (optional)",
+        fields: [
+          { id: "acneMedicines", type: "textarea", label: "Previous or current medicines you've taken for acne (optional)", help: "Not sure? Leave it blank. Our nurse can fill this in with you." },
+          { id: "otherHealth", type: "textarea", label: "Other medicines and medical conditions (optional)", placeholder: "Any other medicines, vitamins or supplements, and any medical conditions" },
+        ],
+      },
+      {
+        title: "Anything else we should know?",
+        fields: [
+          { id: "anxietyDepression", type: "select", label: "Do you have anxiety or depression?", options: yesNo, required: true, width: "half" },
+          { id: "allergies", type: "select", label: "Do you have any allergies?", options: yesNo, required: true, width: "half" },
+          { id: "allergiesList", type: "textarea", label: "Please list your allergies", placeholder: "Medicines, foods or anything else", showIf: (a) => str(a, "allergies") === "Yes" },
+        ],
+      },
+      {
+        title: "Pregnancy & contraception",
+        showIf: isFemale,
+        fields: [
+          { id: "pregnancy", type: "choice", label: "Are you pregnant, breastfeeding or planning a pregnancy?", options: ["Pregnant", "Breastfeeding", "Planning a pregnancy", "None of these"], multiple: true, required: true, columns: 4 },
+          { id: "pregnancyNote", type: "note", text: "Some acne treatments can't be used during pregnancy or breastfeeding, or while trying to conceive." },
+          { id: "hormonalContraception", type: "choice", label: "Are you on hormonal contraception? (e.g. the combined pill, mini pill, hormonal IUD, implant)", options: ["Yes", "No", "Not sure"], columns: 3 },
+          { id: "contraceptionName", type: "text", label: "Name, if you know it (optional)", placeholder: "Name, if you know it (optional)", width: "half", showIf: (a) => str(a, "hormonalContraception") === "Yes" },
+        ],
+      },
+      {
+        title: "Your preferences (optional)",
+        fields: [
+          { id: "practitionerPreference", type: "choice", label: "Who would you prefer to see?", options: ["Our GP with a special interest in acne", "Dermatologist", "No preference"], columns: 3 },
+          { id: "prescriptionPreference", type: "choice", label: "How would you like your medicine?", options: ["Send my script to me (SMS or email) so I can use any pharmacy", "Post my medication to my home (via Edge Compounding Pharmacy)"], columns: 2, help: "Posting is optional. You can use any pharmacy. Treat:Acne has no financial or business relationship with Edge Compounding Pharmacy." },
+        ],
+      },
+    ],
+  },
+  {
+    name: "Photos",
+    heading: "Your photos",
+    intro: "Clear photos help your doctor make an accurate assessment. Not ready? You can submit without them: our nurse will send you a private link to add them later.",
+    sections: [],
+  },
+  {
+    name: "Optional questions",
+    heading: "How your skin affects your life",
+    sections: [
+      {
         title: "How your skin affects your life (DLQI)",
-        // Licensed questionnaire, ages 16+ only (see lib/dlqi.ts)
-        showIf: (a) => DLQI_ENABLED && (ageFrom(str(a, "dob")) ?? 0) >= DLQI_MIN_AGE,
+        // Licensed questionnaire, ages 16+ (see lib/dlqi.ts)
+        showIf: (a) => questionnaireFor(a) === "dlqi",
         fields: [
           { id: "dlqiInstructions", type: "note", text: DLQI_INSTRUCTIONS },
           ...dlqiQuestions.map(
@@ -192,10 +250,7 @@ export const steps: Step[] = [
       {
         title: "How your skin affects you (CDLQI)",
         // Licensed children's questionnaire, ages 4–15 (see lib/dlqi.ts)
-        showIf: (a) => {
-          const age = ageFrom(str(a, "dob"));
-          return CDLQI_ENABLED && age !== null && age >= CDLQI_MIN_AGE && age < DLQI_MIN_AGE;
-        },
+        showIf: (a) => questionnaireFor(a) === "cdlqi",
         fields: [
           { id: "cdlqiParentNote", type: "note", text: CDLQI_PARENT_NOTE },
           { id: "cdlqiInstructions", type: "note", text: CDLQI_INSTRUCTIONS },
@@ -217,75 +272,25 @@ export const steps: Step[] = [
           { id: "cdlqiCopyright", type: "note", text: CDLQI_COPYRIGHT },
         ],
       },
-      {
-        title: "Hormones & Contraception",
-        showIf: (a) => str(a, "sex") !== "Male",
-        fields: [
-          { id: "periodsAge", type: "text", label: "What age did your periods start?", placeholder: "e.g. 13", width: "full", inputMode: "numeric" },
-          { id: "flareBeforePeriod", type: "choice", label: "Did you notice your acne flares up in the week before your period?", options: yesNo, columns: 2 },
-          { id: "onCocp", type: "choice", label: "Are you currently using a combined oral contraceptive pill (COCP)?", options: yesNo, columns: 2 },
-          { id: "cocpName", type: "text", label: "Which pill?", placeholder: "e.g. Yasmin, Yaz, Levlen", width: "half", showIf: (a) => str(a, "onCocp") === "Yes" },
-          { id: "cocpStarted", type: "text", label: "When did you start?", placeholder: "Month / Year", width: "half", showIf: (a) => str(a, "onCocp") === "Yes" },
-          { id: "planningPregnancy", type: "choice", label: "Are you planning to become pregnant in the next 12 months?", options: yesNo, columns: 2 },
-          { id: "pregnancyNote", type: "note", text: "IMPORTANT: some acne treatments cannot be used during pregnancy or while trying to conceive." },
-        ],
-      },
-      {
-        title: "Previous treatments",
-        fields: [
-          { id: "topicals", type: "choice", label: "Creams & Gels (topicals): have you tried topical treatments?", options: ["Benzoyl Peroxide", "Retinoids (e.g. Differin)", "Antibiotic Cream", "Salicylic Acid", "Clindamycin", "None/Not Sure"], multiple: true, columns: 3 },
-          { id: "topicalsDuration", type: "select", label: "How long did you use them for?", options: useDurations, width: "half" },
-          { id: "topicalsEffective", type: "select", label: "Were they effective?", options: effectiveness, width: "half" },
-          { id: "orals", type: "choice", label: "Oral Medications: have you taken oral medications for acne?", options: ["Antibiotics (e.g. doxycycline)", "Spironolactone", "Combined pill for acne", "None", "Not sure"], multiple: true, columns: 3 },
-          { id: "oralsDose", type: "text", label: "Dose (if known)", placeholder: "e.g. 100mg doxycycline", width: "half" },
-          { id: "oralsDuration", type: "select", label: "How long for?", options: useDurations, width: "half" },
-          { id: "oralsEffective", type: "select", label: "Were they effective?", options: effectiveness, width: "full" },
-          { id: "isotretinoin", type: "choice", label: "Have you heard of or are you interested in Roaccutane / Accutane (isotretinoin)?", options: ["Yes - I'd like to explore it", "I've heard of it, not sure", "No, prefer other options", "I've used it before"], columns: 2 },
-          { id: "isoYears", type: "text", label: "Previous course: year(s) taken", placeholder: "e.g. 2019 - 2020", width: "third", showIf: (a) => str(a, "isotretinoin") === "I've used it before" },
-          { id: "isoDuration", type: "select", label: "Previous course: duration", options: ["Less than 6 months", "6–12 months", "More than 12 months"], width: "third", showIf: (a) => str(a, "isotretinoin") === "I've used it before" },
-          { id: "isoMaxDose", type: "text", label: "Previous course: max dose (if known)", placeholder: "e.g. 40mg/day", width: "third", showIf: (a) => str(a, "isotretinoin") === "I've used it before" },
-          { id: "isoSideEffects", type: "choice", label: "Any notable side effects?", options: ["Dry Lips/Skin", "Joint pain", "Mood changes", "Eye dryness", "Nosebleeds", "None"], multiple: true, columns: 3, showIf: (a) => str(a, "isotretinoin") === "I've used it before" },
-        ],
-      },
-      {
-        title: "Medical History",
-        fields: [
-          { id: "conditions", type: "choice", label: "Any relevant medical conditions? (select all that apply)", options: ["PCOS", "Thyroid condition", "Diabetes", "Liver disease", "High cholesterol", "None"], multiple: true, columns: 3 },
-          { id: "anxietyDepression", type: "choice", label: "Do you have a history of anxiety or depression?", options: yesNo, columns: 2 },
-          { id: "mentalHealthConditions", type: "choice", label: "Which condition(s)?", options: ["Anxiety", "Depression", "Both"], columns: 3, showIf: (a) => str(a, "anxietyDepression") === "Yes" },
-          { id: "seenPsych", type: "choice", label: "Have you seen a psychologist or psychiatrist?", options: yesNo, columns: 2, showIf: (a) => str(a, "anxietyDepression") === "Yes" },
-          { id: "familyHistory", type: "choice", label: "Family history (select all that apply)", options: ["Acne in family", "PCOS in family", "None"], multiple: true, columns: 3 },
-          { id: "currentMedications", type: "textarea", label: "Current medications", placeholder: "List any medications, vitamins or supplements you take, or write 'None'" },
-          { id: "allergies", type: "textarea", label: "Allergies", placeholder: "List any allergies (medicines, foods, other), or write 'None'" },
-        ],
-      },
-      {
-        title: "Your preferences",
-        fields: [
-          { id: "prescriptionPreference", type: "choice", label: "Prescription preference", options: ["Send my script to me (SMS or email) so I can use my local pharmacy", "Post my medication to my home (via Edge Compounding Pharmacy)"], columns: 2 },
-          { id: "practitionerPreference", type: "choice", label: "Who would you prefer to see?", options: ["Our GP trained in acne", "Dermatologist", "No preference"], columns: 3 },
-        ],
-      },
     ],
   },
   {
-    heading: "Let's upload your photos",
-    intro: "Clear photos will help your doctor make an accurate assessment. The whole process takes about 2 minutes.",
+    name: "Almost done",
+    heading: "Almost done",
     sections: [
       {
-        title: "Consents & Declaration",
+        title: "Consents & declaration",
         fields: [
+          // TODO: final photo-consent wording is with the lawyer
           { id: "consentPrivacy", type: "checkbox", title: "Privacy.", label: "I consent to Treat Skin Conditions Pty Ltd collecting, storing, using and sharing my personal and health information, including my photos, to provide my care, as described in the Privacy Policy.", required: true },
-          { id: "consentTelehealth", type: "checkbox", title: "Telehealth.", label: "I understand my consultations will happen by phone or video. Telehealth has limits, and my clinician may recommend an in-person review. I have read and accept the Terms of Use.", required: true },
-          { id: "consentCarePathway", type: "checkbox", title: "Care pathway and fees.", label: "I understand that I will first speak with an acne nurse, who does not prescribe, and may then see a doctor or dermatologist. I understand the fees, deposit and cancellation policy on the Pricing page.", required: true },
-          { id: "consentAccuracy", type: "checkbox", title: "Accuracy and age.", label: "I confirm the information I have given is true and complete. I am 18 or over, or I am the parent or guardian of the patient, consent to their care, and will attend their consultations.", required: true },
-          { id: "consentPhotography", type: "checkbox", title: "Clinical photography (optional).", label: "I consent to my de-identified photos being used for clinical training and quality improvement. I can still receive care if I don't tick this box." },
+          { id: "consentDeclaration", type: "checkbox", title: "Telehealth, fees and accuracy.", label: "I understand my consultations will happen by phone or video, that telehealth has limits, and that my clinician may recommend an in-person review. I understand I will first speak with an acne nurse, who does not prescribe, and may then see a doctor, and I understand the fees, deposit and cancellation policy on the Pricing page. I have read and accept the Terms of Use. The information I have given is true and complete, and I am 18 or over, or the patient's parent or guardian.", required: true },
+          { id: "consentPhotography", type: "checkbox", title: "Clinical photography (optional).", label: "I consent to my photos being used only for internal clinical training and quality improvement, never in advertising. I can still receive care if I don't tick this box." },
         ],
       },
       {
-        title: "Electronic Signature",
+        title: "Electronic signature",
         fields: [
-          { id: "signatureName", type: "text", label: "Full name", placeholder: "Enter name", required: true, width: "half", autoComplete: "name" },
+          { id: "signatureName", type: "text", label: "Full name (your typed signature)", placeholder: "Type your full name", required: true, width: "half", autoComplete: "name" },
           { id: "signatureDate", type: "date", label: "Date", required: true, width: "half" },
           { id: "signatureRelationship", type: "text", label: "Your relationship to the patient", placeholder: "e.g. Mother, Father, Guardian", required: true, width: "full", showIf: isUnder18 },
         ],
@@ -294,8 +299,11 @@ export const steps: Step[] = [
   },
 ];
 
+/** Steps by number, for the form's step logic */
+export const STEP = { about: 0, skin: 1, photos: 2, questionnaire: 3, done: 4 } as const;
+
 /** File slots. The referral sits on step 1, photos on step 3. */
-export type FileSlot = { id: string; label: string; hint?: string; group: string };
+export type FileSlot = { id: string; label: string; hint?: string; example?: string; group: string };
 
 export const referralSlot: FileSlot = {
   id: "referral",
@@ -303,34 +311,30 @@ export const referralSlot: FileSlot = {
   group: "Referral",
 };
 
+const ex = (name: string) => `/images/photo-examples/example-${name}.jpg`;
+
 export const photoGroups: { title: string; slots: FileSlot[] }[] = [
   {
-    title: "Face Photos",
+    title: "Your photos",
     slots: [
-      { id: "face-front", label: "Front Face", hint: "Looking straight ahead", group: "Face Photos" },
-      { id: "face-left", label: "Left Profile", hint: "Turn head left", group: "Face Photos" },
-      { id: "face-right", label: "Right Profile", hint: "Turn head right", group: "Face Photos" },
-    ],
-  },
-  {
-    title: "Close-Up / Specific Areas",
-    slots: [
-      { id: "closeup-1", label: "Close-up of main problem area", group: "Close-Up / Specific Areas" },
-      { id: "closeup-2", label: "Add another area (optional)", group: "Close-Up / Specific Areas" },
-      { id: "closeup-3", label: "Add another area (optional)", group: "Close-Up / Specific Areas" },
-    ],
-  },
-  {
-    title: "Body Acne",
-    slots: [
-      { id: "body-chest", label: "Chest", hint: "- front torso", group: "Body Acne" },
-      { id: "body-back", label: "Upper back", hint: "- ask someone to help", group: "Body Acne" },
-      { id: "body-other", label: "Other area", hint: "(optional)", group: "Body Acne" },
+      { id: "face-front", label: "Front of face", hint: "Looking straight ahead", example: ex("face-front"), group: "Photos" },
+      { id: "face-left", label: "Left side", hint: "Left cheek to the camera", example: ex("face-left"), group: "Photos" },
+      { id: "face-right", label: "Right side", hint: "Right cheek to the camera", example: ex("face-right"), group: "Photos" },
+      { id: "closeup-1", label: "Close-up of worst area", hint: "Where your acne is worst", example: ex("closeup"), group: "Photos" },
+      { id: "body", label: "Chest or back", hint: "If needed", example: ex("body-chest"), group: "Photos" },
     ],
   },
 ];
 
-export const allFileSlots: FileSlot[] = [referralSlot, ...photoGroups.flatMap((g) => g.slots)];
+/** "Upload all photos at once": unlabelled extra photos, which the nurse sorts out */
+export const MAX_BULK_PHOTOS = 10;
+export const bulkSlots: FileSlot[] = Array.from({ length: MAX_BULK_PHOTOS }, (_, i) => ({
+  id: `extra-${i + 1}`,
+  label: `Photo ${i + 1} (uploaded together)`,
+  group: "Photos",
+}));
+
+export const allFileSlots: FileSlot[] = [referralSlot, ...photoGroups.flatMap((g) => g.slots), ...bulkSlots];
 
 export const ALLOWED_FILE_TYPES = [
   "image/jpeg",
@@ -348,6 +352,13 @@ export function visibleFields(step: Step, a: Answers): Field[] {
     .filter((s) => !s.showIf || s.showIf(a))
     .flatMap((s) => s.fields)
     .filter((f) => !f.showIf || f.showIf(a));
+}
+
+/** Answer keys currently shown in a step (a matrix saves one key per row) */
+export function visibleAnswerIds(step: Step, a: Answers): string[] {
+  return visibleFields(step, a).flatMap((f) =>
+    f.type === "matrix" ? f.rows.map((r) => r.id) : f.type === "note" ? [] : [f.id],
+  );
 }
 
 const isEmpty = (v: Answers[string]) =>
@@ -373,5 +384,7 @@ export function validateStep(stepIndex: number, a: Answers): Record<string, stri
 
 /** All known field ids (used to drop anything unexpected from a submission) */
 export const fieldIds = new Set(
-  steps.flatMap((s) => s.sections.flatMap((sec) => sec.fields)).filter((f) => f.type !== "note").map((f) => f.id),
+  steps
+    .flatMap((s) => s.sections.flatMap((sec) => sec.fields))
+    .flatMap((f) => (f.type === "matrix" ? f.rows.map((r) => r.id) : f.type === "note" ? [] : [f.id])),
 );

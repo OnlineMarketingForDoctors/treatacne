@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { SHOP_ENABLED, navLinks } from "@/lib/site";
 import { useCart } from "@/components/cart/CartProvider";
+import { Tagline } from "@/components/Tagline";
 
 export function Header() {
   const [open, setOpen] = useState(false);
@@ -22,7 +23,7 @@ export function Header() {
     <header className="sticky top-0 z-40 border-b border-brand bg-white">
       <div className="flex h-[62px] items-stretch">
         <div className="flex flex-1 items-center px-5 lg:w-1/2 lg:flex-none lg:px-[30px]">
-          <Link href="/" aria-label="Treat:Acne home">
+          <Link href="/" aria-label="Treat:Acne home" className="w-[130px] text-brand">
             <Image
               src="/images/logo-dark.png"
               alt="Treat:Acne"
@@ -31,6 +32,7 @@ export function Header() {
               priority
               className="h-auto w-[130px]"
             />
+            <Tagline className="mt-[3px] w-full" />
           </Link>
         </div>
 

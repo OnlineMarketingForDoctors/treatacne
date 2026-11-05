@@ -1,55 +1,71 @@
 import type { Metadata } from "next";
 import { PillLink } from "@/components/Button";
-import { PageLayout } from "@/components/PageLayout";
+import { Block, PageLayout } from "@/components/PageLayout";
 import { COURSE_URL } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: "Learn: Mastering Acne online course",
+  title: "Mastering Acne online course",
   description:
-    "Mastering Acne, our online acne course. Understand your skin, build a routine that works, and get the most from your treatment.",
+    "Mastering Acne, an online course by dermatologist Dr Niyati Sharma: how acne works, how to build a routine that suits your skin, and how to get the most from treatment.",
+  alternates: { canonical: "/learn" },
 };
 
-const coursePrices = [
-  { label: "Public", price: "$89" },
-  { label: "After a GP consultation", price: "$19.99" },
-  { label: "After a dermatologist consultation", price: "Free" },
+// TODO: course outline (modules, length, access period) due from Niyati.
+const outline = [
+  { label: "Created by", value: "Dr Niyati Sharma, Dermatologist (FACD)" },
+  { label: "Modules", value: "[Module list to come]" },
+  { label: "Length", value: "[Course length to come]" },
+  { label: "Access", value: "[How long access lasts to come]" },
 ];
 
 export default function LearnPage() {
   return (
     <PageLayout
-      title="Mastering Acne - our online acne course."
+      title="Mastering Acne: our online acne course."
       intro={
         <p>
           Understand your skin, build a routine that works, and get the most from your treatment.
+          Created by our dermatologist Dr Niyati Sharma, at your own pace.
         </p>
       }
     >
-      <div data-reveal="up" className="border-t border-brand py-[30px]">
-        <table className="w-full text-left text-body">
-          <caption className="sr-only">Course prices</caption>
-          <tbody>
-            {coursePrices.map((row) => (
-              <tr key={row.label} className="border-b border-brand/40">
-                <td className="py-4 pr-6 text-black">{row.label}</td>
-                <td className="py-4 text-right lg:text-big">{row.price}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        <p className="mt-4 text-small text-black italic">
-          Treat:Acne patients receive their personal discount code by email after their
-          consultation.
-        </p>
-      </div>
+      <Block heading="Course outline">
+        <dl className="divide-y divide-brand/40">
+          {outline.map((row) => (
+            <div key={row.label} className="grid gap-1 py-3 sm:grid-cols-[160px_1fr]">
+              <dt className="text-brand">{row.label}</dt>
+              <dd>{row.value}</dd>
+            </div>
+          ))}
+        </dl>
+      </Block>
 
-      <div data-reveal="up" className="border-t border-brand pt-[30px]">
-        {/* TODO: Kajabi checkout link; patients enter their discount code at checkout */}
-        <PillLink href={COURSE_URL} className="w-full sm:w-auto">
+      <div data-reveal="up" className="border-t border-brand py-[30px]">
+        <p className="text-h2 lg:text-h2-lg">$49</p>
+        <p className="mt-3 text-body text-black">
+          Already a Treat:Acne patient? Patient pricing is available after a completed
+          consultation. Not redeemable for cash.
+        </p>
+        {/* TODO: Kajabi checkout link (due from Niyati) */}
+        <PillLink href={COURSE_URL} className="mt-6 w-full sm:w-auto">
           Enrol now →
         </PillLink>
+        <ul className="mt-6 space-y-2 text-small text-black/70">
+          <li>
+            The course is non-refundable once purchased, except where required by the Australian
+            Consumer Law.
+          </li>
+          <li>
+            Patient pricing is available after a completed consultation. Codes are single-use and
+            not redeemable for cash.
+          </li>
+          <li>The course is general education only and is not medical advice.</li>
+          <li>
+            If your acne is painful, leaving marks or scars, or not improving, we recommend booking a
+            consultation.
+          </li>
+        </ul>
       </div>
     </PageLayout>
   );
 }
-

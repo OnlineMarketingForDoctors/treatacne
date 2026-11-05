@@ -4,7 +4,7 @@ import { GetStartedForm } from "./GetStartedForm";
 export const metadata: Metadata = {
   title: "Get Started",
   description:
-    "Tell us about your skin and upload your photos, then book your free 30-minute consultation with our trained acne nurses.",
+    "A 4-minute form about your skin and a few photos, then book your free phone consultation with our acne nurse.",
   // Patient intake form: keep out of search results
   robots: { index: false },
 };

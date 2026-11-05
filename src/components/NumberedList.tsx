@@ -11,7 +11,7 @@ export function NumberedList({
   lastGap = false,
   firstDivider = true,
 }: {
-  items: { title: string; body: string }[];
+  items: { title: string; body: string; extra?: React.ReactNode }[];
   lastGap?: boolean;
   firstDivider?: boolean;
 }) {
@@ -35,6 +35,7 @@ export function NumberedList({
             <div>
               <h3 className="text-body font-bold">{item.title}</h3>
               <p className="mt-3 max-w-[460px] text-body">{item.body}</p>
+              {item.extra && <div className="mt-3 text-body">{item.extra}</div>}
             </div>
           </li>
         );

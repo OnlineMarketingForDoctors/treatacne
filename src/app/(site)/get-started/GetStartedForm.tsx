@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { PillLink } from "@/components/Button";
 import { FormField, inputClass } from "@/components/form/FormField";
 import { PhotoSlot } from "@/components/form/PhotoSlot";
@@ -9,16 +10,22 @@ import { createUploadClient } from "@/lib/supabase/browser";
 import { SUBMISSIONS_BUCKET } from "@/lib/supabase/env";
 import {
   ALLOWED_FILE_TYPES,
+  MAX_BULK_PHOTOS,
   MAX_FILE_BYTES,
+  QUESTIONNAIRE_INTRO,
+  STEP,
   isUnder18,
   photoGroups,
+  questionnaireFor,
   steps,
   validateStep,
   visibleFields,
   type Answers,
 } from "@/lib/intake";
-import { BOOKING_URL, keyMessage } from "@/lib/site";
+import { BOOKING_URL } from "@/lib/site";
 import { TEST_PREFILL, testAnswers, testFiles } from "@/lib/testPrefill";
+import { clearDraft, loadDraft, saveDraft } from "@/lib/formDraft";
+import { clearQuiz, loadQuiz, type SavedQuiz } from "@/lib/quizStore";
 import { completeSubmission, startSubmission } from "./actions";
 
 const typeFromName: Record<string, string> = {
@@ -36,11 +43,25 @@ function fileType(file: File) {
   return file.type || typeFromName[file.name.split(".").pop()?.toLowerCase() ?? ""] || "";
 }
 
+/** Quiz answers that map onto form questions (step 2 stays editable) */
+function answersFromQuiz(quiz: SavedQuiz): Answers {
+  const a = quiz.answers;
+  const out: Answers = {};
+  const pref = a.preference?.[0];
+  if (pref === "Dermatologist" || pref === "No preference") out.practitionerPreference = pref;
+  else if (pref?.startsWith("Our GP")) out.practitionerPreference = "Our GP with a special interest in acne";
+  const duration = a.duration?.[0];
+  if (duration === "Less than 6 months" || duration === "6–12 months") out.acneDuration = duration;
+  const body = (a.location ?? []).filter((l) => l === "Chest" || l === "Back");
+  if (body.length) out.acneLocations = body;
+  return out;
+}
+
 type Status =
   | { kind: "editing" }
   | { kind: "submitting"; message: string }
   | { kind: "error"; message: string }
-  | { kind: "done"; firstName: string };
+  | { kind: "done"; firstName: string; photos: boolean };
 
 export function GetStartedForm() {
   const [stepIndex, setStepIndex] = useState(0);
@@ -50,30 +71,46 @@ export function GetStartedForm() {
   const [fileErrors, setFileErrors] = useState<Record<string, string>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [status, setStatus] = useState<Status>({ kind: "editing" });
+  const [quiz, setQuiz] = useState<SavedQuiz | null>(null);
+  const [restored, setRestored] = useState(false);
   const honeypot = useRef<HTMLInputElement>(null);
   const top = useRef<HTMLDivElement>(null);
   const dirty = useRef(false);
 
-  // Test mode: placeholder photos (made in the browser, so after the first render)
+  // After the first render (browser only): test photos, or the saved draft, or quiz answers.
+  // Browser storage can't be read during server rendering, so this restores after hydration.
   useEffect(() => {
-    if (TEST_PREFILL) void testFiles().then(setFiles);
+    const savedQuiz = loadQuiz();
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- one-off restore after hydration
+    setQuiz(savedQuiz);
+    if (TEST_PREFILL) {
+      void testFiles().then(setFiles);
+    } else {
+      const draft = loadDraft();
+      if (draft) {
+        setAnswers({ ...emptyAnswers(), ...draft.answers });
+        setStepIndex(Math.min(draft.stepIndex, steps.length - 1));
+      } else if (savedQuiz) {
+        setAnswers((prev) => ({ ...prev, ...answersFromQuiz(savedQuiz) }));
+      }
+    }
+    setRestored(true);
   }, []);
 
-  const clearTestData = () => {
+  // Save progress in this browser as they go (not in test mode)
+  useEffect(() => {
+    if (restored && !TEST_PREFILL && dirty.current && status.kind !== "done") saveDraft(answers, stepIndex);
+  }, [answers, stepIndex, restored, status.kind]);
+
+  const clearAll = () => {
+    clearDraft();
+    dirty.current = false;
     setAnswers(emptyAnswers());
     setFiles({});
     setErrors({});
     setFileErrors({});
+    setStepIndex(0);
   };
-
-  // Warn before leaving with unsent answers (nothing is saved in the browser)
-  useEffect(() => {
-    const warn = (e: BeforeUnloadEvent) => {
-      if (dirty.current) e.preventDefault();
-    };
-    window.addEventListener("beforeunload", warn);
-    return () => window.removeEventListener("beforeunload", warn);
-  }, []);
 
   const step = steps[stepIndex];
   const isLast = stepIndex === steps.length - 1;
@@ -89,13 +126,41 @@ export function GetStartedForm() {
     });
   };
 
+  const checkFile = (file: File) => {
+    if (!ALLOWED_FILE_TYPES.includes(fileType(file))) return "Please choose a JPG, PNG, HEIC or PDF file.";
+    if (file.size > MAX_FILE_BYTES) return "This file is over 15MB. Please choose a smaller one.";
+    return "";
+  };
+
   const setFile = (slot: string, file: File | undefined) => {
     dirty.current = true;
-    let problem = "";
-    if (file && !ALLOWED_FILE_TYPES.includes(fileType(file))) problem = "Please choose a JPG, PNG, HEIC or PDF file.";
-    else if (file && file.size > MAX_FILE_BYTES) problem = "This file is over 15MB. Please choose a smaller one.";
+    const problem = file ? checkFile(file) : "";
     setFileErrors((prev) => ({ ...prev, [slot]: problem }));
     setFiles((prev) => ({ ...prev, [slot]: problem ? undefined : file }));
+  };
+
+  /** "Upload all photos at once": fills the unlabelled extra-1… slots */
+  const addBulk = (list: File[]) => {
+    dirty.current = true;
+    setFiles((prev) => {
+      const next = { ...prev };
+      const problems: string[] = [];
+      for (const file of list) {
+        const problem = checkFile(file);
+        if (problem) {
+          problems.push(`${file.name}: ${problem}`);
+          continue;
+        }
+        const free = Array.from({ length: MAX_BULK_PHOTOS }, (_, i) => `extra-${i + 1}`).find((k) => !next[k]);
+        if (!free) {
+          problems.push(`You can add up to ${MAX_BULK_PHOTOS} photos this way.`);
+          break;
+        }
+        next[free] = file;
+      }
+      setFileErrors((e) => ({ ...e, bulk: problems.join(" ") }));
+      return next;
+    });
   };
 
   const scrollToTop = () => top.current?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -124,10 +189,12 @@ export function GetStartedForm() {
   async function submit() {
     setStatus({ kind: "submitting", message: "Saving your details securely…" });
     const chosen = Object.entries(files).filter((entry): entry is [string, File] => Boolean(entry[1]));
+    const hadPhotos = chosen.some(([slot]) => slot !== "referral");
     try {
       const started = await startSubmission({
         answers,
         files: chosen.map(([slot, file]) => ({ slot, type: fileType(file), size: file.size })),
+        quiz: quiz ? { answers: quiz.answers, result: quiz.result } : undefined,
         website: honeypot.current?.value,
       });
       if (!started.ok) return setStatus({ kind: "error", message: started.error });
@@ -162,28 +229,16 @@ export function GetStartedForm() {
         return setStatus({ kind: "error", message: "We couldn't finish saving your form. Please try again." });
       }
       dirty.current = false;
-      setStatus({ kind: "done", firstName: String(answers.firstName ?? "") });
+      clearDraft();
+      clearQuiz();
+      setStatus({ kind: "done", firstName: String(answers.firstName ?? ""), photos: hadPhotos });
       requestAnimationFrame(scrollToTop);
     } catch {
       setStatus({ kind: "error", message: "Something went wrong. Please check your connection and try again." });
     }
   }
 
-  if (status.kind === "done") {
-    return (
-      <div ref={top} className="mx-auto max-w-[705px] scroll-mt-[90px] px-5 py-16 text-center lg:py-24">
-        <h1 className="text-h2 lg:text-h2-lg">Thank you{status.firstName ? `, ${status.firstName}` : ""}.</h1>
-        <p className="mt-8 text-big text-black">
-          We&apos;ve received your details and photos securely. Next, book a time for your free
-          30-minute phone consultation with our acne nurse.
-        </p>
-        <PillLink href={BOOKING_URL} className="mt-10 w-full sm:w-auto">
-          Book your free nurse consultation →
-        </PillLink>
-        <p className="mt-8 text-small text-black/70">{keyMessage}</p>
-      </div>
-    );
-  }
+  if (status.kind === "done") return <ThankYou ref={top} firstName={status.firstName} photos={status.photos} />;
 
   const submitting = status.kind === "submitting";
   const fields = visibleFields(step, answers);
@@ -197,20 +252,32 @@ export function GetStartedForm() {
             <strong className="font-bold">Test mode:</strong> this form is pre-filled with dummy data and
             placeholder photos.
           </span>
-          <button type="button" onClick={clearTestData} className="text-brand underline underline-offset-2">
+          <button type="button" onClick={clearAll} className="text-brand underline underline-offset-2">
             Clear test data
           </button>
         </div>
       )}
-      <h1 className="text-center text-h2 lg:text-h2-lg">{step.heading}</h1>
+
+      {/* Progress: step name and bar */}
+      <div aria-live="polite" className="flex items-baseline justify-between gap-4 text-small">
+        <span>
+          Step {stepIndex + 1} of {steps.length}: <strong className="font-bold">{step.name}</strong>
+        </span>
+        {stepIndex === 0 && <span className="text-black/60">About 3 minutes</span>}
+      </div>
+      <div className="mt-3 h-[4px] overflow-hidden rounded-full border border-brand" aria-hidden>
+        <div className="h-full bg-brand transition-[width] duration-500" style={{ width: `${progress}%` }} />
+      </div>
+
+      <h1 className="mt-10 text-center text-h2 lg:text-h2-lg">{step.heading}</h1>
       {step.intro && (
-        <p className="mx-auto mt-8 max-w-[560px] text-center text-[18px] leading-[1.2] text-black lg:mt-[55px] lg:text-big">
+        <p className="mx-auto mt-6 max-w-[560px] text-center text-[18px] leading-[1.2] text-black lg:text-big">
           {step.intro}
         </p>
       )}
       <p className="mt-6 text-center text-note text-black/60">
-        Only fields marked <span className="text-brand">*</span> are required. Our nurse can collect
-        anything else on the call.
+        Only the <span className="text-brand">*</span> questions are needed. Skip anything you&apos;re
+        unsure of: our nurse will go through it with you.
       </p>
 
       <form
@@ -224,37 +291,22 @@ export function GetStartedForm() {
         {/* Honeypot: hidden from people */}
         <input ref={honeypot} name="website" tabIndex={-1} autoComplete="off" aria-hidden className="hidden" />
 
-        {stepIndex === 2 && <PhotoStep files={files} fileErrors={fileErrors} onFile={setFile} />}
+        {stepIndex === STEP.photos && (
+          <PhotoStep files={files} fileErrors={fileErrors} onFile={setFile} onBulk={addBulk} />
+        )}
 
-        {step.sections
-          .filter((s) => !s.showIf || s.showIf(answers))
-          .map((section) => {
-            const sectionFields = section.fields.filter((f) => fields.includes(f));
-            return (
-              <section key={section.title} className="mt-10">
-                <h2 className="border-b border-brand pb-2 text-small">{section.title}</h2>
-                <div className="mt-5 grid grid-cols-1 gap-x-[30px] gap-y-5 sm:grid-cols-12">
-                  {sectionFields.map((field) => (
-                    <FormField
-                      key={field.id}
-                      field={field}
-                      answers={answers}
-                      error={errors[field.id]}
-                      compact={stepIndex === 0}
-                      onChange={update}
-                    />
-                  ))}
-                </div>
-              </section>
-            );
-          })}
+        {stepIndex === STEP.questionnaire ? (
+          <QuestionnaireStep answers={answers} errors={errors} onChange={update} />
+        ) : (
+          <Sections stepIndex={stepIndex} answers={answers} errors={errors} fields={fields} onChange={update} />
+        )}
 
-        {stepIndex === 0 && (
+        {stepIndex === STEP.about && (
           <section className="mt-10">
-            <h2 className="border-b border-brand pb-2 text-small">GP Referral (optional)</h2>
+            <h2 className="border-b border-brand pb-2 text-small">GP referral (optional)</h2>
             <p className="mt-4 text-small text-black">
               Have a GP referral? Upload it here to claim a Medicare rebate on your dermatologist
-              consult. No referral? Our doctor can refer you.
+              consultation. No referral? Our doctor can refer you.
             </p>
             <ReferralUpload file={files.referral} error={fileErrors.referral} onFile={(f) => setFile("referral", f)} />
           </section>
@@ -266,21 +318,26 @@ export function GetStartedForm() {
           </p>
         )}
 
-        <div className="mt-14">
-          <div className="h-[4px] overflow-hidden rounded-full border border-brand" aria-hidden>
-            <div className="h-full bg-brand transition-[width] duration-500" style={{ width: `${progress}%` }} />
-          </div>
+        {isLast && (
+          <p className="mt-8 rounded-[10px] bg-cream p-4 text-small text-black">
+            <strong className="font-bold">Your data is safe.</strong> Your answers and photos are
+            encrypted, stored securely in Australia, and only seen by our clinical team. We never
+            send your health information by email.
+          </p>
+        )}
+
+        <div className="mt-10">
           {status.kind === "error" && (
-            <p role="alert" className="mt-5 rounded-[10px] border border-red-700 p-3 text-small text-red-700">
+            <p role="alert" className="mb-5 rounded-[10px] border border-red-700 p-3 text-small text-red-700">
               {status.message}
             </p>
           )}
           {submitting && (
-            <p role="status" className="mt-5 text-center text-small">
+            <p role="status" className="mb-5 text-center text-small">
               {status.message}
             </p>
           )}
-          <div className="mt-5 grid grid-cols-[1fr_auto_1fr] items-center gap-4">
+          <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-4">
             <button
               type="button"
               disabled={stepIndex === 0 || submitting}
@@ -289,7 +346,7 @@ export function GetStartedForm() {
             >
               ← Previous
             </button>
-            <span className="text-small" aria-live="polite">
+            <span className="text-small">
               {stepIndex + 1}/{steps.length}
             </span>
             <button
@@ -303,7 +360,145 @@ export function GetStartedForm() {
             </button>
           </div>
         </div>
+
+        {!TEST_PREFILL && (
+          <p className="mt-8 text-center text-note text-black/60">
+            Your answers are saved on this device until you submit (photos aren&apos;t saved).{" "}
+            <button type="button" onClick={clearAll} className="underline underline-offset-2 hover:text-brand">
+              Clear and start again
+            </button>
+          </p>
+        )}
       </form>
+    </div>
+  );
+}
+
+function Sections({
+  stepIndex,
+  answers,
+  errors,
+  fields,
+  onChange,
+}: {
+  stepIndex: number;
+  answers: Answers;
+  errors: Record<string, string>;
+  fields: ReturnType<typeof visibleFields>;
+  onChange: (id: string, value: Answers[string]) => void;
+}) {
+  return (
+    <>
+      {steps[stepIndex].sections
+        .filter((s) => !s.showIf || s.showIf(answers))
+        .map((section) => {
+          const sectionFields = section.fields.filter((f) => fields.includes(f));
+          return (
+            <section key={section.title} className="mt-10">
+              <h2 className="border-b border-brand pb-2 text-small">{section.title}</h2>
+              <div className="mt-5 grid grid-cols-1 gap-x-[30px] gap-y-5 sm:grid-cols-12">
+                {sectionFields.map((field) => (
+                  <FormField
+                    key={field.id}
+                    field={field}
+                    answers={answers}
+                    error={errors[field.id]}
+                    compact={stepIndex === STEP.about}
+                    onChange={onChange}
+                  />
+                ))}
+              </div>
+            </section>
+          );
+        })}
+    </>
+  );
+}
+
+/** Step 4: the DLQI (16+) or CDLQI (4–15), collapsed and fully optional */
+function QuestionnaireStep({
+  answers,
+  errors,
+  onChange,
+}: {
+  answers: Answers;
+  errors: Record<string, string>;
+  onChange: (id: string, value: Answers[string]) => void;
+}) {
+  const which = questionnaireFor(answers);
+  const started = Object.keys(answers).some((k) => /^c?dlqi\d/.test(k) && answers[k]);
+  const [open, setOpen] = useState(started);
+
+  if (!which) {
+    return (
+      <p className="mt-10 text-center text-body text-black">
+        There are no extra questions for this age. Press Next to continue.
+      </p>
+    );
+  }
+
+  return (
+    <div className="mt-10 rounded-2xl border border-brand p-5 lg:p-7">
+      <p className="text-body text-black">{QUESTIONNAIRE_INTRO}</p>
+      {!open ? (
+        <div className="mt-5 flex flex-wrap items-center gap-4">
+          <button
+            type="button"
+            onClick={() => setOpen(true)}
+            aria-expanded={false}
+            className="h-[42px] rounded-full bg-brand px-8 text-body text-white transition-colors hover:bg-brand-soft"
+          >
+            Fill in now (2 minutes)
+          </button>
+          <span className="text-small text-black/60">or press Next to skip</span>
+        </div>
+      ) : (
+        <Sections
+          stepIndex={STEP.questionnaire}
+          answers={answers}
+          errors={errors}
+          fields={visibleFields(steps[STEP.questionnaire], answers)}
+          onChange={onChange}
+        />
+      )}
+    </div>
+  );
+}
+
+function ThankYou({
+  ref,
+  firstName,
+  photos,
+}: {
+  ref: React.Ref<HTMLDivElement>;
+  firstName: string;
+  photos: boolean;
+}) {
+  return (
+    <div ref={ref} className="mx-auto max-w-[705px] scroll-mt-[90px] px-5 py-16 text-center lg:py-24">
+      <h1 className="text-h2 lg:text-h2-lg">Thank you{firstName ? `, ${firstName}` : ""}.</h1>
+      <p className="mt-8 text-big text-black">
+        We&apos;ve received your details securely. Next step: book a time for your free phone call
+        with our acne nurse.
+      </p>
+      {!photos && (
+        <p className="mt-4 text-body text-black">
+          Haven&apos;t uploaded your photos yet? Our nurse will send you a private link to upload
+          them before your call.
+        </p>
+      )}
+      <PillLink href={BOOKING_URL} className="mt-10 w-full sm:w-auto">
+        Book your free nurse consultation →
+      </PillLink>
+      <p className="mt-8 text-small text-black/70">
+        Nurse consultation (phone): Free · Dermatologist consultation: $365 (Medicare rebate with a
+        valid referral) · GP consultation: $99 (no Medicare rebate). Nurse consultations don&apos;t
+        include prescribing.{" "}
+        <Link href="/pricing" className="underline underline-offset-2">
+          See Pricing
+        </Link>
+        .
+      </p>
     </div>
   );
 }
@@ -312,17 +507,22 @@ function PhotoStep({
   files,
   fileErrors,
   onFile,
+  onBulk,
 }: {
   files: Record<string, File | undefined>;
   fileErrors: Record<string, string>;
   onFile: (slot: string, file: File | undefined) => void;
+  onBulk: (files: File[]) => void;
 }) {
+  const bulk = Object.entries(files).filter(
+    (entry): entry is [string, File] => entry[0].startsWith("extra-") && Boolean(entry[1]),
+  );
   return (
     <>
       <PhotoTips className="mt-6" />
       {photoGroups.map((group) => (
         <section key={group.title} className="mt-12">
-          <h2 className="border-b border-brand pb-2 text-small">{group.title}</h2>
+          <h2 className="border-b border-brand pb-2 text-small">{group.title} (optional)</h2>
           <ul className="mt-6 grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-7">
             {group.slots.map((slot) => (
               <PhotoSlot
@@ -336,6 +536,40 @@ function PhotoStep({
           </ul>
         </section>
       ))}
+
+      <div className="mt-8 text-center">
+        <label className="cursor-pointer text-body text-brand underline underline-offset-2 has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-brand">
+          <input
+            type="file"
+            multiple
+            accept="image/*,.heic,.heif"
+            onChange={(e) => {
+              onBulk(Array.from(e.target.files ?? []));
+              e.target.value = "";
+            }}
+            className="sr-only"
+          />
+          Or upload all photos at once
+        </label>
+        {bulk.length > 0 && (
+          <ul className="mx-auto mt-4 max-w-[420px] space-y-2 text-left text-small">
+            {bulk.map(([slot, file]) => (
+              <li key={slot} className="flex items-center justify-between gap-4 border-b border-brand/30 pb-2">
+                <span className="truncate">✓ {file.name}</span>
+                <button
+                  type="button"
+                  onClick={() => onFile(slot, undefined)}
+                  className="shrink-0 text-black/60 underline underline-offset-2 hover:text-brand"
+                >
+                  Remove
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+        {fileErrors.bulk && <p className="mt-2 text-note text-red-700">{fileErrors.bulk}</p>}
+      </div>
+
       <p className="mt-8 text-small text-black">
         For follow-up visits, we&apos;ll send you a private link to upload new photos securely.
       </p>

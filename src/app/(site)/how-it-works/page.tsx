@@ -1,18 +1,22 @@
 import type { Metadata } from "next";
-import { OfferTermsText } from "@/components/OfferTermsText";
 import Image from "next/image";
-import { HowItWorks } from "@/components/HowItWorks";
+import { BudgetCallout, stepExtras } from "@/components/HowItWorks";
+import { CourseLine } from "@/components/CourseLine";
 import { FinalCta } from "@/components/FinalCta";
-import { keyMessage } from "@/lib/site";
-
-const stepsNote =
-  "Your acne nurse will call you by phone. GP and dermatologist consultations are by secure video: we'll send you a private link when your appointment is booked - just click to join, no app needed. Prefer to see a dermatologist? Just tell our nurse and they'll book you in. Some acne treatments can only be prescribed by a dermatologist, so if you have moderate to severe acne you'll need to see our dermatologist. Our nurse will guide you.";
+import { OfferTermsText } from "@/components/OfferTermsText";
+import { PillLink } from "@/components/Button";
+import { QuizCard } from "@/components/home/QuizCard";
+import { revealDelay } from "@/lib/reveal";
+import { BOOKING_URL, goodToKnow, keyMessage, ongoingCare, steps } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "How it works",
   description:
-    "Dermatologist-led acne care in 5 simple steps: a free acne nurse consultation by phone, then a video consultation with our GP trained in acne or a dermatologist.",
+    "Dermatologist-led acne care from home in 5 steps: a short online form, a free call with our acne nurse, then a video consultation with our dermatologist or GP.",
+  alternates: { canonical: "/how-it-works" },
 };
+
+const extras = stepExtras("/quiz");
 
 export default function HowItWorksPage() {
   return (
@@ -20,8 +24,8 @@ export default function HowItWorksPage() {
       <section className="p-5 lg:p-[30px]">
         <div className="flex min-h-[560px] flex-col items-center overflow-hidden rounded-2xl bg-brand px-5 pt-14 text-center text-white lg:min-h-[717px] lg:pt-[72px]">
           <h1 data-reveal="up" className="text-h1 lg:text-h1-lg">
-            Bringing dermatologist care <br className="hidden sm:inline" />
-            to every Australian.
+            Dermatologist-led acne care, <br className="hidden sm:inline" />
+            from home.
           </h1>
           <p data-reveal="up" className="mt-6 max-w-[560px] text-body lg:text-big">
             {keyMessage}
@@ -45,9 +49,63 @@ export default function HowItWorksPage() {
         </div>
       </section>
 
-      <HowItWorks className="border-t" note={stepsNote} />
+      <section className="border-t border-brand px-5 py-12 lg:px-[30px] lg:py-[60px]">
+        <h2 data-reveal="up" className="text-h2 lg:text-h2-lg">
+          How it works in 5 simple steps
+        </h2>
+        <ol className="mt-8 grid gap-4 sm:grid-cols-2 lg:mt-10 lg:grid-cols-5">
+          {steps.map((step, i) => {
+            const highlight = i === 2;
+            return (
+              <li
+                key={step.title}
+                data-reveal="up"
+                style={revealDelay(i * 90)}
+                className={`flex flex-col rounded-2xl p-5 lg:p-6 ${
+                  highlight ? "bg-brand text-white" : "border border-brand bg-white"
+                }`}
+              >
+                <span aria-hidden className="text-[40px] leading-none font-light">
+                  {i + 1}
+                </span>
+                <h3 className="mt-6 text-body font-bold">{step.title}</h3>
+                <p className={`mt-3 text-body ${highlight ? "" : "text-black"}`}>{step.body}</p>
+                {extras[i] && (
+                  <div
+                    className={`mt-3 text-body ${highlight ? "[&_a]:!text-white" : "text-black"}`}
+                  >
+                    {extras[i]}
+                  </div>
+                )}
+              </li>
+            );
+          })}
+        </ol>
 
-      <FinalCta tone="white" />
+        <BudgetCallout className="mt-6" />
+
+        <dl className="mt-10 grid gap-8 lg:grid-cols-2">
+          <div data-reveal="up">
+            <dt className="text-[22px] leading-[1.2] lg:text-[26px]">Ongoing care</dt>
+            <dd className="mt-3 text-body text-black">{ongoingCare}</dd>
+          </div>
+          <div data-reveal="up" style={revealDelay(100)}>
+            <dt className="text-[22px] leading-[1.2] lg:text-[26px]">Good to know</dt>
+            <dd className="mt-3 text-body text-black">{goodToKnow}</dd>
+          </div>
+        </dl>
+
+        <div data-reveal="up" className="mt-12 text-center">
+          <PillLink href={BOOKING_URL} className="w-full sm:w-auto">
+            Book your free nurse consultation →
+          </PillLink>
+          <CourseLine className="mx-auto mt-4 max-w-[560px]" />
+        </div>
+      </section>
+
+      <QuizCard />
+
+      <FinalCta />
     </>
   );
 }

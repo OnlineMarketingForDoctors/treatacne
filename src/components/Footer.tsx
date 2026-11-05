@@ -8,6 +8,7 @@ import {
   socialLinks,
 } from "@/lib/site";
 import { NewsletterForm } from "@/components/NewsletterForm";
+import { Tagline } from "@/components/Tagline";
 
 export function Footer() {
   return (
@@ -52,13 +53,16 @@ export function Footer() {
           data-reveal="group"
           className="flex items-end overflow-hidden pt-8 max-lg:order-3 lg:pt-10 lg:pr-5"
         >
-          <Image
-            src="/images/logo-light.png"
-            alt="Treat:Acne"
-            width={364}
-            height={54}
-            className="reveal-rise h-auto w-full max-w-[650px]"
-          />
+          <div className="reveal-rise w-full max-w-[650px]">
+            <Image
+              src="/images/logo-light.png"
+              alt="Treat:Acne"
+              width={364}
+              height={54}
+              className="h-auto w-full"
+            />
+            <Tagline className="mt-[1.5%] w-full" />
+          </div>
         </div>
 
         {/* Acknowledgement, support lines and credits */}
@@ -105,7 +109,7 @@ export function Footer() {
           </div>
           <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-2 text-note text-brand-muted lg:pr-[100px]">
           <span>
-            ©{new Date().getFullYear()} {contact.company}
+            ©{new Date().getFullYear()} {contact.company} · ABN {contact.abn}
           </span>
           <a
             href="https://onlinemarketingfordoctors.com/"

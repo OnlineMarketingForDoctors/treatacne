@@ -1,15 +1,29 @@
 import Link from "next/link";
-import { freeConsultTerms } from "@/lib/site";
+import { footerCtaTerms, freeConsultTerms } from "@/lib/site";
 
-/** The free-consultation terms with a link to Pricing (inline, inherits colour). */
-export function OfferTermsText() {
+/**
+ * The free-consultation terms with a link to Pricing (inline, inherits colour).
+ * `full` is the longer wording used in the "Let's get started" band.
+ */
+export function OfferTermsText({
+  full = false,
+  pricingLink = true,
+}: {
+  full?: boolean;
+  pricingLink?: boolean;
+}) {
   return (
     <>
-      {freeConsultTerms}{" "}
-      <Link href="/pricing" className="underline underline-offset-2">
-        See Pricing
-      </Link>
-      .
+      {full ? footerCtaTerms : freeConsultTerms}
+      {pricingLink && (
+        <>
+          {" "}
+          <Link href="/pricing" className="underline underline-offset-2">
+            See Pricing
+          </Link>
+          .
+        </>
+      )}
     </>
   );
 }

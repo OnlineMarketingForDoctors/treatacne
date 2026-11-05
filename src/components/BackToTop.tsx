@@ -24,7 +24,7 @@ export function BackToTop() {
       aria-label="Back to top"
       tabIndex={visible ? 0 : -1}
       aria-hidden={!visible}
-      className={`fixed right-5 bottom-5 z-30 flex size-12 items-center justify-center rounded-full border border-white/80 bg-brand text-white shadow-lg transition-all duration-300 hover:bg-white hover:text-brand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand lg:right-[30px] lg:bottom-[30px] ${
+      className={`fixed right-5 bottom-[72px] z-30 flex size-12 items-center justify-center rounded-full border border-white/80 bg-brand text-white shadow-lg transition-all duration-300 hover:bg-white hover:text-brand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand lg:right-[30px] lg:bottom-[30px] ${
         visible ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-4 opacity-0"
       }`}
     >

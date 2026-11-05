@@ -80,7 +80,7 @@ export default async function ProductPage({ params }: { params: Params }) {
       </section>
 
       <DermatologistPlan />
-      <FinalCta tone="white" />
+      <FinalCta />
     </>
   );
 }

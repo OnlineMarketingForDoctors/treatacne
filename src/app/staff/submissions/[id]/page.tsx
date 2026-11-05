@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ageFrom, allFileSlots, steps, visibleFields, type Answers } from "@/lib/intake";
+import { ageFrom, allFileSlots, fieldIds, steps, visibleFields, type Answers } from "@/lib/intake";
+import { quizQuestions } from "@/lib/quiz";
 import { formatDateTime, requireStaff, statusLabels } from "@/lib/staff";
 import { cdlqiBand, cdlqiScore, dlqiBand, dlqiScore } from "@/lib/dlqi";
 import { SUBMISSIONS_BUCKET } from "@/lib/supabase/env";
@@ -50,7 +51,11 @@ export default async function SubmissionPage({ params }: { params: Promise<{ id:
   const { data: staff } = await supabase.from("staff_members").select("user_id, name");
   const staffNames = new Map((staff ?? []).map((s) => [s.user_id, s.name]));
 
-  const answers = row.data as Answers;
+  const { quiz, ...answers } = row.data as Answers & {
+    quiz?: { answers: Record<string, string[]>; result: string };
+  };
+  // Answers from an earlier version of the form, so nothing is hidden from staff
+  const legacy = Object.entries(answers).filter(([key]) => !fieldIds.has(key));
   const age = ageFrom(row.date_of_birth);
   const answeredKeys = Object.keys(answers);
   const qol = answeredKeys.some((k) => k.startsWith("dlqi"))
@@ -159,9 +164,14 @@ export default async function SubmissionPage({ params }: { params: Promise<{ id:
                 <dl className="mt-4 grid gap-x-8 gap-y-3 text-small sm:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)]">
                   {visibleFields({ ...step, sections: [section] }, answers)
                     .filter((f) => f.type !== "note")
+                    .flatMap((f): { id: string; label: string; type: string }[] =>
+                      f.type === "matrix"
+                        ? f.rows.map((r) => ({ id: r.id, label: r.label, type: f.type }))
+                        : [{ id: f.id, label: "title" in f && f.title ? f.title : f.label, type: f.type }],
+                    )
                     .map((f) => (
                       <div key={f.id} className="contents">
-                        <dt className="text-black/60">{"title" in f && f.title ? f.title : f.label}</dt>
+                        <dt className="text-black/60">{f.label}</dt>
                         <dd className="break-words">{display(answers[f.id], f.type)}</dd>
                       </div>
                     ))}
@@ -170,6 +180,34 @@ export default async function SubmissionPage({ params }: { params: Promise<{ id:
             ))}
         </div>
       ))}
+
+      {quiz && (
+        <section className="mt-6 rounded-2xl bg-white p-6">
+          <h2 className="text-big text-brand">Quiz answers (result {quiz.result})</h2>
+          <dl className="mt-4 grid gap-x-8 gap-y-3 text-small sm:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)]">
+            {quizQuestions.map((q) => (
+              <div key={q.id} className="contents">
+                <dt className="text-black/60">{q.label}</dt>
+                <dd>{display(quiz.answers[q.id])}</dd>
+              </div>
+            ))}
+          </dl>
+        </section>
+      )}
+
+      {legacy.length > 0 && (
+        <section className="mt-6 rounded-2xl bg-white p-6">
+          <h2 className="text-big text-brand">Other answers (earlier form version)</h2>
+          <dl className="mt-4 grid gap-x-8 gap-y-3 text-small sm:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)]">
+            {legacy.map(([key, value]) => (
+              <div key={key} className="contents">
+                <dt className="text-black/60">{key}</dt>
+                <dd className="break-words">{display(value as Answers[string])}</dd>
+              </div>
+            ))}
+          </dl>
+        </section>
+      )}
 
       <section className="mt-6 rounded-2xl bg-white p-6">
         <h2 className="text-big text-brand">Access log</h2>

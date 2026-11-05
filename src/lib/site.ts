@@ -3,8 +3,9 @@
 // TODO: replace with the Healthengine nurse-consultation booking link (due from Niyati).
 export const BOOKING_URL = "https://www.healthengine.com.au/";
 export const GET_STARTED_URL = "/get-started";
-// TODO: Kajabi "Mastering Acne" checkout link (due from Niyati).
+// TODO: Kajabi "Mastering Acne" checkout link (due from Niyati). The course page is /learn.
 export const COURSE_URL = "#";
+export const COURSE_PAGE = "/learn";
 
 // Shop is a "coming soon" page for now. Set to true to bring back the product pages and cart.
 export const SHOP_ENABLED = false;
@@ -16,22 +17,30 @@ export const contact = {
   email: "info@treatacne.com.au",
   phone: "0485 816 400",
   phoneTel: "+61485816400",
+  fax: "03 7074 0477",
   company: "Treat Skin Conditions Pty Ltd",
   abn: "70 685 569 608",
-  address: "186 Gilbert Road, Preston VIC 3072",
 };
 
-export const keyMessage =
-  "Your first 30-minute consultation is FREE with our trained acne nurses. GP consultations $99.";
+export const tagline = "Dermatologist-led care";
+export const responseTime = "within 2 working days";
+
+export const keyMessage = "Your first consultation with our acne nurse is free.";
 
 // Terms that must accompany the free-consultation offer wherever it appears
-export const freeConsultTerms =
-  "Nurse consultation is free and doesn't include prescribing. 20-minute GP consultations are $99 with no Medicare rebate. Dermatologist fees apply. Seeing a dermatologist without a referral means no Medicare rebate.";
+export const freeConsultTerms = "Nurse consultations don't include prescribing. Doctor fees apply.";
+// The same terms in the "Let's get started" band (the one place they appear on every page)
+export const footerCtaTerms =
+  "Nurse consultation is free and doesn't include prescribing. Doctor fees apply.";
+
+export const courseLine =
+  "Not ready for a consultation? You can still learn more with our online course, Mastering Acne.";
 
 export const navLinks = [
   { href: "/about", label: "About Us" },
   { href: "/how-it-works", label: "How it works" },
   { href: "/pricing", label: "Pricing" },
+  { href: "/learn", label: "Learn" },
   { href: "/shop", label: "Shop" },
   { href: "/contact", label: "Contact" },
 ];
@@ -43,20 +52,21 @@ export const footerLinks = [
   { href: "/severe-persistent-acne", label: "Severe & persistent acne" },
   { href: "/faq", label: "FAQ" },
   { href: "/learn", label: "Learn" },
+  { href: "/quiz", label: "Acne quiz" },
 ];
 
 export const footerSecondaryLinks = [
   { href: "/photo-guide", label: "Photo guide" },
   { href: "/shop", label: "Shop" },
+  { href: "/contact", label: "Contact" },
+  { href: "/feedback-and-complaints", label: "Feedback & complaints" },
+  { href: "/accessibility", label: "Accessibility" },
   { href: "/privacy-policy", label: "Privacy Policy" },
   { href: "/terms-of-use", label: "Terms of Use" },
 ];
 
-// TODO: replace with the clinic's real profile URLs (due from Niyati)
-export const socialLinks = [
-  { href: "https://www.instagram.com/", label: "Instagram" },
-  { href: "https://www.linkedin.com/", label: "LinkedIn" },
-];
+// TODO: add the clinic's Instagram and LinkedIn profile URLs (due from Niyati). Hidden until then.
+export const socialLinks: { href: string; label: string }[] = [];
 
 export const crisisLines = [
   { name: "Lifeline", number: "13 11 14", tel: "131114", note: "24/7" },
@@ -64,57 +74,66 @@ export const crisisLines = [
 ];
 
 export const prices = [
-  { service: "Acne nurse consultation (30 minutes, phone)", fee: "Free" },
-  { service: "GP trained in acne (20 minutes, video, mild acne)", fee: "$99" },
-  { service: "Dermatologist - first consultation (20 minutes, video)", fee: "$365" },
-  { service: "Dermatologist - review (10 minutes, video)", fee: "$280" },
+  { service: "Acne nurse consultation (phone)", fee: "Free" },
+  { service: "Dermatologist, first consultation (video)", fee: "$365" },
+  { service: "Dermatologist, review (video)", fee: "$280" },
+  { service: "GP with a special interest in acne, first consultation (video)", fee: "$99 (no Medicare rebate)" },
+  { service: "GP review (video)", fee: "$99 (no Medicare rebate)" },
   { service: "Nurse support between appointments", fee: "Free" },
-  { service: "Blood tests", fee: "Bulk-billed (free)" },
+  { service: "Blood tests", fee: "Bulk-billed with Medicare" },
 ];
 
+export const gpReferralNote =
+  "If our GP refers you to our dermatologist, the referral is free. Dermatologist fees apply, and with the referral you can claim the Medicare rebate.";
+
+// "How it works in 5 steps" (same wording on Home and How it works)
 export const steps = [
+  { title: "Tell us about your skin.", body: "A 4-minute online form and a few photos." },
   {
-    title: "Submit your medical information and photos.",
-    body: "It takes about 4 minutes to fill out our online form and attach your photos.",
+    title: "Free call with our acne nurse.",
+    body: "Book a time that suits you, usually within 2 working days. She reviews your history and photos, explains all your treatment options, then books you with the right doctor. Our nurses provide information only: they can't give medical advice or prescribe.",
   },
   {
-    title: "Talk to our acne nurse - within 2 business days.",
-    body: "Our nurse calls you by phone for a free 30-minute consultation, reviews your history and photos, and guides you to the right doctor.",
+    title: "See our dermatologist or GP.",
+    body: "By secure video, wherever you live. We recommend our dermatologist for moderate, severe or persistent acne, or acne that hasn't responded to treatment.",
   },
+  { title: "Your personalised treatment plan.", body: "Built around your skin and what you've already tried." },
   {
-    title: "See the right doctor for your skin.",
-    body: "Our GP trained in acne for mild acne ($99), or a dermatologist if you've already had lengthy treatment from your GP, or for moderate, severe or persistent acne, or if you'd prefer one. Our GPs are trained and guided by our dermatologist throughout your consultation process.",
-  },
-  {
-    title: "Receive your personalised treatment plan.",
-    body: "Medical treatment where appropriate, targeted skincare, or both.",
-  },
-  {
-    title: "Get your treatment, your way.",
-    body: "We can send your script to you for any pharmacy, or post your treatment directly to you - whichever is easier, wherever you live in Australia.",
+    title: "Treatment, your way.",
+    body: "Your script sent to you for any pharmacy, or your treatment posted to your door.",
   },
 ];
+
+export const ongoingCare = "Regular dermatologist reviews, with nurse support between visits.";
+
+export const budgetCallout = {
+  title: "On a budget? See our GP for $99.",
+  body: `Our GP with a special interest in acne offers video consultations for $99 (no Medicare rebate). Some acne medications can only be prescribed by a dermatologist, so our GP can refer you if you need one. ${gpReferralNote} Just tell our nurse.`,
+};
+
+export const goodToKnow =
+  "Your nurse calls by phone. Doctor consultations are by secure video: we'll send a private link, with no app needed.";
 
 export const whyChoose = [
   {
     title: "Dermatologist-led care.",
-    body: "Every treatment pathway is designed and overseen by a specialist dermatologist.",
+    body: "Our treatment pathways are designed by a specialist dermatologist.",
   },
   {
     title: "From home, Australia-wide.",
-    body: "Phone and video consultations, with treatment posted to you or collected locally.",
+    body: "Phone and video consultations, with no referral or clinic visit needed. Treatment is posted to you or collected locally.",
   },
   {
     title: "Personalised treatment.",
-    body: "Based on your skin, your history and what you've already tried.",
+    body: "A plan based on your skin and what you've already tried.",
   },
   {
     title: "Supported throughout.",
-    body: "A nurse is available between appointments, so you're never left managing it alone.",
+    body: "Real follow-up, with nurse support between appointments, so you're never managing it alone.",
   },
   {
     title: "The right care at the right price.",
-    body: "A free nurse consultation, then our GP trained in acne for $99, or a dermatologist when you need one.",
+    body: "A free nurse consultation to start, with clear fees before you book.",
   },
 ];
 
@@ -125,38 +144,80 @@ export const faqs = [
       "Anyone in Australia with acne, at any age. Under-18s need a parent or guardian to consent and attend the consultation.",
   },
   {
+    question: "I'm not ready for a consultation. What can I do at home?",
+    answer:
+      "Start with Mastering Acne, a comprehensive online course created by our dermatologist, Dr Niyati Sharma. Learn how acne works, how to build a routine that suits your skin, and how to get the most from treatment, at your own pace. If your acne is painful, leaving marks or scars, or not improving, we recommend booking a consultation.",
+    link: { href: "/learn", label: "See the course →" },
+  },
+  {
     question: "What happens at my first consultation?",
     answer:
-      "Our acne nurse calls you within 2 business days, reviews your history and photos, then books you with the right doctor.",
+      "Book your free nurse call at a time that suits you, usually within 2 working days. Our acne nurse reviews your history and photos, explains your treatment options, then books you with the right doctor.",
   },
   {
     question: "Do I need a referral?",
     answer:
-      "No. A referral is only needed to claim a Medicare rebate for a dermatologist consultation. If you start with our GP and later need a dermatologist's care, or your treatment plan changes, our GP can refer you to our dermatologist at no extra cost. Please note that fees for consultations already provided aren't refundable. Every person's acne is different, and needing a new approach doesn't mean the earlier care was wrong. It just means it's time for our dermatologist to take a different approach.",
+      "No. A referral is only needed to claim a Medicare rebate for a dermatologist consultation. If you start with our GP and later need a dermatologist's care, our GP can refer you to our dermatologist, and the referral is free. Dermatologist fees apply, and with the referral you can claim the Medicare rebate. Fees for consultations already provided aren't refundable. Every person's acne is different, and needing a new approach doesn't mean the earlier care was wrong.",
   },
   {
     question: "How much does it cost?",
     answer:
-      "30-minute acne nurse consultation: free. 20-minute consultation with our GP with a special interest in acne: $99 (no Medicare rebate). Our GPs are trained and guided by our dermatologist throughout your consultation process. Dermatologist: $365 for the first consultation and $280 for reviews (Medicare rebate with a valid referral). See Pricing.",
+      "Acne nurse consultation: free. GP with a special interest in acne: $99 for the first consultation and $99 for reviews (no Medicare rebate). Dermatologist: $365 for the first consultation and $280 for reviews (Medicare rebate with a valid referral). Fees are for a complete consultation. Your doctor will take the time you need.",
+    link: { href: "/pricing", label: "See Pricing →" },
+  },
+  {
+    question: "Do you offer discounts for healthcare or concession card holders?",
+    answer:
+      "We're not able to offer concession discounts at this stage, and our fees are the same for everyone. We've kept care as affordable as we can: your first nurse consultation is free, and our GP consultations are $99. If you have a concession card, you may pay less for PBS medicines at the pharmacy, so please tell our nurse.",
+  },
+  {
+    question: "How do I pay?",
+    answer:
+      "After your nurse consultation, our nurse will send you a secure Tyro payment link by text or email. You can also pay by bank transfer: our nurse will give you the details. Payment must be received before your consultation. If it isn't, your appointment will be moved to a later time. Dermatologist bookings need a $100 deposit to secure the time, with the balance paid before the consultation.",
+  },
+  {
+    question: "What if I need to cancel?",
+    answer:
+      "Cancel more than 24 hours before your appointment for a full refund of your payment or deposit. If you cancel within 24 hours or miss your appointment, your GP consultation payment or $100 dermatologist deposit is not refunded. Your nurse consultation is free, so just text us to rebook. To cancel, text or call 0485 816 400 or email info@treatacne.com.au.",
   },
   {
     question: "What if my acne is severe or keeps coming back?",
     answer:
-      "Our dermatologist manages severe and persistent acne, with regular reviews, any monitoring you need, and nurse support throughout. Some acne treatments can only be prescribed by a dermatologist, so if you have moderate to severe acne you'll need to see our dermatologist. Our nurse will guide you.",
+      "Our dermatologist manages severe and persistent acne, with regular reviews, any monitoring you need, and nurse support throughout. Some acne treatments can only be prescribed by a dermatologist, so if you have moderate to severe acne we recommend our dermatologist. Our nurse will guide you.",
   },
   {
-    question: "How do I get my medication?",
+    question: "How do I get my medicine?",
     answer:
-      "We can post it to you, or send the script to you so you can use your local pharmacy.",
+      "We'll send your script to you to use at any pharmacy. If you prefer, you can choose to have it posted to you by Edge Compounding Pharmacy. This is optional, and we have no financial or business relationship with Edge.",
   },
   {
     question: "What about blood tests?",
     answer:
-      "We email you a request form to take to any pathology centre. They're bulk-billed, and we contact you with the results.",
+      "We email you a request form to take to any pathology centre. They're bulk-billed with Medicare, and we contact you with the results.",
+  },
+  {
+    question: "How do I send my GP referral?",
+    answer:
+      "Upload it in the Get Started form, fax it to 03 7074 0477, or email it to info@treatacne.com.au. A valid referral lets you claim a Medicare rebate for your dermatologist consultation.",
   },
   {
     question: "Is telehealth right for me?",
     answer: "It works for most acne. If your skin needs to be seen in person, we'll let you know.",
+  },
+  {
+    question: "Who can't you treat?",
+    answer:
+      "Treat:Acne is for people living in Australia. We can't help in an emergency (call 000), and if your doctor thinks you need to be examined in person, they'll tell you and help you arrange it.",
+  },
+  {
+    question: "Can teenagers use Treat:Acne?",
+    answer:
+      "Yes. We treat patients of all ages. If you're under 18, a parent or guardian needs to give consent and join every consultation.",
+  },
+  {
+    question: "I'm pregnant, breastfeeding or planning a pregnancy. Can I still be treated?",
+    answer:
+      "Yes, but please tell our nurse, because some acne treatments aren't suitable during pregnancy or breastfeeding. Your doctor will recommend safe options for you.",
   },
   {
     question: "Can I keep using my own skincare?",
@@ -165,7 +226,7 @@ export const faqs = [
   {
     question: "Is my information private?",
     answer:
-      "Yes. Your details are stored securely and used only for your care, in line with our Privacy Policy.",
+      "Yes. Your answers and photos are encrypted, stored securely in Australia and only seen by our clinical team, in line with our Privacy Policy.",
   },
   {
     question: "I've already been treated for acne by my GP. Can I see a dermatologist instead?",
