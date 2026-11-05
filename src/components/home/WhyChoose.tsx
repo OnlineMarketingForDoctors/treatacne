@@ -11,16 +11,16 @@ export function WhyChoose() {
           <h2 data-reveal="up" className="text-h2 lg:text-h2-lg">
             Why choose Treat:Acne
           </h2>
-          {/* Generated with Nano Banana Pro */}
-          <div className="mt-8 w-full overflow-hidden rounded-lg lg:mt-10 lg:max-w-[503px]">
+          {/* Generated with Nano Banana Pro from the "How it works" photo (same model) */}
+          <div className="mt-8 w-full overflow-hidden rounded-lg lg:mt-10 lg:max-w-[440px]">
             <Image
               data-reveal="zoom"
-              src="/images/why-choose.jpg"
-              alt="Smiling young woman on the sofa at home, on a call on her phone"
-              width={1200}
-              height={1490}
+              src="/images/why-choose-laughing.jpg"
+              alt="Laughing woman touching her cheek"
+              width={962}
+              height={983}
               sizes="(min-width: 1024px) 34vw, 100vw"
-              className="aspect-[4/3] w-full object-cover object-[50%_40%] lg:aspect-[8/7]"
+              className="w-full"
             />
           </div>
         </div>
