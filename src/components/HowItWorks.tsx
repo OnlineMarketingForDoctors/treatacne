@@ -37,15 +37,17 @@ export function BudgetCallout({ className = "" }: { className?: string }) {
 }
 
 // Home page version: orange, the 5 steps on the left with the callout underneath, and the photo
-// on the right, sticky while the steps scroll past (same 30px spacing as the section above).
+// on the right, sticky while the steps scroll past (same spacing as the photo in the section above).
 export function HowItWorks({ className = "" }: { className?: string }) {
   return (
     <section
       id="how-it-works"
       className={`grid border-b border-brand bg-brand text-white [--rule-color:white] lg:grid-cols-2 ${className}`}
     >
-      <div className="px-5 pt-5 pb-5 max-lg:order-2 lg:order-2 lg:p-[30px]">
-        <div className="mx-auto w-full overflow-hidden rounded-lg lg:sticky lg:top-[92px] lg:max-w-[503px]">
+      {/* 73px above and below the photo, matching the Why choose photo (centred there); it
+          stays 73px below the 62px header while the steps scroll */}
+      <div className="px-5 pt-5 pb-5 max-lg:order-2 lg:order-2 lg:px-[30px] lg:py-[73px]">
+        <div className="mx-auto w-full overflow-hidden rounded-lg lg:sticky lg:top-[135px] lg:max-w-[503px]">
           {/* Generated with Nano Banana Pro from hands.jpg (same model) */}
           <Image
             data-reveal="zoom"
