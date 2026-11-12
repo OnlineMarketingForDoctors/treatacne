@@ -480,29 +480,37 @@ function ThankYou({
 }) {
   return (
     <div ref={ref} className="mx-auto max-w-[705px] scroll-mt-[90px] px-5 py-16 text-center lg:py-24">
-      <h1 className="text-h2 lg:text-h2-lg">Thank you{firstName ? `, ${firstName}` : ""}.</h1>
-      <p className="mt-8 text-big text-black">
-        We&apos;ve received your details securely. Next step: book a time for your free phone call
-        with our acne nurse.
-      </p>
-      {!photos && (
-        <p className="mt-4 text-body text-black">
-          Haven&apos;t uploaded your photos yet? Our nurse will send you a private link to upload
-          them before your call.
-        </p>
-      )}
-      <PillLink href={BOOKING_URL} className="mt-10 w-full sm:w-auto">
+      <span aria-hidden className="mx-auto flex size-[72px] items-center justify-center rounded-full bg-[#fcede6] text-brand">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+          <path d="m5 12.5 4.5 4.5L19 7.5" />
+        </svg>
+      </span>
+      <h1 className="mt-8 text-h2 lg:text-h2-lg">Thank you{firstName ? `, ${firstName}` : ""}.</h1>
+      <p className="mt-6 text-body text-black lg:text-big">We&apos;ve received your details securely.</p>
+      <p className="mt-4 text-big text-black">Next step: book your free phone call with our acne nurse.</p>
+      {/* TODO: BOOKING_URL is the Healthengine placeholder until Niyati sends the nurse calendar link */}
+      <PillLink href={BOOKING_URL} className="mt-8 h-[52px] w-full bg-brand !text-white hover:!bg-brand-soft sm:w-auto">
         Book your free nurse consultation →
       </PillLink>
-      <p className="mt-8 text-small text-black/70">
-        Nurse consultation (phone): Free · Dermatologist consultation: $365 (Medicare rebate with a
-        valid referral) · GP consultation: $99 (no Medicare rebate). Nurse consultations don&apos;t
-        include prescribing.{" "}
-        <Link href="/pricing" className="underline underline-offset-2">
-          See Pricing
-        </Link>
-        .
-      </p>
+      {!photos && (
+        <p className="mt-6 rounded-xl bg-[#fcede6] px-5 py-3 text-body text-black">
+          Haven&apos;t uploaded your photos yet? That&apos;s OK. Our nurse will email you a private link to
+          upload them before your consultation.
+        </p>
+      )}
+      <div className="mt-8 border-t border-brand/30 pt-6 text-small text-black/80">
+        <p>
+          Nurse consultation (phone): Free · Dermatologist consultation: $365 (Medicare rebate with a
+          valid referral) · GP consultation: $99 (no Medicare rebate)
+        </p>
+        <p className="mt-2">
+          Nurse consultations don&apos;t include prescribing.{" "}
+          <Link href="/pricing" className="text-brand underline underline-offset-2">
+            See Pricing
+          </Link>
+          .
+        </p>
+      </div>
     </div>
   );
 }
