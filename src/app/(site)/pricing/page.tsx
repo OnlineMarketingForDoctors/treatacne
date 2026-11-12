@@ -75,12 +75,7 @@ export default function PricingPage() {
         </p>
       </div>
 
-      <Block heading="Medicare rebates">
-        <p>
-          Dermatologist consultations attract a Medicare rebate with a valid referral from your GP
-          or our GP. GP consultations are a flat $99 with no Medicare rebate.
-        </p>
-        <p className="font-bold">Your dermatologist cost with a GP referral:</p>
+      <Block heading="Your dermatologist cost with a GP referral">
         {/* Scrolls sideways on narrow phones rather than squashing the columns */}
         <div className="-mx-5 overflow-x-auto px-5">
           <table className="w-full min-w-[520px] text-left text-small lg:text-body">
@@ -122,6 +117,13 @@ export default function PricingPage() {
           Figures shown are based on the Medicare Benefits Schedule from 1 July 2026. Rebates apply
           with a valid referral from your GP or our GP. Your rebate may be higher if you&apos;ve
           reached the Medicare Safety Net. Without a referral, the full fee applies.
+        </p>
+      </Block>
+
+      <Block heading="Medicare rebates">
+        <p>
+          Dermatologist consultations attract a Medicare rebate with a valid referral from your GP
+          or our GP. GP consultations are a flat $99 with no Medicare rebate.
         </p>
       </Block>
 
