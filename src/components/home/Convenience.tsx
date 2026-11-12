@@ -4,8 +4,9 @@ import { AustraliaMap } from "./AustraliaMap";
 export function Convenience() {
   return (
     <section className="p-5 lg:p-[30px]">
-      <div data-reveal="up" className="grid overflow-hidden rounded-2xl lg:min-h-[633px] lg:grid-cols-2">
-        <div className="flex flex-col justify-between gap-12 bg-brand p-5 pb-6 text-white lg:p-[36px]">
+      {/* One orange card: text on the left, the map on the right */}
+      <div data-reveal="up" className="grid overflow-hidden rounded-2xl bg-brand text-white lg:min-h-[633px] lg:grid-cols-2">
+        <div className="flex flex-col justify-between gap-12 p-5 pb-6 lg:p-[36px]">
           <h2 className="text-h2 lg:text-h2-lg">
             Designed for
             <br />
@@ -27,7 +28,7 @@ export function Convenience() {
           </div>
         </div>
         {/* Map of Australia: telehealth in every state and territory */}
-        <div className="flex flex-col justify-center gap-6 bg-cream px-5 py-8 lg:px-[40px] lg:py-[36px]">
+        <div className="flex flex-col justify-center gap-8 px-5 pt-4 pb-10 lg:px-[40px] lg:py-[60px]">
           <p className="flex items-center gap-2 self-start rounded-full bg-white px-4 py-1.5 text-small text-brand">
             <svg aria-hidden width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7">
               <rect x="2.5" y="6" width="13" height="12" rx="2" />
@@ -35,7 +36,7 @@ export function Convenience() {
             </svg>
             Telehealth in every state and territory
           </p>
-          <AustraliaMap className="mx-auto max-w-[560px]" />
+          <AustraliaMap className="mx-auto w-full max-w-[600px]" />
         </div>
       </div>
     </section>
