@@ -36,7 +36,7 @@ export function Faq({ limit }: { limit?: number }) {
         </p>
       </div>
 
-      <FaqItems items={items} />
+      <FaqItems items={items} fill={Boolean(limit)} />
     </section>
   );
 }

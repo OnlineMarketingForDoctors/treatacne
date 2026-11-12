@@ -6,19 +6,22 @@ import { revealDelay } from "@/lib/reveal";
 
 type Item = { question: string; answer: string; link?: { href: string; label: string } };
 
-/** Accordion items as real buttons with aria-expanded (keyboard and screen-reader friendly). */
-export function FaqItems({ items }: { items: Item[] }) {
+/**
+ * Accordion items as real buttons with aria-expanded (keyboard and screen-reader friendly).
+ * `fill` stretches the rows to the height of the panel beside them (Home page, desktop).
+ */
+export function FaqItems({ items, fill = false }: { items: Item[]; fill?: boolean }) {
   const [open, setOpen] = useState<number | null>(null);
   const baseId = useId();
 
   return (
-    <div>
+    <div className={fill ? "lg:flex lg:flex-col" : ""}>
       {items.map((faq, i) => {
         const expanded = open === i;
         const panelId = `${baseId}-panel-${i}`;
         return (
-          <div key={faq.question} data-reveal="up" style={revealDelay(Math.min(i, 4) * 90)} className="border-b border-brand">
-            <h3>
+          <div key={faq.question} data-reveal="up" style={revealDelay(Math.min(i, 4) * 90)} className={`border-b border-brand ${fill ? "lg:flex lg:flex-1 lg:flex-col" : ""}`}>
+            <h3 className={fill ? "lg:flex lg:flex-1" : ""}>
               <button
                 type="button"
                 aria-expanded={expanded}
