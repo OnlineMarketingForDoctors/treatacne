@@ -65,7 +65,7 @@ type Status =
 
 export function GetStartedForm() {
   const [stepIndex, setStepIndex] = useState(0);
-  const emptyAnswers = (): Answers => ({ signatureDate: new Date().toISOString().slice(0, 10) });
+  const emptyAnswers = (): Answers => ({});
   const [answers, setAnswers] = useState<Answers>(() => (TEST_PREFILL ? testAnswers() : emptyAnswers()));
   const [files, setFiles] = useState<Record<string, File | undefined>>({});
   const [fileErrors, setFileErrors] = useState<Record<string, string>>({});
@@ -242,7 +242,6 @@ export function GetStartedForm() {
 
   const submitting = status.kind === "submitting";
   const fields = visibleFields(step, answers);
-  const progress = ((stepIndex + 1) / steps.length) * 100;
 
   return (
     <div ref={top} className="mx-auto max-w-[705px] scroll-mt-[90px] px-5 pt-10 pb-16 lg:pt-[50px] lg:pb-[90px]">
@@ -258,26 +257,30 @@ export function GetStartedForm() {
         </div>
       )}
 
-      {/* Progress: step name and bar */}
-      <div aria-live="polite" className="flex items-baseline justify-between gap-4 text-small">
-        <span>
-          Step {stepIndex + 1} of {steps.length}: <strong className="font-bold">{step.name}</strong>
-        </span>
-        {stepIndex === 0 && <span className="text-black/60">About 3 minutes</span>}
-      </div>
-      <div className="mt-3 h-[4px] overflow-hidden rounded-full border border-brand" aria-hidden>
-        <div className="h-full bg-brand transition-[width] duration-500" style={{ width: `${progress}%` }} />
+      <div className="flex items-baseline justify-between gap-4">
+        <h1 className="text-h2 lg:text-h2-lg">Get started</h1>
+        <span className="shrink-0 text-small text-black/60">About 3 minutes</span>
       </div>
 
-      <h1 className="mt-10 text-center text-h2 lg:text-h2-lg">{step.heading}</h1>
-      {step.intro && (
-        <p className="mx-auto mt-6 max-w-[560px] text-center text-[18px] leading-[1.2] text-black lg:text-big">
-          {step.intro}
-        </p>
-      )}
-      <p className="mt-6 text-center text-note text-black/60">
+      {/* Progress: one segment per step, with its name */}
+      <p className="sr-only" aria-live="polite">
+        Step {stepIndex + 1} of {steps.length}: {step.name}
+      </p>
+      <ol aria-hidden className="mt-5 grid grid-cols-5 gap-1.5">
+        {steps.map((st, i) => (
+          <li key={st.name}>
+            <span className={`block h-[4px] rounded-full ${i <= stepIndex ? "bg-brand" : "bg-brand/20"}`} />
+            <span
+              className={`mt-1.5 hidden text-note sm:block ${i === stepIndex ? "text-brand" : "text-black/50"}`}
+            >
+              {i + 1} {st.name}
+            </span>
+          </li>
+        ))}
+      </ol>
+      <p className="mt-4 text-note text-black/60">
         Only the <span className="text-brand">*</span> questions are needed. Skip anything you&apos;re
-        unsure of: our nurse will go through it with you.
+        unsure of: our nurse will go through it with you. Your progress saves automatically.
       </p>
 
       <form
@@ -286,8 +289,10 @@ export function GetStartedForm() {
           e.preventDefault();
           next();
         }}
-        className="mt-6"
+        className="mt-6 rounded-2xl border border-brand/30 p-5 lg:p-8"
       >
+        <h2 className="text-[24px] leading-[1.15] lg:text-[28px]">{step.heading}</h2>
+        {step.intro && <p className="mt-3 text-body text-black">{step.intro}</p>}
         {/* Honeypot: hidden from people */}
         <input ref={honeypot} name="website" tabIndex={-1} autoComplete="off" aria-hidden className="hidden" />
 
@@ -302,11 +307,13 @@ export function GetStartedForm() {
         )}
 
         {stepIndex === STEP.about && (
-          <section className="mt-10">
-            <h2 className="border-b border-brand pb-2 text-small">GP referral (optional)</h2>
-            <p className="mt-4 text-small text-black">
-              Have a GP referral? Upload it here to claim a Medicare rebate on your dermatologist
-              consultation. No referral? Our doctor can refer you.
+          <section className="mt-10 rounded-2xl border border-brand bg-[#fcede6] p-5 lg:p-6">
+            <h3 className="text-big">Do you have a GP referral to a dermatologist?</h3>
+            <p className="mt-3 text-small text-black">
+              A GP referral lets you claim a Medicare rebate on dermatologist consultations. Any GP
+              referral to a dermatologist is accepted: it doesn&apos;t need to name a particular
+              dermatologist. It&apos;s usually valid for 12 months from your first dermatologist
+              consultation. No referral? That&apos;s fine: you can still book.
             </p>
             <ReferralUpload file={files.referral} error={fileErrors.referral} onFile={(f) => setFile("referral", f)} />
           </section>
@@ -395,7 +402,7 @@ function Sections({
           const sectionFields = section.fields.filter((f) => fields.includes(f));
           return (
             <section key={section.title} className="mt-10">
-              <h2 className="border-b border-brand pb-2 text-small">{section.title}</h2>
+              <h3 className="border-b border-brand/40 pb-2 text-small">{section.title}</h3>
               <div className="mt-5 grid grid-cols-1 gap-x-[30px] gap-y-5 sm:grid-cols-12">
                 {sectionFields.map((field) => (
                   <FormField
@@ -403,7 +410,6 @@ function Sections({
                     field={field}
                     answers={answers}
                     error={errors[field.id]}
-                    compact={stepIndex === STEP.about}
                     onChange={onChange}
                   />
                 ))}
@@ -522,7 +528,7 @@ function PhotoStep({
       <PhotoTips className="mt-6" />
       {photoGroups.map((group) => (
         <section key={group.title} className="mt-12">
-          <h2 className="border-b border-brand pb-2 text-small">{group.title} (optional)</h2>
+          <h3 className="sr-only">{group.title}</h3>
           <ul className="mt-6 grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-7">
             {group.slots.map((slot) => (
               <PhotoSlot
@@ -571,7 +577,8 @@ function PhotoStep({
       </div>
 
       <p className="mt-8 text-small text-black">
-        For follow-up visits, we&apos;ll send you a private link to upload new photos securely.
+        Not ready? That&apos;s OK. Submit now and our nurse will email you a private link to upload
+        them before your consultation.
       </p>
     </>
   );
@@ -587,10 +594,10 @@ function ReferralUpload({
   onFile: (file: File | undefined) => void;
 }) {
   return (
-    <div className="mt-4">
+    <div className="mt-5">
       {file ? (
-        <div className={`${inputClass} flex items-center justify-between border-[#c4c4c4]`}>
-          <span className="truncate">{file.name}</span>
+        <div className={`${inputClass} flex h-auto items-center justify-between border-[#c4c4c4] py-3`}>
+          <span className="truncate">✓ {file.name}</span>
           <button
             type="button"
             onClick={() => onFile(undefined)}
@@ -600,7 +607,7 @@ function ReferralUpload({
           </button>
         </div>
       ) : (
-        <label className="inline-flex h-[42px] cursor-pointer items-center rounded-full border border-brand px-8 text-body transition-colors hover:bg-brand hover:text-white has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-brand">
+        <label className="flex cursor-pointer items-center gap-4 rounded-xl border border-dashed border-brand bg-white p-4 transition-colors hover:bg-cream has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-brand">
           <input
             type="file"
             accept="application/pdf,image/*,.heic,.heif"
@@ -610,7 +617,17 @@ function ReferralUpload({
             }}
             className="sr-only"
           />
-          Upload referral
+          <span aria-hidden className="flex size-10 shrink-0 items-center justify-center rounded-full bg-brand text-white">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+              <path d="M12 16V4M6.5 9.5 12 4l5.5 5.5M4 20h16" />
+            </svg>
+          </span>
+          <span>
+            <span className="block text-body">Upload referral (optional)</span>
+            <span className="block text-note text-black/60">
+              Photo or PDF. GPs can also fax 03 7074 0477 or email info@treatacne.com.au
+            </span>
+          </span>
         </label>
       )}
       {error && <p className="mt-2 text-note text-red-700">{error}</p>}

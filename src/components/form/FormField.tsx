@@ -91,47 +91,100 @@ export function FormField({
   }
 
   if (field.type === "matrix") {
-    const radio = (rowId: string, option: string) => {
-      const checked = answers[rowId] === option;
+    // A table: one row per treatment, a radio per answer (desktop); stacked on phones
+    const rows = [...field.rows, ...(field.otherRow ? [field.otherRow] : [])];
+    const radio = (row: { id: string; label: string }, option: string) => {
+      const checked = answers[row.id] === option;
       return (
         <label
           key={option}
-          className={`flex min-h-[34px] cursor-pointer items-center justify-center rounded-full border border-brand px-3 py-1 text-center text-small transition-colors has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-brand ${
-            checked ? "bg-brand text-white" : "text-brand hover:bg-brand/10"
-          }`}
+          className="flex cursor-pointer items-center justify-center gap-2 text-small text-black md:min-h-[40px]"
         >
           <input
             type="radio"
-            name={rowId}
+            name={row.id}
             value={option}
             checked={checked}
+            aria-label={`${row.label}: ${option}`}
             // Clicking the chosen answer again clears it (the grid is optional)
-            onClick={() => checked && onChange(rowId, "")}
-            onChange={() => onChange(rowId, option)}
-            className="sr-only"
+            onClick={() => checked && onChange(row.id, "")}
+            onChange={() => onChange(row.id, option)}
+            className="size-[18px] cursor-pointer accent-brand"
           />
-          {option}
+          <span className="md:sr-only">{option}</span>
         </label>
       );
     };
+    const cols = "md:grid-cols-[1fr_repeat(4,92px)]";
+    return (
+      <fieldset className="col-span-full overflow-hidden rounded-xl border border-brand/30">
+        <legend className="sr-only">{field.label}</legend>
+        <div aria-hidden className={`hidden bg-cream px-4 py-2.5 text-small text-black md:grid ${cols}`}>
+          <span>{field.label}</span>
+          {field.options.map((o) => (
+            <span key={o} className="text-center">
+              {o}
+            </span>
+          ))}
+        </div>
+        <p className="bg-cream px-4 py-2.5 text-small text-black md:hidden">{field.label}</p>
+        <div className="divide-y divide-brand/20">
+          {rows.map((row) => {
+            const isOther = field.otherRow && row.id === field.otherRow.id;
+            return (
+              <div
+                key={row.id}
+                role="radiogroup"
+                aria-label={row.label}
+                className={`grid gap-2 px-4 py-3 md:items-center md:gap-0 md:py-1 ${cols}`}
+              >
+                {isOther ? (
+                  <span className="flex items-center gap-3 text-small text-black">
+                    {row.label}:
+                    <input
+                      type="text"
+                      aria-label="Other treatment you've tried"
+                      placeholder="Type what you tried"
+                      value={String(answers[field.otherRow!.textId] ?? "")}
+                      onChange={(e) => onChange(field.otherRow!.textId, e.target.value)}
+                      className={`${inputClass} h-9 max-w-[260px] border-[#c4c4c4] text-small`}
+                    />
+                  </span>
+                ) : (
+                  <span className="text-small text-black">{row.label}</span>
+                )}
+                <div className="flex flex-wrap gap-x-5 gap-y-1 md:contents">
+                  {field.options.map((o) => radio(row, o))}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </fieldset>
+    );
+  }
+
+  if (field.type === "radios") {
     return (
       <fieldset className="col-span-full">
         <legend className="mb-3 text-small text-black">{field.label}</legend>
-        <div className="divide-y divide-brand/30 border-y border-brand/30">
-          {field.rows.map((row) => (
-            <div
-              key={row.id}
-              role="radiogroup"
-              aria-label={row.label}
-              className="grid gap-2 py-3 md:grid-cols-[1fr_auto] md:items-center md:gap-6"
-            >
-              <span className="text-small text-black">{row.label}</span>
-              <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 md:w-[440px]">
-                {field.options.map((o) => radio(row.id, o))}
-              </div>
-            </div>
+        <div className="space-y-2">
+          {field.options.map((o) => (
+            <label key={o} className="flex cursor-pointer items-start gap-3 text-body text-black">
+              <input
+                type="radio"
+                name={field.id}
+                value={o}
+                checked={value === o}
+                onClick={() => value === o && onChange(field.id, "")}
+                onChange={() => onChange(field.id, o)}
+                className="mt-1 size-[18px] shrink-0 cursor-pointer accent-brand"
+              />
+              {o}
+            </label>
           ))}
         </div>
+        {field.help && <p className="mt-2 text-note text-black/60">{field.help}</p>}
       </fieldset>
     );
   }
@@ -233,6 +286,7 @@ export function FormField({
             </option>
           ))}
         </select>
+        {field.help && <p className="mt-1.5 text-note text-black/60">{field.help}</p>}
         {errorText}
       </div>
     );

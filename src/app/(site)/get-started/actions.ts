@@ -104,7 +104,8 @@ export async function startSubmission(input: unknown): Promise<StartResult> {
     mobile: String(answers.mobile).trim(),
     email: typeof answers.email === "string" && answers.email.trim() ? answers.email.trim() : null,
     under_18: isUnder18(answers),
-    data: quiz ? { ...answers, quiz } : answers,
+    // The typed signature is dated by the server
+    data: { ...answers, signedAt: new Date().toISOString(), ...(quiz ? { quiz } : {}) },
     files: fileRecords,
   });
   if (error) {

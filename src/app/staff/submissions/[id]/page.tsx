@@ -51,8 +51,9 @@ export default async function SubmissionPage({ params }: { params: Promise<{ id:
   const { data: staff } = await supabase.from("staff_members").select("user_id, name");
   const staffNames = new Map((staff ?? []).map((s) => [s.user_id, s.name]));
 
-  const { quiz, ...answers } = row.data as Answers & {
+  const { quiz, signedAt, ...answers } = row.data as Answers & {
     quiz?: { answers: Record<string, string[]>; result: string };
+    signedAt?: string;
   };
   // Answers from an earlier version of the form, so nothing is hidden from staff
   const legacy = Object.entries(answers).filter(([key]) => !fieldIds.has(key));
@@ -83,6 +84,7 @@ export default async function SubmissionPage({ params }: { params: Promise<{ id:
           </h1>
           <p className="mt-2 text-small text-black/70">
             Age {age ?? "-"} · Mobile {row.mobile} · Received {formatDateTime(row.created_at)}
+            {signedAt && <> · Signed {formatDateTime(signedAt)}</>}
           </p>
           {qol && (
             <p className="mt-2 text-small">

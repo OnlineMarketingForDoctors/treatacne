@@ -48,11 +48,11 @@ export function PhotoSlot({
   return (
     <li className="flex flex-col text-center">
       <p className="text-small text-black">{slot.label}</p>
-      {slot.hint && <p className="text-note text-black/60">{slot.hint}</p>}
+      <p className="min-h-[2.6em] text-note text-black/60">{slot.hint}</p>
 
       <label
         htmlFor={inputId}
-        className="group relative mx-auto mt-3 block aspect-square w-full max-w-[220px] cursor-pointer overflow-hidden rounded-2xl border border-brand/40 bg-cream has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-brand"
+        className="group relative mx-auto mt-3 block aspect-square w-full max-w-[220px] cursor-pointer overflow-hidden rounded-2xl border border-dashed border-brand bg-cream has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-brand"
       >
         <input
           id={inputId}
@@ -84,14 +84,12 @@ export function PhotoSlot({
             {file.name}
           </span>
         ) : (
-          <span className="absolute inset-0 flex flex-col items-center justify-center gap-2">
-            <span className="flex size-14 items-center justify-center rounded-full bg-brand text-white shadow-md transition-transform group-hover:scale-105">
-              <svg aria-hidden width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
-                <path d="M4 8h3l2-2.5h6L17 8h3v11H4z" />
-                <circle cx="12" cy="13" r="3.5" />
-              </svg>
-            </span>
-            <span className="rounded-full bg-white/85 px-3 py-0.5 text-note text-brand">Add photo</span>
+          <span className="absolute top-2 right-2 flex size-10 items-center justify-center rounded-full bg-brand text-white shadow-md transition-transform group-hover:scale-105">
+            <svg aria-hidden width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7">
+              <path d="M4 8h3l2-2.5h6L17 8h3v11H4z" />
+              <circle cx="12" cy="13" r="3.5" />
+            </svg>
+            <span className="sr-only">Add photo</span>
           </span>
         )}
         {file && (
