@@ -9,7 +9,7 @@ export function QuizCard() {
       >
         <div className="max-w-[460px] text-h2 lg:text-h2-lg">
           <h2>Find the right care for your skin.</h2>
-          <p className="mt-3 lg:mt-2">Answer 7 quick questions to see where to start.</p>
+          <p className="mt-3 lg:mt-2">7 quick questions. A guide only, not a diagnosis.</p>
         </div>
         {/* Solid orange button on the light background */}
         <PillLink
