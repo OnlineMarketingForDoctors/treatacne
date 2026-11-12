@@ -23,11 +23,7 @@ export function Faq({
 
   return (
     <section className="grid border-t border-brand lg:grid-cols-2">
-      <div
-        className={`flex flex-col justify-between gap-10 bg-brand px-[30px] py-8 text-white lg:py-[30px] ${
-          aside ? "xl:grid xl:grid-cols-[1fr_minmax(0,300px)] xl:grid-rows-[1fr_auto] xl:gap-x-8" : ""
-        }`}
-      >
+      <div className="relative flex flex-col justify-between gap-10 bg-brand px-[30px] py-8 text-white lg:py-[30px]">
         <div data-reveal="up" className="lg:sticky lg:top-[92px]">
           <Heading className="text-h2 lg:text-h2-lg">
             Frequently Asked
@@ -43,8 +39,14 @@ export function Faq({
             </Link>
           )}
         </div>
-        {aside && <div className="xl:col-start-2 xl:row-span-2 xl:row-start-1 xl:self-start">{aside}</div>}
-        <p className="text-body xl:col-start-1 xl:row-start-2">
+        {/* On wide screens the card fills the strip from the Shop section's column line (34.7% of
+            the page = 69.4% of this half-width panel) to the panel's edge, full height */}
+        {aside && (
+          <div className="min-[1440px]:absolute min-[1440px]:inset-y-[30px] min-[1440px]:right-[30px] min-[1440px]:left-[69.4%]">
+            {aside}
+          </div>
+        )}
+        <p className="text-body">
           Need more support?{" "}
           <Link href="/contact" className="underline underline-offset-2">
             Contact Us
