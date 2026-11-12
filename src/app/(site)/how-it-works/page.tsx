@@ -61,13 +61,22 @@ export default function HowItWorksPage() {
                 key={step.title}
                 data-reveal="up"
                 style={revealDelay(i * 90)}
-                className={`flex flex-col rounded-2xl p-5 lg:p-6 ${
+                className={`relative flex flex-col rounded-2xl p-5 lg:p-6 ${
                   highlight ? "bg-brand text-white" : "border border-brand bg-white"
                 }`}
               >
                 <span aria-hidden className="text-[40px] leading-none font-light">
                   {i + 1}
                 </span>
+                {highlight && (
+                  <Image
+                    src="/images/dr-niyati-sharma-avatar.jpg"
+                    alt="Dr Niyati Sharma, dermatologist"
+                    width={160}
+                    height={160}
+                    className="absolute top-4 right-4 size-16 rounded-full border-2 border-white object-cover lg:top-5 lg:right-5"
+                  />
+                )}
                 <h3 className="mt-6 text-body font-bold">{step.title}</h3>
                 <p className={`mt-3 text-body ${highlight ? "" : "text-black"}`}>{step.body}</p>
                 {extras[i] && (
