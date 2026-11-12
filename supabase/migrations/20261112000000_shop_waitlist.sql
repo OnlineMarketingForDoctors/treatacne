@@ -13,3 +13,6 @@ grant select on public.shop_waitlist to authenticated;
 
 create policy "staff can read the waitlist" on public.shop_waitlist
   for select to authenticated using (private.is_staff());
+
+-- The server writes with the secret key (service_role)
+grant select, insert, update on public.shop_waitlist to service_role;
