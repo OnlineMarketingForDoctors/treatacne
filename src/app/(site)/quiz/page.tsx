@@ -13,7 +13,7 @@ export default function QuizPage() {
   return (
     <PageLayout
       title="Find the right care for your skin"
-      intro={<p>Answer 7 quick questions to see where to start. It&apos;s optional, and you can get started at any time.</p>}
+      intro={<p>7 quick questions. A guide only, not a diagnosis.</p>}
     >
       <Quiz />
     </PageLayout>
