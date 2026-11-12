@@ -3,50 +3,54 @@
 import Link from "next/link";
 import { useState } from "react";
 
-// TODO: connect to the email platform (e.g. Klaviyo) once chosen.
+// TODO: connect to the email platform once chosen.
 // For now this only validates the address and shows a confirmation.
 export function NewsletterForm() {
   const [status, setStatus] = useState<"idle" | "done">("idle");
 
   return (
-    <form
-      onSubmit={(e) => {
-        e.preventDefault();
-        setStatus("done");
-      }}
-      className="flex h-full flex-col justify-between gap-12 lg:gap-0"
-    >
-      <label htmlFor="newsletter-email" className="text-body">
-        Get Our Latest Updates
-      </label>
-      {status === "done" ? (
-        <p role="status" className="pb-3 text-big lg:text-[28px]">
-          Thanks, you&apos;re subscribed.
-        </p>
-      ) : (
-        <div className="flex items-end gap-6 border-b border-white pb-2 lg:border-b-0 lg:pb-3">
-          <input
-            id="newsletter-email"
-            type="email"
-            required
-            autoComplete="email"
-            placeholder="Enter Email Address"
-            className="min-w-0 flex-1 bg-transparent text-big text-white outline-none placeholder:text-brand-muted lg:max-w-[300px] lg:flex-none lg:text-[24px]"
-          />
-          <button type="submit" className="text-small tracking-[0.06em] uppercase hover:underline">
-            Submit
-          </button>
-        </div>
-      )}
-      {status !== "done" && (
-        <p className="mt-3 text-note text-white/85 lg:mt-0 lg:pb-3">
+    <div className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-center lg:gap-12">
+      <div>
+        <h2 className="text-[26px] leading-[1.15] lg:text-[32px]">Get our latest updates</h2>
+        <p className="mt-3 max-w-[520px] text-small text-white/90">
           By joining you agree to receive emails from Treat:Acne. Unsubscribe anytime.{" "}
           <Link href="/privacy-policy" className="underline underline-offset-2">
             Privacy Policy
           </Link>
           .
         </p>
+      </div>
+      {status === "done" ? (
+        <p role="status" className="text-big">
+          Thanks, you&apos;re subscribed.
+        </p>
+      ) : (
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            setStatus("done");
+          }}
+          className="flex flex-col gap-3 sm:flex-row"
+        >
+          <label htmlFor="newsletter-email" className="sr-only">
+            Email address
+          </label>
+          <input
+            id="newsletter-email"
+            type="email"
+            required
+            autoComplete="email"
+            placeholder="Enter email address"
+            className="h-[52px] min-w-0 rounded-full bg-white px-6 text-body text-black outline-none placeholder:text-black/50 focus-visible:ring-2 focus-visible:ring-black sm:flex-1 lg:w-[380px] lg:flex-none"
+          />
+          <button
+            type="submit"
+            className="h-[52px] rounded-full bg-[#2a1d17] px-9 text-body text-white transition-colors hover:bg-black"
+          >
+            Submit
+          </button>
+        </form>
       )}
-    </form>
+    </div>
   );
 }

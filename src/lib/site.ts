@@ -47,26 +47,31 @@ export const navLinks = [
 
 export const footerLinks = [
   { href: "/about", label: "About" },
-  { href: "/how-it-works", label: "How It Works" },
+  { href: "/how-it-works", label: "How it works" },
   { href: "/pricing", label: "Pricing" },
   { href: "/severe-persistent-acne", label: "Severe & persistent acne" },
   { href: "/faq", label: "FAQ" },
   { href: "/learn", label: "Learn" },
-  { href: "/quiz", label: "Acne quiz" },
 ];
 
 export const footerSecondaryLinks = [
   { href: "/photo-guide", label: "Photo guide" },
   { href: "/shop", label: "Shop" },
   { href: "/contact", label: "Contact" },
-  { href: "/feedback-and-complaints", label: "Feedback & complaints" },
-  { href: "/accessibility", label: "Accessibility" },
+  { href: "/for-referring-doctors", label: "For referring doctors" },
   { href: "/privacy-policy", label: "Privacy Policy" },
   { href: "/terms-of-use", label: "Terms of Use" },
+  { href: "/feedback-and-complaints", label: "Feedback & complaints" },
+  { href: "/accessibility", label: "Accessibility" },
 ];
 
-// TODO: add the clinic's Instagram and LinkedIn profile URLs (due from Niyati). Hidden until then.
-export const socialLinks: { href: string; label: string }[] = [];
+// TODO: the clinic's profile URLs (due from Niyati). Each button shows in the footer once its
+// URL is filled in.
+export const socialLinks: { href: string; label: string }[] = [
+  { href: "", label: "Instagram" },
+  { href: "", label: "Facebook" },
+  { href: "", label: "LinkedIn" },
+];
 
 export const crisisLines = [
   { name: "Lifeline", number: "13 11 14", tel: "131114", note: "24/7" },

@@ -3,11 +3,13 @@ import { faqs } from "@/lib/site";
 import { FaqItems } from "@/components/FaqItems";
 
 /**
- * FAQ accordion. The home page shows the first four with a link to the full FAQ page;
- * on the FAQ page itself (no limit) the heading is the page's h1.
+ * FAQ accordion. The home page shows a short list (the first `limit`, plus any questions named
+ * in `include`) with a link to the full FAQ page; on the FAQ page itself the heading is the h1.
  */
-export function Faq({ limit }: { limit?: number }) {
-  const items = limit ? faqs.slice(0, limit) : faqs;
+export function Faq({ limit, include = [] }: { limit?: number; include?: string[] }) {
+  const items = limit
+    ? [...faqs.slice(0, limit), ...faqs.filter((f, i) => i >= limit && include.includes(f.question))]
+    : faqs;
   const Heading = limit ? "h2" : "h1";
 
   return (
