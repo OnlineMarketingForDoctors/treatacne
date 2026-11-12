@@ -25,8 +25,7 @@ export default function Home() {
       <DermatologistPlan />
       <Convenience />
       <ShopTeaser />
-      <Faq limit={4} include={["How do I pay?"]} />
-      <LearnCard />
+      <Faq limit={4} include={["How do I pay?"]} aside={<LearnCard />} />
       <FinalCta />
     </>
   );

@@ -1,24 +1,17 @@
 import { PillLink } from "@/components/Button";
 import { COURSE_PAGE } from "@/lib/site";
 
-// "Learn more about acne" card under the Home FAQ, pointing to the course.
+// "Learn more about acne" course card, shown inside the orange Home FAQ panel.
 export function LearnCard() {
   return (
-    <section className="p-5 lg:p-[30px]">
-      <div
-        data-reveal="up"
-        className="flex flex-col justify-between gap-8 p-5 lg:flex-row lg:items-end lg:p-[33px]"
-      >
-        <div className="max-w-[620px]">
-          <h2 className="text-h2 lg:text-h2-lg">Learn more about acne</h2>
-          <p className="mt-4 text-body text-black lg:text-big">
-            Understand your skin, build a routine that works, and get the most from your treatment.
-          </p>
-        </div>
-        <PillLink href={COURSE_PAGE} className="w-full shrink-0 lg:w-[245px]">
-          See the course →
-        </PillLink>
-      </div>
-    </section>
+    <div data-reveal="up" className="rounded-2xl bg-white p-5 text-black lg:p-6">
+      <h3 className="text-[22px] leading-[1.15] text-brand lg:text-[26px]">Learn more about acne</h3>
+      <p className="mt-3 text-small lg:text-body">
+        Understand your skin, build a routine that works, and get the most from your treatment.
+      </p>
+      <PillLink href={COURSE_PAGE} className="mt-5 w-full">
+        See the course →
+      </PillLink>
+    </div>
   );
 }
