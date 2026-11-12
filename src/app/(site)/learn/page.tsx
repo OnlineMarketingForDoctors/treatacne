@@ -1,71 +1,109 @@
 import type { Metadata } from "next";
+import Image from "next/image";
+import { FinalCta } from "@/components/FinalCta";
 import { PillLink } from "@/components/Button";
-import { Block, PageLayout } from "@/components/PageLayout";
+import { revealDelay } from "@/lib/reveal";
 import { COURSE_URL } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Mastering Acne online course",
   description:
-    "Mastering Acne, an online course by dermatologist Dr Niyati Sharma: how acne works, how to build a routine that suits your skin, and how to get the most from treatment.",
+    "Mastering Acne, an online course by dermatologist Dr Niyati Sharma: 11 self-paced modules on how acne works, building a routine that suits your skin, and getting the most from treatment. $49.",
   alternates: { canonical: "/learn" },
 };
 
-// TODO: course outline (modules, length, access period) due from Niyati.
-const outline = [
-  { label: "Created by", value: "Dr Niyati Sharma, Dermatologist (FACD)" },
-  { label: "Modules", value: "[Module list to come]" },
-  { label: "Length", value: "[Course length to come]" },
-  { label: "Access", value: "[How long access lasts to come]" },
+// Module titles from the Mastering Acne course outline (check they match Kajabi exactly).
+// "Patient success stories" is left off the website: it would count as testimonials (AHPRA).
+const modules = [
+  { title: "Introduction to acne", body: "What acne is, the different types, and what causes and triggers it." },
+  { title: "Understanding your skin", body: "How your skin works, and the role of genes and hormones." },
+  { title: "Acne myths vs facts", body: "Common misconceptions, and what the evidence really says." },
+  { title: "A personalised skincare routine", body: "Choosing products, cleansing and moisturising, and exfoliating safely." },
+  { title: "Lifestyle and diet", body: "Nutrition, stress and sleep, and how they affect your skin." },
+  { title: "Acne and mental health", body: "The emotional impact of acne, building confidence, and getting support." },
+  { title: "When to seek professional help", body: "Signs your acne needs medical care, and how treatment works." },
+  { title: "Skincare tips for acne-prone skin", body: "Makeup, sun protection, and managing marks and scarring." },
+  { title: "Acne through life stages", body: "Teenage acne, adult acne and hormonal acne." },
+  { title: "Tracking progress and setting goals", body: "Monitoring your skin and creating your own acne action plan." },
+  { title: "Review and next steps", body: "A recap, ongoing support and resources." },
 ];
 
 export default function LearnPage() {
   return (
-    <PageLayout
-      title="Mastering Acne: our online acne course."
-      intro={
-        <p>
-          Understand your skin, build a routine that works, and get the most from your treatment.
-          Created by our dermatologist Dr Niyati Sharma, at your own pace.
-        </p>
-      }
-    >
-      <Block heading="Course outline">
-        <dl className="divide-y divide-brand/40">
-          {outline.map((row) => (
-            <div key={row.label} className="grid gap-1 py-3 sm:grid-cols-[160px_1fr]">
-              <dt className="text-brand">{row.label}</dt>
-              <dd>{row.value}</dd>
-            </div>
-          ))}
-        </dl>
-      </Block>
+    <>
+      <section className="grid grid-cols-1 items-center gap-8 px-5 pt-10 pb-12 lg:grid-cols-2 lg:gap-[40px] lg:px-[30px] lg:pt-[60px] lg:pb-[60px]">
+        <div>
+          <p data-reveal="up" className="text-small tracking-[0.12em] uppercase">
+            Online course
+          </p>
+          <h1 data-reveal="up" className="mt-4 text-h1 lg:text-h1-lg">
+            Mastering Acne
+          </h1>
+          <p data-reveal="up" style={revealDelay(100)} className="mt-6 max-w-[560px] text-body text-black lg:text-big">
+            Created by dermatologist Dr Niyati Sharma. Learn how acne works, how to build a routine
+            that suits your skin, and how to get the most from treatment, at your own pace.
+          </p>
+          <div data-reveal="up" style={revealDelay(200)}>
+            {/* Public price only: patient pricing lives in Kajabi as single-use codes (AHPRA) */}
+            <p className="mt-8 text-[44px] leading-none lg:text-[56px]">$49</p>
+            <p className="mt-5 max-w-[520px] text-small text-black/80">
+              Already a Treat:Acne patient? Patient pricing is available after a completed
+              consultation. Codes are single-use and not redeemable for cash.
+            </p>
+            <p className="mt-2 max-w-[520px] text-small text-black/80">
+              The course is non-refundable once purchased, except where required by the Australian
+              Consumer Law.
+            </p>
+            {/* TODO: Kajabi checkout link (due from Niyati) */}
+            <PillLink href={COURSE_URL} className="mt-7 w-full bg-brand !text-white hover:!bg-brand-soft sm:w-auto">
+              Enrol now →
+            </PillLink>
+          </div>
+        </div>
+        <div className="relative aspect-[1410/1210] overflow-hidden rounded-2xl">
+          <Image
+            src="/images/phone.jpg"
+            alt="Person holding a phone showing the Treat:Acne app"
+            fill
+            priority
+            sizes="(min-width: 1024px) 50vw, 100vw"
+            data-reveal="zoom"
+            className="object-cover"
+          />
+        </div>
+      </section>
 
-      <div data-reveal="up" className="border-t border-brand py-[30px]">
-        <p className="text-h2 lg:text-h2-lg">$49</p>
-        <p className="mt-3 text-body text-black">
-          Already a Treat:Acne patient? Patient pricing is available after a completed
-          consultation. Not redeemable for cash.
+      <section className="border-t border-brand px-5 py-12 lg:px-[30px] lg:py-[60px]">
+        <h2 data-reveal="up" className="text-h2 lg:text-h2-lg">
+          What&apos;s in the course
+        </h2>
+        <ol className="mt-8 grid gap-x-[40px] md:grid-cols-2">
+          {modules.map((m, i) => (
+            <li
+              key={m.title}
+              data-reveal="up"
+              style={revealDelay((i % 2) * 80)}
+              className="grid grid-cols-[40px_1fr] gap-x-3 border-b border-brand/40 py-4"
+            >
+              <span aria-hidden className="text-big">
+                {i + 1}
+              </span>
+              <div>
+                <h3 className="text-body text-black">{m.title}</h3>
+                <p className="mt-1 text-small text-black/70">{m.body}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+        {/* TODO: add the total course length once known */}
+        <p className="mt-6 text-small text-black/80">
+          11 modules · Self-paced video and written lessons · By Dr Niyati Sharma, Dermatologist
+          (FACD). General education only, not medical advice. If your acne is painful, leaving marks
+          or scars, or not improving, we recommend booking a consultation.
         </p>
-        {/* TODO: Kajabi checkout link (due from Niyati) */}
-        <PillLink href={COURSE_URL} className="mt-6 w-full sm:w-auto">
-          Enrol now →
-        </PillLink>
-        <ul className="mt-6 space-y-2 text-small text-black/70">
-          <li>
-            The course is non-refundable once purchased, except where required by the Australian
-            Consumer Law.
-          </li>
-          <li>
-            Patient pricing is available after a completed consultation. Codes are single-use and
-            not redeemable for cash.
-          </li>
-          <li>The course is general education only and is not medical advice.</li>
-          <li>
-            If your acne is painful, leaving marks or scars, or not improving, we recommend booking a
-            consultation.
-          </li>
-        </ul>
-      </div>
-    </PageLayout>
+      </section>
+
+      <FinalCta />
+    </>
   );
 }
