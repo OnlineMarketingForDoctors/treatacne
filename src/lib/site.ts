@@ -116,24 +116,24 @@ export const goodToKnow =
 
 export const whyChoose = [
   {
-    title: "Dermatologist-led care.",
+    title: "Designed by a dermatologist",
     body: "Our treatment pathways are designed by a specialist dermatologist.",
   },
   {
-    title: "From home, Australia-wide.",
-    body: "Phone and video consultations, with no referral or clinic visit needed. Treatment is posted to you or collected locally.",
+    title: "Personalised treatment",
+    body: "A plan based on your skin and what you've already tried, with support throughout.",
   },
   {
-    title: "Personalised treatment.",
-    body: "A plan based on your skin and what you've already tried.",
+    title: "Real follow-up",
+    body: "Regular reviews, with nurse support between visits.",
   },
   {
-    title: "Supported throughout.",
-    body: "Real follow-up, with nurse support between appointments, so you're never managing it alone.",
-  },
-  {
-    title: "The right care at the right price.",
+    title: "Clear fees",
     body: "A free nurse consultation to start, with clear fees before you book.",
+  },
+  {
+    title: "No referral or clinic visit needed",
+    body: "Care from home, anywhere in Australia.",
   },
 ];
 
