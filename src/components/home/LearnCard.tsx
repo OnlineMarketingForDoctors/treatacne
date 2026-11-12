@@ -7,7 +7,7 @@ export function LearnCard() {
     <section className="p-5 lg:p-[30px]">
       <div
         data-reveal="up"
-        className="flex flex-col justify-between gap-8 rounded-2xl bg-cream p-5 lg:flex-row lg:items-end lg:p-[33px]"
+        className="flex flex-col justify-between gap-8 p-5 lg:flex-row lg:items-end lg:p-[33px]"
       >
         <div className="max-w-[620px]">
           <h2 className="text-h2 lg:text-h2-lg">Learn more about acne</h2>

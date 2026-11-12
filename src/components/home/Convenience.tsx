@@ -1,5 +1,5 @@
-import Image from "next/image";
 import { PillLink } from "@/components/Button";
+import { AustraliaMap } from "./AustraliaMap";
 
 export function Convenience() {
   return (
@@ -26,15 +26,16 @@ export function Convenience() {
             </PillLink>
           </div>
         </div>
-        <div className="relative h-[260px] overflow-hidden lg:h-auto">
-          <Image
-            src="/images/phone.jpg"
-            alt="Person holding a phone showing the Treat:Acne app"
-            fill
-            sizes="(min-width: 1024px) 50vw, 100vw"
-            data-reveal="zoom"
-            className="object-cover"
-          />
+        {/* Map of Australia: telehealth in every state and territory */}
+        <div className="flex flex-col justify-center gap-6 bg-cream px-5 py-8 lg:px-[40px] lg:py-[36px]">
+          <p className="flex items-center gap-2 self-start rounded-full bg-white px-4 py-1.5 text-small text-brand">
+            <svg aria-hidden width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7">
+              <rect x="2.5" y="6" width="13" height="12" rx="2" />
+              <path d="m15.5 10.5 6-3.5v10l-6-3.5" />
+            </svg>
+            Telehealth in every state and territory
+          </p>
+          <AustraliaMap className="mx-auto max-w-[560px]" />
         </div>
       </div>
     </section>
