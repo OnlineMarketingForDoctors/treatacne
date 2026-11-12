@@ -1,8 +1,8 @@
-// Dummy answers and photos for test submissions of the Get Started form.
+// Dummy answers for test submissions of the Get Started form.
 // TURN OFF BEFORE LAUNCH: set TEST_PREFILL to false.
 
 import { cdlqiQuestions, dlqiQuestions } from "@/lib/dlqi";
-import { photoGroups, type Answers } from "@/lib/intake";
+import type { Answers } from "@/lib/intake";
 
 /** Pre-fills the Get Started form with dummy data. Must be false on the live site. */
 export const TEST_PREFILL = true;
@@ -69,27 +69,4 @@ export function testAnswers(): Answers {
     signatureName: "Test Patient",
     signatureRelationship: "Mother",
   };
-}
-
-/** Small labelled placeholder JPEGs for the main photo slots (browser only) */
-export async function testFiles(): Promise<Record<string, File>> {
-  const slots = photoGroups.flatMap((g) => g.slots).filter((s) => s.id !== "body");
-  const files: Record<string, File> = {};
-  for (const slot of slots) {
-    const canvas = document.createElement("canvas");
-    canvas.width = canvas.height = 400;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) continue;
-    ctx.fillStyle = "#fcede6";
-    ctx.fillRect(0, 0, 400, 400);
-    ctx.fillStyle = "#e8541e";
-    ctx.textAlign = "center";
-    ctx.font = "bold 28px sans-serif";
-    ctx.fillText("TEST PHOTO", 200, 185);
-    ctx.font = "22px sans-serif";
-    ctx.fillText(slot.label, 200, 225);
-    const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/jpeg", 0.8));
-    if (blob) files[slot.id] = new File([blob], `test-${slot.id}.jpg`, { type: "image/jpeg" });
-  }
-  return files;
 }

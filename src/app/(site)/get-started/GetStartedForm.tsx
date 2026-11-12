@@ -23,7 +23,7 @@ import {
   type Answers,
 } from "@/lib/intake";
 import { BOOKING_URL } from "@/lib/site";
-import { TEST_PREFILL, testAnswers, testFiles } from "@/lib/testPrefill";
+import { TEST_PREFILL, testAnswers } from "@/lib/testPrefill";
 import { clearDraft, loadDraft, saveDraft } from "@/lib/formDraft";
 import { clearQuiz, loadQuiz, type SavedQuiz } from "@/lib/quizStore";
 import { completeSubmission, startSubmission } from "./actions";
@@ -83,9 +83,7 @@ export function GetStartedForm() {
     const savedQuiz = loadQuiz();
     // eslint-disable-next-line react-hooks/set-state-in-effect -- one-off restore after hydration
     setQuiz(savedQuiz);
-    if (TEST_PREFILL) {
-      void testFiles().then(setFiles);
-    } else {
+    if (!TEST_PREFILL) {
       const draft = loadDraft();
       if (draft) {
         setAnswers({ ...emptyAnswers(), ...draft.answers });
@@ -248,8 +246,8 @@ export function GetStartedForm() {
       {TEST_PREFILL && (
         <div className="mb-8 flex flex-wrap items-center justify-between gap-3 rounded-[10px] border border-dashed border-brand bg-[#fcede6] px-4 py-3 text-small">
           <span>
-            <strong className="font-bold">Test mode:</strong> this form is pre-filled with dummy data and
-            placeholder photos.
+            <strong className="font-bold">Test mode:</strong> this form is pre-filled with dummy data. Add
+            photos yourself if you want to test uploads.
           </span>
           <button type="button" onClick={clearAll} className="text-brand underline underline-offset-2">
             Clear test data
