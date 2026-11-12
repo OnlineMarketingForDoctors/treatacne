@@ -95,11 +95,17 @@ export default function HowItWorksPage() {
 
         <dl className="mt-10 grid gap-8 lg:grid-cols-2">
           <div data-reveal="up">
-            <dt className="text-[22px] leading-[1.2] lg:text-[26px]">Ongoing care</dt>
+            <dt className="flex items-center gap-3 text-[22px] leading-[1.2] lg:text-[26px]">
+              <svg aria-hidden width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round" className="shrink-0"><path d="M20 11a8 8 0 0 0-14.5-4.5M4 4v3h3" /><path d="M4 13a8 8 0 0 0 14.5 4.5M20 20v-3h-3" /></svg>
+              Ongoing care
+            </dt>
             <dd className="mt-3 text-body text-black">{ongoingCare}</dd>
           </div>
           <div data-reveal="up" style={revealDelay(100)}>
-            <dt className="text-[22px] leading-[1.2] lg:text-[26px]">Good to know</dt>
+            <dt className="flex items-center gap-3 text-[22px] leading-[1.2] lg:text-[26px]">
+              <svg aria-hidden width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round" className="shrink-0"><circle cx="12" cy="12" r="9" /><path d="M12 11v5" /><path d="M12 7.6v.1" /></svg>
+              Good to know
+            </dt>
             <dd className="mt-3 text-body text-black">{goodToKnow}</dd>
           </div>
         </dl>
