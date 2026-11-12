@@ -2,8 +2,6 @@
 
 import Link from "next/link";
 import { useRef, useState } from "react";
-import { CourseLine } from "@/components/CourseLine";
-import { PillLink } from "@/components/Button";
 import { COURSE_PAGE, GET_STARTED_URL } from "@/lib/site";
 import { saveQuiz, type QuizAnswers, type QuizResult } from "@/lib/quizStore";
 import { GP_OPTION, NOT_READY, quizQuestions, type Question } from "@/lib/quiz";
@@ -129,26 +127,46 @@ const copy: Record<Exclude<QuizResult, "D">, { heading: string; body: string }> 
   },
 };
 
+const card = "mt-[30px] rounded-2xl border bg-white p-6 lg:p-[33px]";
+const box = "mt-5 rounded-xl px-4 py-3 text-body text-black";
+const primary = "mt-8 flex h-[48px] w-full items-center justify-center rounded-full bg-brand px-8 text-body text-white transition-colors hover:bg-brand-soft";
+const small = "mt-5 text-note text-black/70";
+
+function NotReady() {
+  return (
+    <p className="mt-3 text-note text-black/70">
+      Not ready?{" "}
+      <Link href={COURSE_PAGE} className="text-brand underline underline-offset-2">
+        See the course →
+      </Link>
+    </p>
+  );
+}
+
 function Result({ result, reason }: { result: QuizResult; reason?: string }) {
   if (result === "D") {
     return (
-      <div className="mt-[30px] rounded-2xl bg-brand p-6 text-white lg:p-[33px]">
-        <h2 className="text-h2 lg:text-h2-lg">Start with our dermatologist&apos;s online course.</h2>
-        <p className="mt-6 text-body lg:text-big">
+      <div className={`${card} border-brand`}>
+        <h2 className="text-[26px] leading-[1.15] lg:text-[32px]">
+          Start with our dermatologist&apos;s online course.
+        </h2>
+        <p className="mt-4 text-body text-black">
           Not ready to see someone yet? That&apos;s okay. Mastering Acne, created by our
           dermatologist Dr Niyati Sharma, explains how acne works, how to build a routine that suits
           your skin, and how to get the most from treatment, at your own pace.
         </p>
-        <p className="mt-4 text-body font-bold">Mastering Acne online course: $49</p>
-        <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-6">
-          <PillLink href={COURSE_PAGE} tone="light" className="w-full bg-white !text-brand hover:!bg-cream sm:w-auto">
-            See the course →
-          </PillLink>
-          <Link href={GET_STARTED_URL} className="text-body underline underline-offset-2">
-            Or book your free nurse consultation
-          </Link>
-        </div>
-        <p className="mt-6 text-note text-white/85">
+        {/* Only the public price here (AHPRA: no patient discounts on the website) */}
+        <p className={`${box} bg-[#fcede6]`}>Mastering Acne online course: $49</p>
+        <Link href={COURSE_PAGE} className={primary}>
+          See the course →
+        </Link>
+        <Link
+          href={GET_STARTED_URL}
+          className="mt-3 flex h-[48px] w-full items-center justify-center rounded-full border border-brand px-8 text-body transition-colors hover:bg-brand hover:text-white"
+        >
+          Or book your free nurse consultation
+        </Link>
+        <p className={small}>
           If your acne is painful, leaving marks or scars, or not improving, we recommend booking a
           consultation. The course is general education only and is not medical advice.
         </p>
@@ -158,31 +176,34 @@ function Result({ result, reason }: { result: QuizResult; reason?: string }) {
 
   const { heading, body } = copy[result];
   return (
-    <div className="mt-[30px] rounded-2xl bg-brand p-6 text-white lg:p-[33px]">
-      <h2 className="text-h2 lg:text-h2-lg">{heading}</h2>
-      <p className="mt-6 text-body lg:text-big">{body}</p>
-      {reason && <p className="mt-4 text-body">{reason}</p>}
+    <div className={`${card} ${result === "B" ? "border-brand" : "border-brand/40"}`}>
+      <h2 className="text-[26px] leading-[1.15] lg:text-[32px]">{heading}</h2>
+      <p className="mt-4 text-body text-black">{body}</p>
+      {/* Only Result A shows a price (the GP fee) */}
       {result === "A" && (
         <>
-          <p className="mt-4 text-body font-bold">GP consultation by video: $99 (no Medicare rebate).</p>
-          <p className="mt-2 text-body">If you need a dermatologist later, our GP can refer you.</p>
+          <p className={`${box} bg-[#fcede6]`}>GP consultation by video: $99 (no Medicare rebate).</p>
+          <p className="mt-4 text-body text-black">If you need a dermatologist later, our GP can refer you.</p>
         </>
       )}
       {result === "B" && (
-        <p className="mt-4 text-body">
-          Have a GP referral? Upload it in the form to claim a Medicare rebate.
-        </p>
+        <>
+          {reason && <p className={`${box} bg-cream`}>{reason}</p>}
+          <p className="mt-4 text-body text-black">
+            Have a GP referral? Upload it in the form to claim a Medicare rebate.
+          </p>
+        </>
       )}
       {/* Form first: the answers are attached to the Get Started form, then the patient books */}
-      <PillLink href={GET_STARTED_URL} tone="light" className="mt-8 w-full bg-white !text-brand hover:!bg-cream sm:w-auto">
+      <Link href={GET_STARTED_URL} className={primary}>
         Book your free nurse consultation →
-      </PillLink>
-      <p className="mt-6 text-note text-white/85">
+      </Link>
+      <p className={small}>
         Nurse consultations don&apos;t include prescribing.{" "}
         {result !== "A" && (
           <>
-            Doctor fees apply.{" "}
-            <Link href="/pricing" className="underline underline-offset-2">
+            {result === "B" ? "Dermatologist" : "Doctor"} fees apply.{" "}
+            <Link href="/pricing" className="text-brand underline underline-offset-2">
               See Pricing
             </Link>
             .{" "}
@@ -192,7 +213,7 @@ function Result({ result, reason }: { result: QuizResult; reason?: string }) {
         may recommend a different pathway. This quiz is a guide only and does not diagnose or
         prescribe.
       </p>
-      <CourseLine className="mt-4 text-white/85" />
+      <NotReady />
     </div>
   );
 }
