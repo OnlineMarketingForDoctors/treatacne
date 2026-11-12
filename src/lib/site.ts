@@ -58,7 +58,7 @@ export const footerSecondaryLinks = [
   { href: "/photo-guide", label: "Photo guide" },
   { href: "/shop", label: "Shop" },
   { href: "/contact", label: "Contact" },
-  { href: "/for-referring-doctors", label: "For referring doctors" },
+  { href: "/referrals", label: "For referring doctors" },
   { href: "/privacy-policy", label: "Privacy Policy" },
   { href: "/terms-of-use", label: "Terms of Use" },
   { href: "/feedback-and-complaints", label: "Feedback & complaints" },

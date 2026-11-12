@@ -59,7 +59,7 @@ export default function ContactPage() {
             <div>
               <h2 className={label}>Fax (GP referrals)</h2>
               <p className="mt-1 text-big text-black">{contact.fax}</p>
-              <Link href="/for-referring-doctors" className="mt-1 inline-block text-small underline underline-offset-2">
+              <Link href="/referrals" className="mt-1 inline-block text-small underline underline-offset-2">
                 Information for referring doctors →
               </Link>
             </div>
