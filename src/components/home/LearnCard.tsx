@@ -6,7 +6,7 @@ export function LearnCard() {
   return (
     <div
       data-reveal="up"
-      className="flex h-full flex-col justify-between gap-6 rounded-2xl bg-white p-5 text-black lg:p-6 min-[1440px]:p-5"
+      className="flex h-full flex-col justify-between gap-6 rounded-2xl bg-cream p-5 text-black lg:p-6 min-[1440px]:p-5"
     >
       <div>
         <h3 className="text-[22px] leading-[1.15] text-brand lg:text-[26px] min-[1440px]:text-[24px]">
