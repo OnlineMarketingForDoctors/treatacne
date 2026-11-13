@@ -24,22 +24,25 @@ const strip = [
   { src: "/images/hero-face.jpg", alt: "Smiling woman with cleanser on her face", caption: "Simple routines you can keep up" },
 ];
 
-// TODO: team headshots, and Dr Kaur's qualifications and bio (due from Niyati).
+// TODO: Dr Kaur's qualifications and bio (due from Niyati).
 // Dr Iyengar's AHPRA number can be added to her lines if she agrees.
-const team: { name: string; role: string; lines: string[]; confirm?: string }[] = [
+const team: { name: string; role: string; photo: string; lines: string[]; confirm?: string }[] = [
   {
     name: "Dr Laxmi Iyengar",
+    photo: "/images/team-laxmi-iyengar.jpg",
     role: "GP with a special interest in acne",
     lines: ["PhD, FRACGP, BSc (Hons 1). An evidence-based GP involved in dermatology clinical trials."],
   },
   {
     name: "Dr Nehal Kaur",
+    photo: "/images/team-nehal-kaur.jpg",
     role: "Doctor with advanced training in dermatology",
     confirm: "[Qualifications and 1–2 line bio to come]",
     lines: ["Supports patients alongside our nurses at their free first consultation."],
   },
   {
     name: "Teesha",
+    photo: "/images/team-teesha.jpg",
     role: "Dermatology Nurse",
     lines: [
       "A degree in neurophysiology and a Master of Nursing Science from the University of Melbourne, with 4 years in dermatology. Your guide from first call to clear plan.",
@@ -47,6 +50,7 @@ const team: { name: string; role: string; lines: string[]; confirm?: string }[] 
   },
   {
     name: "Marnie",
+    photo: "/images/team-marnie.jpg",
     role: "Acne Nurse",
     lines: [
       "A nurse since 2008, supporting acne patients at Inside Out Dermatology for over 2 years. Practical, friendly, and in your corner.",
@@ -150,23 +154,21 @@ export default function AboutPage() {
                 key={member.name}
                 data-reveal="up"
                 style={revealDelay((i % 2) * 100)}
-                className="rounded-2xl border border-brand/40 p-4 lg:p-5"
+                className="flex gap-4 rounded-2xl border border-brand/40 p-4 lg:gap-6 lg:p-5"
               >
-                {/* Headshot placeholder until photos arrive */}
-                <div aria-hidden className="flex aspect-[16/7] items-end justify-center overflow-hidden rounded-xl bg-cream">
-                  <svg viewBox="0 0 120 100" className="w-[22%] text-brand-muted" fill="currentColor">
-                    <circle cx="60" cy="38" r="22" />
-                    <path d="M14 100c4-26 22-40 46-40s42 14 46 40z" />
-                  </svg>
+                <div className="relative aspect-[4/5] w-[110px] shrink-0 self-start overflow-hidden rounded-xl bg-cream sm:w-[150px] lg:w-[180px]">
+                  <Image src={member.photo} alt={`${member.name}, ${member.role}`} fill sizes="180px" className="object-cover" />
                 </div>
-                <h3 className="mt-5 text-[22px] leading-[1.15] lg:text-[24px]">{member.name}</h3>
-                <p className="mt-1 text-small">{member.role}</p>
-                {member.lines.map((line) => (
-                  <p key={line} className="mt-3 text-small text-black">
-                    {member.confirm && <span className="mr-1 text-black/50">{member.confirm}</span>}
-                    {line}
-                  </p>
-                ))}
+                <div>
+                  <h3 className="text-[22px] leading-[1.15] lg:text-[24px]">{member.name}</h3>
+                  <p className="mt-1 text-small">{member.role}</p>
+                  {member.lines.map((line) => (
+                    <p key={line} className="mt-3 text-small text-black">
+                      {member.confirm && <span className="mr-1 text-black/50">{member.confirm}</span>}
+                      {line}
+                    </p>
+                  ))}
+                </div>
               </li>
             ))}
           </ul>
