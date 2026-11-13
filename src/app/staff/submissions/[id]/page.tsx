@@ -25,7 +25,7 @@ function display(value: Answers[string], type?: string) {
 export default async function SubmissionPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   if (!/^[0-9a-f-]{36}$/i.test(id)) notFound();
-  const { supabase, userId, name } = await requireStaff();
+  const { supabase, userId, name, role } = await requireStaff();
 
   const { data: row } = await supabase.from("submissions").select("*").eq("id", id).maybeSingle();
   if (!row) notFound();
@@ -67,7 +67,7 @@ export default async function SubmissionPage({ params }: { params: Promise<{ id:
 
   return (
     <>
-      <StaffNav name={name} />
+      <StaffNav name={name} role={role} />
       <Link href="/staff" className="text-small text-brand hover:underline">
         ← All submissions
       </Link>

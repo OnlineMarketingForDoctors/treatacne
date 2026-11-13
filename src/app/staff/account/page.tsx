@@ -5,10 +5,10 @@ import { ChangePasswordForm } from "./ChangePasswordForm";
 export const metadata = { title: "Change password" };
 
 export default async function AccountPage() {
-  const { name } = await requireStaff();
+  const { name, role } = await requireStaff();
   return (
     <>
-      <StaffNav name={name} />
+      <StaffNav name={name} role={role} />
       <div className="max-w-[460px] rounded-2xl bg-white p-8">
         <h1 className="text-h2">Change password</h1>
         <ChangePasswordForm />

@@ -18,7 +18,7 @@ export default async function StaffHome({
 }: {
   searchParams: Promise<{ status?: string }>;
 }) {
-  const { supabase, name } = await requireStaff();
+  const { supabase, name, role } = await requireStaff();
   const { status: requested } = await searchParams;
   const status = filters.some((f) => f.key === requested) ? requested! : "new";
 
@@ -32,7 +32,7 @@ export default async function StaffHome({
 
   return (
     <>
-      <StaffNav name={name} />
+      <StaffNav name={name} role={role} />
       <h1 className="text-h2">Get Started submissions</h1>
       <nav aria-label="Filter by status" className="mt-6 flex flex-wrap gap-2.5">
         {filters.map((f) => (

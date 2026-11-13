@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import Link from "next/link";
 import { FinalCta } from "@/components/FinalCta";
+import { PostCard } from "@/components/blog/PostCard";
+import { listPublishedPosts } from "@/lib/blog";
 import { PillLink } from "@/components/Button";
 import { revealDelay } from "@/lib/reveal";
 import { COURSE_URL } from "@/lib/site";
@@ -28,7 +31,11 @@ const modules = [
   { title: "Review and next steps", body: "A recap, ongoing support and resources." },
 ];
 
-export default function LearnPage() {
+// Re-checked every 10 minutes for newly published articles
+export const revalidate = 600;
+
+export default async function LearnPage() {
+  const posts = await listPublishedPosts(3);
   return (
     <>
       <section className="grid grid-cols-1 items-center gap-8 px-5 pt-10 pb-12 lg:grid-cols-2 lg:gap-[40px] lg:px-[30px] lg:pt-[60px] lg:pb-[60px]">
@@ -102,6 +109,25 @@ export default function LearnPage() {
           or scars, or not improving, we recommend booking a consultation.
         </p>
       </section>
+
+      {/* Latest 3 articles (hidden until the first one is published) */}
+      {posts.length > 0 && (
+        <section className="bg-cream px-5 py-12 lg:px-[30px] lg:py-[60px]">
+          <h2 data-reveal="up" className="text-h2 lg:text-h2-lg">
+            From the blog
+          </h2>
+          <ul className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-[30px]">
+            {posts.map((p) => (
+              <li key={p.id}>
+                <PostCard post={p} />
+              </li>
+            ))}
+          </ul>
+          <Link href="/blog" className="mt-8 inline-block text-body text-brand underline underline-offset-2">
+            See all articles →
+          </Link>
+        </section>
+      )}
 
       <FinalCta />
     </>

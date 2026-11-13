@@ -28,9 +28,24 @@ export async function requireStaff() {
   if (claims.aal !== "aal2") redirect("/staff/mfa");
   const { data: member } = await supabase
     .from("staff_members")
-    .select("name")
+    .select("name, role")
     .eq("user_id", claims.sub)
     .maybeSingle();
   if (!member) redirect("/staff/no-access");
-  return { supabase, userId: claims.sub, name: member.name as string };
+  return {
+    supabase,
+    userId: claims.sub,
+    name: member.name as string,
+    role: (member.role === "admin" ? "admin" : "nurse") as StaffRole,
+  };
+}
+
+export type StaffRole = "admin" | "nurse";
+export const roleLabels: Record<StaffRole, string> = { admin: "Admin", nurse: "Nurse" };
+
+/** Admin-only pages (blog and users). Nurses are sent back to submissions. */
+export async function requireAdmin() {
+  const staff = await requireStaff();
+  if (staff.role !== "admin") redirect("/staff");
+  return staff;
 }

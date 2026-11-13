@@ -36,11 +36,18 @@ export const footerCtaTerms =
 export const courseLine =
   "Not ready for a consultation? You can still learn more with our online course, Mastering Acne.";
 
-export const navLinks = [
+export const navLinks: { href: string; label: string; children?: { href: string; label: string }[] }[] = [
   { href: "/about", label: "About Us" },
   { href: "/how-it-works", label: "How it works" },
   { href: "/pricing", label: "Pricing" },
-  { href: "/learn", label: "Learn" },
+  {
+    href: "/learn",
+    label: "Learn",
+    children: [
+      { href: "/learn", label: "Mastering Acne course" },
+      { href: "/blog", label: "Blog" },
+    ],
+  },
   { href: "/shop", label: "Shop" },
   { href: "/contact", label: "Contact" },
 ];
@@ -52,6 +59,7 @@ export const footerLinks = [
   { href: "/severe-persistent-acne", label: "Severe & persistent acne" },
   { href: "/faq", label: "FAQ" },
   { href: "/learn", label: "Learn" },
+  { href: "/blog", label: "Blog" },
 ];
 
 export const footerSecondaryLinks = [

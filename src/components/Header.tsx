@@ -40,11 +40,32 @@ export function Header() {
           aria-label="Main"
           className="hidden flex-1 items-center justify-end gap-5 border-l border-brand pr-6 pl-6 whitespace-nowrap lg:flex xl:gap-8 xl:pr-[70px]"
         >
-          {navLinks.map((link) => (
-            <Link key={link.href} href={link.href} className="text-small hover:underline xl:text-body">
-              {link.label}
-            </Link>
-          ))}
+          {navLinks.map((link) =>
+            link.children ? (
+              // Dropdown opens on hover or keyboard focus; the top link still goes to the hub page
+              <div key={link.href} className="group relative flex h-full items-center">
+                <Link href={link.href} className="flex items-center gap-1 text-small hover:underline xl:text-body">
+                  {link.label}
+                  <svg aria-hidden width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor" strokeWidth="1.5">
+                    <path d="m1 1 4 4 4-4" />
+                  </svg>
+                </Link>
+                <ul className="invisible absolute top-[calc(100%-6px)] left-1/2 z-50 min-w-[210px] -translate-x-1/2 rounded-xl border border-brand/20 bg-white p-2 opacity-0 shadow-lg transition-opacity group-focus-within:visible group-focus-within:opacity-100 group-hover:visible group-hover:opacity-100">
+                  {link.children.map((c) => (
+                    <li key={c.href}>
+                      <Link href={c.href} className="block rounded-lg px-3 py-2 text-small hover:bg-cream xl:text-body">
+                        {c.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : (
+              <Link key={link.href} href={link.href} className="text-small hover:underline xl:text-body">
+                {link.label}
+              </Link>
+            ),
+          )}
           {SHOP_ENABLED && (
             <button type="button" onClick={cart.open} className="text-small hover:underline xl:text-body">
               {cartLabel}
@@ -97,7 +118,7 @@ export function Header() {
             </button>
           </div>
           <nav aria-label="Mobile" className="flex flex-1 flex-col gap-2 px-5 pt-[70px]">
-            {navLinks.map((link) => (
+            {navLinks.flatMap((link) => [link, ...(link.children?.filter((c) => c.href !== link.href) ?? [])]).map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
