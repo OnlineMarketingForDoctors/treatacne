@@ -10,13 +10,13 @@ export function Hero() {
     <section className="grid border-b border-brand lg:min-h-[793px] lg:grid-cols-2">
       <div className="relative h-[265px] overflow-hidden lg:order-2 lg:h-auto">
         <Image
-          src="/images/hero-face.jpg"
-          alt="Smiling woman with cleanser on her face"
+          src="/images/hero-face-foam.jpg"
+          alt="Close-up of a woman winking, with foaming cleanser on her face"
           fill
           priority
           sizes="(min-width: 1024px) 50vw, 100vw"
           data-reveal="zoom"
-          className="object-cover object-[50%_20%]"
+          className="object-cover object-[50%_35%]"
         />
       </div>
 
