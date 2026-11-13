@@ -19,7 +19,7 @@ export default async function BlogPage() {
     <>
       <section className="px-5 pt-10 pb-12 lg:px-[30px] lg:pt-[60px] lg:pb-[60px]">
         <p className="text-small tracking-[0.12em] uppercase">Learn</p>
-        <h1 className="mt-4 text-h2 lg:text-h2-lg">From the blog</h1>
+        <h1 className="mt-4 text-h2 lg:text-h2-lg">Treat:Acne Blog</h1>
         <p className="mt-5 max-w-[640px] text-body text-black lg:text-big">
           Clear, practical articles on acne, reviewed by our dermatologist Dr Niyati Sharma.
         </p>
