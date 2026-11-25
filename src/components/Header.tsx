@@ -22,7 +22,7 @@ export function Header() {
   return (
     <header className="sticky top-0 z-40 border-b border-brand bg-white">
       <div className="flex h-[62px] items-stretch">
-        <div className="flex flex-1 items-center px-5 lg:w-1/2 lg:flex-none lg:px-[30px]">
+        <div className="flex flex-1 items-center px-5 lg:px-[30px]">
           <Link href="/" aria-label="Treat:Acne home" className="w-[130px] text-brand">
             <Image
               src="/images/logo-dark.png"
@@ -38,7 +38,7 @@ export function Header() {
 
         <nav
           aria-label="Main"
-          className="hidden flex-1 items-center justify-end gap-5 border-l border-brand pr-6 pl-6 whitespace-nowrap lg:flex xl:gap-8 xl:pr-[70px]"
+          className="hidden flex-none items-center justify-end gap-5 border-l border-brand pr-6 pl-6 whitespace-nowrap lg:flex xl:gap-8 xl:pr-[50px] xl:pl-[40px]"
         >
           {navLinks.map((link) =>
             link.children ? (

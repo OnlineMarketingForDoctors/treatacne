@@ -1,7 +1,6 @@
 // Dummy answers for test submissions of the Get Started form.
 // TURN OFF BEFORE LAUNCH: set TEST_PREFILL to false.
 
-import { cdlqiQuestions, dlqiQuestions } from "@/lib/dlqi";
 import type { Answers } from "@/lib/intake";
 
 /** Pre-fills the Get Started form with dummy data. Must be false on the live site. */
@@ -13,10 +12,6 @@ export const TEST_PREFILL = true;
  * still gives a valid test).
  */
 export function testAnswers(): Answers {
-  // Middle option of each questionnaire question, so the scores aren't 0
-  const questionnaire = Object.fromEntries(
-    [...dlqiQuestions, ...cdlqiQuestions].map((q) => [q.id, q.options[Math.floor(q.options.length / 2)]]),
-  );
   return {
     // Step 1
     firstName: "Test",
@@ -56,13 +51,7 @@ export function testAnswers(): Answers {
     contraceptionName: "Combined pill (test submission)",
     practitionerPreference: "No preference",
     prescriptionPreference: "Send my script to me (SMS or email) so I can use my local pharmacy",
-    // Step 4 (optional questionnaire)
-    ...questionnaire,
-    dlqi7: "No",
-    dlqi7b: "A little",
-    cdlqi7: "School time",
-    cdlqi7a: "Only a little",
-    // Step 5
+    // Step 4
     consentPrivacy: true,
     consentDeclaration: true,
     consentPhotography: false,

@@ -33,9 +33,11 @@ export function Quiz() {
   const [answers, setAnswers] = useState<QuizAnswers>({});
   const [outcome, setOutcome] = useState<{ result: QuizResult; reason?: string } | null>(null);
   const resultRef = useRef<HTMLDivElement>(null);
+  const [missing, setMissing] = useState<string[]>([]);
 
   const toggle = (q: Question, option: string) => {
     setOutcome(null);
+    setMissing((m) => m.filter((id) => id !== q.id));
     setAnswers((prev) => {
       const current = prev[q.id] ?? [];
       if (!q.multiple) return { ...prev, [q.id]: [option] };
@@ -50,6 +52,15 @@ export function Quiz() {
     <form
       onSubmit={(e) => {
         e.preventDefault();
+        // Required questions (Q1) must be answered before a result is shown
+        const unanswered = quizQuestions.filter((q) => q.required && !answers[q.id]?.length).map((q) => q.id);
+        if (unanswered.length) {
+          setMissing(unanswered);
+          setOutcome(null);
+          document.getElementById(`quiz-${unanswered[0]}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
+          (document.querySelector(`input[name="${unanswered[0]}"]`) as HTMLInputElement | null)?.focus();
+          return;
+        }
         const next = recommend(answers);
         setOutcome(next);
         saveQuiz(answers, next.result);
@@ -60,11 +71,28 @@ export function Quiz() {
       }}
     >
       {quizQuestions.map((q, i) => (
-        <fieldset key={q.id} className="border-t border-brand py-[26px]">
+        <fieldset
+          key={q.id}
+          id={`quiz-${q.id}`}
+          aria-required={q.required || undefined}
+          aria-invalid={missing.includes(q.id) || undefined}
+          aria-describedby={missing.includes(q.id) ? `quiz-${q.id}-error` : undefined}
+          className="scroll-mt-[90px] border-t border-brand py-[26px]"
+        >
           <legend className="float-left mb-4 w-full text-body text-black">
             <span className="text-brand">{i + 1}.</span> {q.label}
+            {q.required && (
+              <span className="text-brand" aria-hidden>
+                {" "}*
+              </span>
+            )}
             {q.multiple && <span className="text-black/60"> (select all that apply)</span>}
           </legend>
+          {missing.includes(q.id) && (
+            <p id={`quiz-${q.id}-error`} role="alert" className="clear-left mb-3 text-small text-red-700">
+              Please answer this question to see your result.
+            </p>
+          )}
           <div className="clear-left flex flex-wrap gap-2.5">
             {q.options.map((option) => {
               const checked = answers[q.id]?.includes(option) ?? false;
@@ -81,6 +109,7 @@ export function Quiz() {
                     value={option}
                     checked={checked}
                     onChange={() => toggle(q, option)}
+                    aria-label={option}
                     className="sr-only"
                   />
                   {option}

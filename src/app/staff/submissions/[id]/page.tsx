@@ -3,7 +3,6 @@ import { notFound } from "next/navigation";
 import { ageFrom, allFileSlots, fieldIds, steps, visibleFields, type Answers } from "@/lib/intake";
 import { quizQuestions } from "@/lib/quiz";
 import { formatDateTime, requireStaff, statusLabels } from "@/lib/staff";
-import { cdlqiBand, cdlqiScore, dlqiBand, dlqiScore } from "@/lib/dlqi";
 import { SUBMISSIONS_BUCKET } from "@/lib/supabase/env";
 import { updateStatus } from "../../actions";
 import { StaffNav } from "../../StaffNav";
@@ -56,15 +55,9 @@ export default async function SubmissionPage({ params }: { params: Promise<{ id:
     signedAt?: string;
   };
   // Answers from an earlier version of the form, so nothing is hidden from staff
-  const legacy = Object.entries(answers).filter(([key]) => !fieldIds.has(key));
+  // (answers to the removed DLQI/CDLQI questionnaire are left out)
+  const legacy = Object.entries(answers).filter(([key]) => !fieldIds.has(key) && !/^c?dlqi/.test(key));
   const age = ageFrom(row.date_of_birth);
-  const answeredKeys = Object.keys(answers);
-  const qol = answeredKeys.some((k) => k.startsWith("dlqi"))
-    ? { name: "DLQI", score: dlqiScore(answers), band: dlqiBand }
-    : answeredKeys.some((k) => k.startsWith("cdlqi"))
-      ? { name: "CDLQI", score: cdlqiScore(answers), band: cdlqiBand }
-      : null;
-
   return (
     <>
       <StaffNav name={name} role={role} />
@@ -86,16 +79,6 @@ export default async function SubmissionPage({ params }: { params: Promise<{ id:
             Age {age ?? "-"} · Mobile {row.mobile} · Received {formatDateTime(row.created_at)}
             {signedAt && <> · Signed {formatDateTime(signedAt)}</>}
           </p>
-          {qol && (
-            <p className="mt-2 text-small">
-              {qol.name} score:{" "}
-              <strong className="font-bold">
-                {qol.score === null
-                  ? "not scored (2 or more questions unanswered)"
-                  : `${qol.score}/30 - ${qol.band(qol.score)}`}
-              </strong>
-            </p>
-          )}
         </div>
         <form action={updateStatus} className="flex items-center gap-3">
           <input type="hidden" name="id" value={row.id} />

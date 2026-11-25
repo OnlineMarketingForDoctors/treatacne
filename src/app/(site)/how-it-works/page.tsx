@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
+import { NurseBooking } from "@/components/NurseBooking";
 import Image from "next/image";
 import { BudgetCallout, stepExtras } from "@/components/HowItWorks";
 import { CourseLine } from "@/components/CourseLine";
 import { FinalCta } from "@/components/FinalCta";
 import { OfferTermsText } from "@/components/OfferTermsText";
-import { PillLink } from "@/components/Button";
 import { QuizCard } from "@/components/home/QuizCard";
 import { revealDelay } from "@/lib/reveal";
-import { BOOKING_URL, goodToKnow, keyMessage, ongoingCare, steps } from "@/lib/site";
+import { goodToKnow, keyMessage, ongoingCare, steps } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "How it works",
@@ -111,9 +111,7 @@ export default function HowItWorksPage() {
         </dl>
 
         <div data-reveal="up" className="mt-12 text-center">
-          <PillLink href={BOOKING_URL} className="w-full sm:w-auto">
-            Book your free nurse consultation →
-          </PillLink>
+          <NurseBooking />
           <CourseLine className="mx-auto mt-4 max-w-[560px]" />
         </div>
       </section>

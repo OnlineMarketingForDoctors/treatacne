@@ -17,7 +17,6 @@ const paths = [
   "/shop",
   "/contact",
   "/referrals",
-  "/feedback-and-complaints",
   "/accessibility",
   "/privacy-policy",
   "/terms-of-use",

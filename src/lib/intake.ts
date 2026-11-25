@@ -1,20 +1,6 @@
-// Get Started form definition: the shorter 5-step form from Niyati's review (Nov 2026).
+// Get Started form definition: the 4-step form (Niyati's review, Nov 2026; the optional DLQI step was removed).
 // Shared by the form, the server-side validation and the staff review pages.
 // Generic medicine names only (TGA advertising rules apply to this public page too).
-
-import {
-  CDLQI_COPYRIGHT,
-  CDLQI_ENABLED,
-  CDLQI_INSTRUCTIONS,
-  CDLQI_MIN_AGE,
-  CDLQI_PARENT_NOTE,
-  cdlqiQuestions,
-  DLQI_COPYRIGHT,
-  DLQI_ENABLED,
-  DLQI_INSTRUCTIONS,
-  DLQI_MIN_AGE,
-  dlqiQuestions,
-} from "@/lib/dlqi";
 
 export type Answers = Record<string, string | string[] | boolean | undefined>;
 
@@ -91,7 +77,7 @@ export type Field =
 
 export type Section = { title: string; fields: Field[]; showIf?: (a: Answers) => boolean };
 export type Step = {
-  /** Short name for the progress label ("Step 2 of 5: Your skin") */
+  /** Short name for the progress label ("Step 2 of 4: Your skin") */
   name: string;
   heading: string;
   intro?: string;
@@ -134,18 +120,6 @@ export const triedRows = [
   { id: "triedSpironolactone", label: "Spironolactone" },
   { id: "triedIsotretinoin", label: "Isotretinoin" },
 ];
-
-/** Which skin questionnaire applies at this age (step 4), if any */
-export function questionnaireFor(a: Answers): "dlqi" | "cdlqi" | null {
-  const age = ageFrom(str(a, "dob"));
-  if (age === null) return null;
-  if (DLQI_ENABLED && age >= DLQI_MIN_AGE) return "dlqi";
-  if (CDLQI_ENABLED && age >= CDLQI_MIN_AGE) return "cdlqi";
-  return null;
-}
-
-export const QUESTIONNAIRE_INTRO =
-  "Optional: how your skin affects your life. These 10 quick questions help us triage you even faster. No time? No problem: you can skip them and still submit.";
 
 export const steps: Step[] = [
   {
@@ -234,58 +208,8 @@ export const steps: Step[] = [
     sections: [],
   },
   {
-    name: "Optional questions",
-    heading: "4. Optional: how your skin affects your life",
-    sections: [
-      {
-        title: "How your skin affects your life (DLQI)",
-        // Licensed questionnaire, ages 16+ (see lib/dlqi.ts)
-        showIf: (a) => questionnaireFor(a) === "dlqi",
-        fields: [
-          { id: "dlqiInstructions", type: "note", text: DLQI_INSTRUCTIONS },
-          ...dlqiQuestions.map(
-            (q): Field => ({
-              id: q.id,
-              type: "choice",
-              label: q.label,
-              options: q.options,
-              columns: q.options.length === 4 ? 4 : 3,
-              showIf: q.id === "dlqi7b" ? (a) => str(a, "dlqi7") === "No" : undefined,
-            }),
-          ),
-          { id: "dlqiCopyright", type: "note", text: DLQI_COPYRIGHT },
-        ],
-      },
-      {
-        title: "How your skin affects you (CDLQI)",
-        // Licensed children's questionnaire, ages 4–15 (see lib/dlqi.ts)
-        showIf: (a) => questionnaireFor(a) === "cdlqi",
-        fields: [
-          { id: "cdlqiParentNote", type: "note", text: CDLQI_PARENT_NOTE },
-          { id: "cdlqiInstructions", type: "note", text: CDLQI_INSTRUCTIONS },
-          ...cdlqiQuestions.map(
-            (q): Field => ({
-              id: q.id,
-              type: "choice",
-              label: q.label,
-              options: q.options,
-              columns: q.options.length === 2 ? 2 : q.options.length === 4 ? 4 : 3,
-              showIf:
-                q.id === "cdlqi7a"
-                  ? (a) => str(a, "cdlqi7") === "School time"
-                  : q.id === "cdlqi7b"
-                    ? (a) => str(a, "cdlqi7") === "Holiday time"
-                    : undefined,
-            }),
-          ),
-          { id: "cdlqiCopyright", type: "note", text: CDLQI_COPYRIGHT },
-        ],
-      },
-    ],
-  },
-  {
     name: "Almost done",
-    heading: "5. Almost done",
+    heading: "4. Almost done",
     sections: [
       {
         title: "Consents & declaration",
@@ -314,7 +238,7 @@ export const steps: Step[] = [
 ];
 
 /** Steps by number, for the form's step logic */
-export const STEP = { about: 0, skin: 1, photos: 2, questionnaire: 3, done: 4 } as const;
+export const STEP = { about: 0, skin: 1, photos: 2, done: 3 } as const;
 
 /** File slots. The referral sits on step 1, photos on step 3. */
 export type FileSlot = { id: string; label: string; hint?: string; example?: string; group: string };

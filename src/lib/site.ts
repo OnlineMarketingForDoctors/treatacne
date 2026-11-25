@@ -1,11 +1,16 @@
 // Content from the Treat:Acne Website Build Guide (approved copy). Keep wording as written.
 
-// TODO: replace with the Healthengine nurse-consultation booking link (due from Niyati).
-export const BOOKING_URL = "https://www.healthengine.com.au/";
+// Healthengine practice id for the nurse-consultation booking widget (components/NurseBooking).
+export const HEALTHENGINE_ID = "103646";
 export const GET_STARTED_URL = "/get-started";
 // TODO: Kajabi "Mastering Acne" checkout link (due from Niyati). The course page is /learn.
 export const COURSE_URL = "#";
 export const COURSE_PAGE = "/learn";
+
+// Patients must accept the Privacy Policy and Terms of Use to submit the Get Started form, so the
+// form stays offline until both are published. Set to true once both final texts are live.
+// Until then the team can still test the form at /get-started?preview=1.
+export const LEGAL_PAGES_PUBLISHED = false;
 
 // Shop is a "coming soon" page for now. Set to true to bring back the product pages and cart.
 export const SHOP_ENABLED = false;
@@ -50,6 +55,7 @@ export const navLinks: { href: string; label: string; children?: { href: string;
   },
   { href: "/shop", label: "Shop" },
   { href: "/contact", label: "Contact" },
+  { href: "/referrals", label: "For Doctors" },
 ];
 
 export const footerLinks = [
@@ -69,7 +75,6 @@ export const footerSecondaryLinks = [
   { href: "/referrals", label: "For referring doctors" },
   { href: "/privacy-policy", label: "Privacy Policy" },
   { href: "/terms-of-use", label: "Terms of Use" },
-  { href: "/feedback-and-complaints", label: "Feedback & complaints" },
   { href: "/accessibility", label: "Accessibility" },
 ];
 

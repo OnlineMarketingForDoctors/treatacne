@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { PillLink } from "@/components/Button";
 import { FormField, inputClass } from "@/components/form/FormField";
 import { PhotoSlot } from "@/components/form/PhotoSlot";
 import { PhotoTips } from "@/components/PhotoTips";
@@ -12,17 +11,15 @@ import {
   ALLOWED_FILE_TYPES,
   MAX_BULK_PHOTOS,
   MAX_FILE_BYTES,
-  QUESTIONNAIRE_INTRO,
   STEP,
   isUnder18,
   photoGroups,
-  questionnaireFor,
   steps,
   validateStep,
   visibleFields,
   type Answers,
 } from "@/lib/intake";
-import { BOOKING_URL } from "@/lib/site";
+import { NurseBooking } from "@/components/NurseBooking";
 import { TEST_PREFILL, testAnswers } from "@/lib/testPrefill";
 import { clearDraft, loadDraft, saveDraft } from "@/lib/formDraft";
 import { clearQuiz, loadQuiz, type SavedQuiz } from "@/lib/quizStore";
@@ -83,14 +80,17 @@ export function GetStartedForm() {
     const savedQuiz = loadQuiz();
     // eslint-disable-next-line react-hooks/set-state-in-effect -- one-off restore after hydration
     setQuiz(savedQuiz);
-    if (!TEST_PREFILL) {
-      const draft = loadDraft();
-      if (draft) {
-        setAnswers({ ...emptyAnswers(), ...draft.answers });
-        setStepIndex(Math.min(draft.stepIndex, steps.length - 1));
-      } else if (savedQuiz) {
-        setAnswers((prev) => ({ ...prev, ...answersFromQuiz(savedQuiz) }));
-      }
+    const fromQuiz = savedQuiz ? answersFromQuiz(savedQuiz) : {};
+    const draft = TEST_PREFILL ? null : loadDraft();
+    if (draft) {
+      // A saved draft wins; quiz answers only fill questions the draft left blank
+      const merged: Answers = { ...emptyAnswers(), ...draft.answers };
+      for (const [k, v] of Object.entries(fromQuiz)) if (!merged[k]) merged[k] = v;
+      setAnswers(merged);
+      setStepIndex(Math.min(draft.stepIndex, steps.length - 1));
+    } else if (savedQuiz) {
+      // Quiz answers pre-fill step 2 (on top of the test answers in test mode)
+      setAnswers((prev) => ({ ...prev, ...fromQuiz }));
     }
     setRestored(true);
   }, []);
@@ -264,7 +264,7 @@ export function GetStartedForm() {
       <p className="sr-only" aria-live="polite">
         Step {stepIndex + 1} of {steps.length}: {step.name}
       </p>
-      <ol aria-hidden className="mt-5 grid grid-cols-5 gap-1.5">
+      <ol aria-hidden className="mt-5 grid grid-cols-4 gap-1.5">
         {steps.map((st, i) => (
           <li key={st.name}>
             <span className={`block h-[4px] rounded-full ${i <= stepIndex ? "bg-brand" : "bg-brand/20"}`} />
@@ -298,11 +298,7 @@ export function GetStartedForm() {
           <PhotoStep files={files} fileErrors={fileErrors} onFile={setFile} onBulk={addBulk} />
         )}
 
-        {stepIndex === STEP.questionnaire ? (
-          <QuestionnaireStep answers={answers} errors={errors} onChange={update} />
-        ) : (
-          <Sections stepIndex={stepIndex} answers={answers} errors={errors} fields={fields} onChange={update} />
-        )}
+        <Sections stepIndex={stepIndex} answers={answers} errors={errors} fields={fields} onChange={update} />
 
         {stepIndex === STEP.about && (
           <section className="mt-10 rounded-2xl border border-brand bg-[#fcede6] p-5 lg:p-6">
@@ -419,56 +415,6 @@ function Sections({
   );
 }
 
-/** Step 4: the DLQI (16+) or CDLQI (4–15), collapsed and fully optional */
-function QuestionnaireStep({
-  answers,
-  errors,
-  onChange,
-}: {
-  answers: Answers;
-  errors: Record<string, string>;
-  onChange: (id: string, value: Answers[string]) => void;
-}) {
-  const which = questionnaireFor(answers);
-  const started = Object.keys(answers).some((k) => /^c?dlqi\d/.test(k) && answers[k]);
-  const [open, setOpen] = useState(started);
-
-  if (!which) {
-    return (
-      <p className="mt-10 text-center text-body text-black">
-        There are no extra questions for this age. Press Next to continue.
-      </p>
-    );
-  }
-
-  return (
-    <div className="mt-10 rounded-2xl border border-brand p-5 lg:p-7">
-      <p className="text-body text-black">{QUESTIONNAIRE_INTRO}</p>
-      {!open ? (
-        <div className="mt-5 flex flex-wrap items-center gap-4">
-          <button
-            type="button"
-            onClick={() => setOpen(true)}
-            aria-expanded={false}
-            className="h-[42px] rounded-full bg-brand px-8 text-body text-white transition-colors hover:bg-brand-soft"
-          >
-            Fill in now (2 minutes)
-          </button>
-          <span className="text-small text-black/60">or press Next to skip</span>
-        </div>
-      ) : (
-        <Sections
-          stepIndex={STEP.questionnaire}
-          answers={answers}
-          errors={errors}
-          fields={visibleFields(steps[STEP.questionnaire], answers)}
-          onChange={onChange}
-        />
-      )}
-    </div>
-  );
-}
-
 function ThankYou({
   ref,
   firstName,
@@ -488,10 +434,7 @@ function ThankYou({
       <h1 className="mt-8 text-h2 lg:text-h2-lg">Thank you{firstName ? `, ${firstName}` : ""}.</h1>
       <p className="mt-6 text-body text-black lg:text-big">We&apos;ve received your details securely.</p>
       <p className="mt-4 text-big text-black">Next step: book your free phone call with our acne nurse.</p>
-      {/* TODO: BOOKING_URL is the Healthengine placeholder until Niyati sends the nurse calendar link */}
-      <PillLink href={BOOKING_URL} className="mt-8 h-[52px] w-full bg-brand !text-white hover:!bg-brand-soft sm:w-auto">
-        Book your free nurse consultation →
-      </PillLink>
+      <NurseBooking className="mt-8" />
       {!photos && (
         <p className="mt-6 rounded-xl bg-[#fcede6] px-5 py-3 text-body text-black">
           Haven&apos;t uploaded your photos yet? That&apos;s OK. Our nurse will email you a private link to

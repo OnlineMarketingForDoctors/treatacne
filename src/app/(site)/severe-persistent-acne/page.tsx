@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { PillLink } from "@/components/Button";
 import { CourseLine } from "@/components/CourseLine";
 import { Block, PageLayout } from "@/components/PageLayout";
-import { BOOKING_URL } from "@/lib/site";
+import { NurseBooking } from "@/components/NurseBooking";
 
 export const metadata: Metadata = {
   title: "Severe & persistent acne",
@@ -83,9 +82,7 @@ export default function SevereAcnePage() {
 
       <div data-reveal="up" className="border-t border-brand pt-[30px]">
         {/* Books the free nurse consultation; the nurse then books the dermatologist */}
-        <PillLink href={BOOKING_URL} className="w-full sm:w-auto">
-          Book your free nurse consultation →
-        </PillLink>
+        <NurseBooking />
         <CourseLine className="mt-4 text-black/70" />
       </div>
     </PageLayout>

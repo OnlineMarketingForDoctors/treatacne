@@ -24,20 +24,23 @@ const strip = [
   { src: "/images/hero-face.jpg", alt: "Smiling woman with cleanser on her face", caption: "Simple routines you can keep up" },
 ];
 
-// TODO: Dr Kaur's qualifications and bio (due from Niyati).
-// Dr Iyengar's AHPRA number can be added to her lines if she agrees.
-const team: { name: string; role: string; photo: string; lines: string[]; confirm?: string }[] = [
+// Due from Niyati: Dr Kaur's qualifications and bio (her card is hidden until then), Dr Iyengar's
+// AHPRA number (shows under her name once filled in), and confirmation that Teesha's title matches
+// her registration.
+type Member = { name: string; role: string; photo: string; lines: string[]; ahpra?: string; hidden?: boolean };
+const team: Member[] = [
   {
     name: "Dr Laxmi Iyengar",
     photo: "/images/team-laxmi-iyengar.jpg",
     role: "GP with a special interest in acne",
+    ahpra: "",
     lines: ["PhD, FRACGP, BSc (Hons 1). An evidence-based GP involved in dermatology clinical trials."],
   },
   {
     name: "Dr Nehal Kaur",
     photo: "/images/team-nehal-kaur.jpg",
     role: "Doctor with advanced training in dermatology",
-    confirm: "[Qualifications and 1–2 line bio to come]",
+    hidden: true,
     lines: ["Supports patients alongside our nurses at their free first consultation."],
   },
   {
@@ -149,7 +152,7 @@ export default function AboutPage() {
             Meet the team
           </h2>
           <ul className="mt-8 grid gap-5 sm:grid-cols-2 lg:gap-[30px]">
-            {team.map((member, i) => (
+            {team.filter((m) => !m.hidden).map((member, i) => (
               <li
                 key={member.name}
                 data-reveal="up"
@@ -162,9 +165,9 @@ export default function AboutPage() {
                 <div>
                   <h3 className="text-[22px] leading-[1.15] lg:text-[24px]">{member.name}</h3>
                   <p className="mt-1 text-small">{member.role}</p>
+                  {member.ahpra && <p className="mt-1 text-note text-black/70">AHPRA: {member.ahpra}</p>}
                   {member.lines.map((line) => (
                     <p key={line} className="mt-3 text-small text-black">
-                      {member.confirm && <span className="mr-1 text-black/50">{member.confirm}</span>}
                       {line}
                     </p>
                   ))}

@@ -1,6 +1,6 @@
 // The 7 quiz questions (shared by the quiz and the staff view of a submission).
 
-export type Question = { id: string; label: string; options: string[]; multiple?: boolean };
+export type Question = { id: string; label: string; options: string[]; multiple?: boolean; required?: boolean };
 
 export const GP_OPTION = "Our GP with a special interest in acne - lower cost";
 export const NOT_READY = "I'm not ready to see anyone yet";
@@ -10,6 +10,7 @@ export const quizQuestions: Question[] = [
     id: "severity",
     label: "How would you describe your acne?",
     options: ["Mild", "Moderate", "Severe", "Not sure"],
+    required: true,
   },
   {
     id: "duration",

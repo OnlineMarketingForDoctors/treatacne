@@ -27,11 +27,18 @@ placeholder copy. Shared copy, prices, FAQ and links live in `src/lib/site.ts`.
 
 Search the code for `TODO` and `[... to come]` to find each one.
 
-- **Healthengine nurse booking page:** `BOOKING_URL` in `src/lib/site.ts` (all Book buttons).
+- **Healthengine nurse booking:** "Book your free nurse consultation" buttons open Healthengine's
+  booking widget in a pop-up (`src/components/NurseBooking.tsx`, practice id `HEALTHENGINE_ID` in
+  `src/lib/site.ts`).
+- **Privacy Policy and Terms of Use:** the Get Started form stays offline until both are published.
+  Then set `LEGAL_PAGES_PUBLISHED = true` in `src/lib/site.ts`. Until then, test the form at
+  `/get-started?preview=1`.
+- **Referrals:** secure messaging provider and ID (`SECURE_MESSAGING` in
+  `src/app/(site)/referrals/page.tsx`, hidden while empty).
 - **Kajabi course checkout link:** `COURSE_URL` in `src/lib/site.ts`; course outline (modules,
   length, access) on `src/app/(site)/learn/page.tsx`.
-- **About page:** AHPRA numbers for Dr Sharma and Dr Iyengar, Dr Nehal Kaur's qualifications and
-  bio, and team headshots (cards show a silhouette until then).
+- **About page:** Dr Iyengar's AHPRA number (`ahpra`, shows once filled in) and Dr Nehal Kaur's
+  qualifications and bio (her card is `hidden` until then).
 - **Instagram/LinkedIn:** `socialLinks` in `src/lib/site.ts` (hidden while empty).
 - **Privacy Policy and Terms of Use** pages show a "coming soon" line. The clinical-photography
   consent wording on the form is also waiting on the lawyer.
@@ -88,11 +95,6 @@ To remove access, delete the user in Authentication > Users (this also removes t
 
 **Testing locally in a proxied environment:** start the server with
 `NODE_USE_ENV_PROXY=1` so server-side calls to Supabase go through the proxy.
-
-**DLQI / CDLQI:** step 2 of the form includes the Dermatology Life Quality Index for ages 16+
-and the Children's DLQI for ages 4–15 (both licensed from Cardiff University). The staff page
-shows the score out of 30 with its band. Switches: `DLQI_ENABLED` and `CDLQI_ENABLED` in
-`src/lib/dlqi.ts`.
 
 **Before launch:**
 - Set `TEST_PREFILL = false` in `src/lib/testPrefill.ts` (it pre-fills the Get Started form with

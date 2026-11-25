@@ -1,17 +1,22 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { FinalCta } from "@/components/FinalCta";
+import { PillLink } from "@/components/Button";
 import { revealDelay } from "@/lib/reveal";
 import { contact, responseTime } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "For referring doctors",
   description:
-    "How GPs and other doctors can refer patients with acne to Treat:Acne: fax, secure messaging or email. Dermatologist Dr Niyati Sharma sees patients by secure video, Australia-wide.",
+    "How GPs and other doctors can refer patients with acne to Treat:Acne by fax or email. Dermatologist Dr Niyati Sharma sees patients by secure video, Australia-wide.",
   alternates: { canonical: "/referrals" },
 };
 
-// Aimed at GPs and other doctors: factual, no outcome claims (AHPRA). Not in the main nav.
+// Aimed at GPs and other doctors: factual, no outcome claims (AHPRA). "For Doctors" in the main nav.
+
+// Secure messaging (HealthLink / Medical Objects) ID, due from Niyati. The secure messaging option
+// only shows once this is filled in.
+const SECURE_MESSAGING = { provider: "", id: "" };
+const hasSecureMessaging = Boolean(SECURE_MESSAGING.id);
 const card = "rounded-2xl p-5 lg:p-6";
 const link = "text-brand underline underline-offset-2";
 
@@ -27,7 +32,10 @@ const whoWeSee = [
 ];
 
 const next = [
-  { title: "Send the referral", body: "Fax, secure message or email. We confirm receipt." },
+  {
+    title: "Send the referral",
+    body: `${hasSecureMessaging ? "Fax, secure message or email" : "Fax or email"}. We confirm receipt.`,
+  },
   { title: "We contact your patient", body: `Usually ${responseTime}, for a free phone call with our acne nurse.` },
   { title: "Dermatologist consultation", body: "By secure video with Dr Niyati Sharma." },
   { title: "We write back to you", body: "A letter with the diagnosis and plan after the first consultation, and at key changes." },
@@ -57,20 +65,23 @@ export default function ReferralsPage() {
       </section>
 
       <div className="px-5 py-12 lg:px-[30px] lg:py-[60px]">
-        <section>
+        <section id="how-to-refer" className="scroll-mt-[90px]">
           <h2 data-reveal="up" className="text-h2 lg:text-h2-lg">
             How to refer
           </h2>
-          <div className="mt-8 grid gap-4 md:grid-cols-3 lg:gap-[30px]">
+          <div className={`mt-8 grid gap-4 lg:gap-[30px] ${hasSecureMessaging ? "md:grid-cols-3" : "md:grid-cols-2"}`}>
             <div data-reveal="up" className={`${card} bg-[#fcede6]`}>
               <h3 className="text-body">Fax</h3>
               <p className="mt-3 text-big text-black">{contact.fax}</p>
             </div>
-            <div data-reveal="up" style={revealDelay(80)} className={`${card} bg-cream`}>
-              <h3 className="text-body">Secure messaging</h3>
-              {/* TODO: confirm the provider and ID with Xestro */}
-              <p className="mt-3 text-body text-black/60">[HealthLink / Medical Objects ID to come]</p>
-            </div>
+            {hasSecureMessaging && (
+              <div data-reveal="up" style={revealDelay(80)} className={`${card} bg-cream`}>
+                <h3 className="text-body">Secure messaging</h3>
+                <p className="mt-3 text-big text-black">
+                  {SECURE_MESSAGING.provider}: {SECURE_MESSAGING.id}
+                </p>
+              </div>
+            )}
             <div data-reveal="up" style={revealDelay(160)} className={`${card} bg-cream`}>
               <h3 className="text-body">Email</h3>
               <a href={`mailto:${contact.email}`} className="mt-3 inline-block text-big text-black hover:text-brand">
@@ -191,7 +202,24 @@ export default function ReferralsPage() {
         </section>
       </div>
 
-      <FinalCta />
+      {/* Doctor version of the band above the footer */}
+      <section className="bg-cream px-5 py-[90px] text-center lg:py-[85px]">
+        <div data-reveal="up">
+          <h2 className="text-h2 lg:text-h2-lg">Refer a patient</h2>
+          <p className="mx-auto mt-5 max-w-[620px] text-body">
+            Fax{" "}
+            <span className="whitespace-nowrap">{contact.fax}</span>{" "}
+            or email{" "}
+            <a href={`mailto:${contact.email}`} className={link}>
+              {contact.email}
+            </a>
+            . We confirm receipt and contact your patient, usually within 2 working days.
+          </p>
+          <PillLink href="#how-to-refer" className="mt-9 w-[230px]">
+            How to refer →
+          </PillLink>
+        </div>
+      </section>
     </>
   );
 }
