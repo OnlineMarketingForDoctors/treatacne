@@ -78,11 +78,10 @@ function ComingSoon() {
           </div>
         </div>
         <div className="px-5 pb-5 lg:p-[30px]">
-          {/* TODO: swap in Chris's new placeholder image when it arrives (same slot) */}
           <div className="relative aspect-[352/318] h-full overflow-hidden rounded-2xl lg:aspect-auto">
             <Image
-              src="/images/products.jpg"
-              alt="Treat:Acne skincare packaging"
+              src="/images/products-range.jpg"
+              alt="Treat:Acne skincare range: cleanser and three numbered products"
               fill
               priority
               sizes="(min-width: 1024px) 50vw, 100vw"

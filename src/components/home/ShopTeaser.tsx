@@ -36,8 +36,8 @@ function ShopImage() {
   return (
     <div className="relative aspect-[352/318] h-full w-full overflow-hidden rounded-2xl lg:aspect-auto">
       <Image
-        src="/images/products.jpg"
-        alt="Treat:Acne cleanser packaging"
+        src="/images/products-range.jpg"
+        alt="Treat:Acne skincare range: cleanser and three numbered products"
         fill
         sizes="(min-width: 1024px) 60vw, 100vw"
         data-reveal="zoom"
