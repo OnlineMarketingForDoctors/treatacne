@@ -1,21 +1,24 @@
 import { tagline } from "@/lib/site";
 
 /**
- * "Dermatologist-led care" set to exactly the width of the logo above it: SVG text
- * stretched with textLength, so it lines up on both sides at any size.
+ * "DERMATOLOGIST-LED CARE" under the logo: uppercase, a touch heavier (a thin outline, as only
+ * the Regular weight of the font is installed), inset slightly on the left and ending flush with
+ * the logo's right edge. SVG text stretched with textLength, so it lines up at any size.
  */
 export function Tagline({ className = "" }: { className?: string }) {
   return (
-    <svg viewBox="0 0 200 18" role="img" aria-label={tagline} className={`block h-auto ${className}`}>
+    <svg viewBox="0 0 200 11" role="img" aria-label={tagline} className={`block h-auto ${className}`}>
       <text
-        x="0"
-        y="14"
-        textLength="200"
+        x="9"
+        y="10"
+        textLength="190.5"
         lengthAdjust="spacing"
         fill="currentColor"
-        style={{ font: "16px var(--font-unica), sans-serif" }}
+        stroke="currentColor"
+        strokeWidth="0.45"
+        style={{ font: "13px var(--font-unica), sans-serif" }}
       >
-        {tagline}
+        {tagline.toUpperCase()}
       </text>
     </svg>
   );
