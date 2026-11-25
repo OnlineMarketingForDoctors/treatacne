@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { contact, LEGAL_PAGES_PUBLISHED } from "@/lib/site";
+import { contact, INTAKE_FORM_ONLINE } from "@/lib/site";
 import { GetStartedForm } from "./GetStartedForm";
 
 export const metadata: Metadata = {
@@ -13,8 +13,8 @@ export const metadata: Metadata = {
 // No analytics or marketing pixels on this page (build guide: privacy)
 export default async function GetStartedPage({ searchParams }: { searchParams: Promise<{ preview?: string }> }) {
   const { preview } = await searchParams;
-  // Offline until the Privacy Policy and Terms of Use are published (patients must accept both)
-  if (!LEGAL_PAGES_PUBLISHED && preview !== "1") {
+  // Can be taken offline until the Privacy Policy and Terms of Use are published
+  if (!INTAKE_FORM_ONLINE && preview !== "1") {
     return (
       <div className="mx-auto max-w-[705px] px-5 py-16 text-center lg:py-24">
         <h1 className="text-h2 lg:text-h2-lg">Our online form is opening soon</h1>

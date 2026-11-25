@@ -30,9 +30,8 @@ Search the code for `TODO` and `[... to come]` to find each one.
 - **Healthengine nurse booking:** "Book your free nurse consultation" buttons open Healthengine's
   booking widget in a pop-up (`src/components/NurseBooking.tsx`, practice id `HEALTHENGINE_ID` in
   `src/lib/site.ts`).
-- **Privacy Policy and Terms of Use:** the Get Started form stays offline until both are published.
-  Then set `LEGAL_PAGES_PUBLISHED = true` in `src/lib/site.ts`. Until then, test the form at
-  `/get-started?preview=1`.
+- **Privacy Policy and Terms of Use:** patients must accept both to submit the Get Started form.
+  `INTAKE_FORM_ONLINE` in `src/lib/site.ts` takes the form offline (false) or brings it back (true).
 - **Referrals:** secure messaging provider and ID (`SECURE_MESSAGING` in
   `src/app/(site)/referrals/page.tsx`, hidden while empty).
 - **Kajabi course checkout link:** `COURSE_URL` in `src/lib/site.ts`; course outline (modules,

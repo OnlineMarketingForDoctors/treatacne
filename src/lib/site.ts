@@ -7,10 +7,10 @@ export const GET_STARTED_URL = "/get-started";
 export const COURSE_URL = "#";
 export const COURSE_PAGE = "/learn";
 
-// Patients must accept the Privacy Policy and Terms of Use to submit the Get Started form, so the
-// form stays offline until both are published. Set to true once both final texts are live.
-// Until then the team can still test the form at /get-started?preview=1.
-export const LEGAL_PAGES_PUBLISHED = false;
+// Patients must accept the Privacy Policy and Terms of Use to submit the Get Started form.
+// Set to false to take the form offline (it then shows "opening soon"; the team can still test
+// it at /get-started?preview=1). Online by request while the final legal texts are pending.
+export const INTAKE_FORM_ONLINE = true;
 
 // Shop is a "coming soon" page for now. Set to true to bring back the product pages and cart.
 export const SHOP_ENABLED = false;
